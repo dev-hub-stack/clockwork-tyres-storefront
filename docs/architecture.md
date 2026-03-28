@@ -28,6 +28,24 @@ Reasons:
 - `pqgrid` admin screens mixed into the frontend
 - leftover unrelated code paths such as `src/app/api.service.ts` and old guards
 
+### 1a. Legacy Clockwork UI Is The Visual Source Of Truth
+
+George wants the new storefront to match the current Clockwork frontend design as closely as possible.
+
+That means `../dealer-portal-Angular` should be treated as the canonical visual reference for storefront screens.
+
+Use it for:
+
+- templates
+- SCSS
+- fonts
+- images
+- spacing and responsive layout behavior
+
+Do not use it as the runtime architecture source.
+
+The visual layer is portable. The old Angular 11, jQuery, Bootstrap JS, and API coupling are not.
+
 ### 2. Storefront-Only Boundary
 
 This repo owns:
@@ -174,4 +192,3 @@ It does not mean:
 - Rebuilding legacy supplier/dealer admin in this repo
 - Preserving every old route
 - Preserving old API contracts indefinitely
-
