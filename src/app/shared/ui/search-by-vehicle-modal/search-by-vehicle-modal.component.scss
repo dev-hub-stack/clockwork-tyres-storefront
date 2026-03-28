@@ -1,0 +1,90 @@
+@use '../../../../assets/css/styles/variables' as *;
+
+.legacy-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 24px;
+}
+
+.modal-dialog {
+  width: min(1200px, 100%);
+  max-width: 1200px;
+}
+
+.vehicle-modal-content {
+  border-radius: 28px;
+  overflow: hidden;
+  border: 0;
+}
+
+.modal-title {
+  font-size: 2rem;
+  font-family: $primaryfont;
+  font-weight: 700;
+}
+
+.grid-row-box2 {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.form-group {
+  margin-bottom: 0;
+  position: relative;
+}
+
+.search-inputs {
+  border: 2px solid #000;
+  border-radius: 14px;
+  height: 56px;
+  color: #111;
+  font-family: $primaryfont;
+  font-weight: 600;
+}
+
+.form-group .fa {
+  position: absolute;
+  right: 16px;
+  top: 14px;
+  pointer-events: none;
+}
+
+.go-btn-pad {
+  min-width: 120px;
+  min-height: 56px;
+  border-radius: 12px;
+  font-family: $primaryfont;
+  font-weight: 700;
+}
+
+.modal-footnote {
+  margin-top: 20px;
+  color: #444;
+  font-family: $primaryfont;
+}
+
+@media (max-width: 991px) {
+  .grid-row-box2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 575px) {
+  .legacy-modal-backdrop {
+    padding: 12px;
+  }
+
+  .grid-row-box2 {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-title {
+    font-size: 1.5rem;
+  }
+}

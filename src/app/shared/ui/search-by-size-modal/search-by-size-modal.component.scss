@@ -1,0 +1,76 @@
+@use '../../../../assets/css/styles/variables' as *;
+
+.legacy-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 24px;
+}
+
+.modal-dialog {
+  width: min(1280px, 100%);
+  max-width: 1280px;
+}
+
+.size-modal-content {
+  border-radius: 28px;
+  overflow: hidden;
+  border: 0;
+}
+
+.modal-title,
+h6 {
+  font-family: $primaryfont;
+  font-weight: 700;
+}
+
+.grid-row-box {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.form-group {
+  margin-bottom: 0;
+}
+
+.search-inputs {
+  border: 2px solid #000;
+  border-radius: 14px;
+  height: 56px;
+  color: #111;
+  font-family: $primaryfont;
+  font-weight: 600;
+}
+
+.rear-section {
+  margin-top: 28px;
+}
+
+.go-btn-pad {
+  min-width: 120px;
+  min-height: 56px;
+  border-radius: 12px;
+  font-family: $primaryfont;
+  font-weight: 700;
+}
+
+@media (max-width: 991px) {
+  .grid-row-box {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 575px) {
+  .legacy-modal-backdrop {
+    padding: 12px;
+  }
+
+  .grid-row-box {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,83 @@
+<div class="full-height">
+  <div class="login-left">
+    <div class="login-left-inner">
+      <div class="login-logo">
+        <a routerLink="/catalog">
+          <img src="/assets/img/new-logo.png" alt="Clockwork" />
+        </a>
+      </div>
+
+      <ul>
+        <li>
+          <span>
+            <img src="/assets/img/icon-24.png" alt="" />
+          </span>
+          24/7 Online ordering access
+        </li>
+        <li>
+          <span>
+            <img src="/assets/img/box-icon.png" alt="" />
+          </span>
+          Manage orders from multiple suppliers
+        </li>
+        <li>
+          <span>
+            <img src="/assets/img/order-icon.png" alt="" />
+          </span>
+          Order history, tracking and invoices
+        </li>
+        <li>
+          <span>
+            <img src="/assets/img/folder-icon.png" alt="" />
+          </span>
+          Live inventory and pricing
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="login-right">
+    <div class="login-right-inner">
+      <div class="login-right-scroll overflow-auto">
+        <div class="login-box">
+          <h3 class="small-30">Log in to your account</h3>
+
+          <form class="signup-form" [formGroup]="form" (ngSubmit)="submit()">
+            <p class="label">Email</p>
+            <input
+              formControlName="email"
+              type="email"
+              class="form-control s-form-field"
+              placeholder="Enter Your Email Address"
+            />
+
+            @if (form.controls.email.invalid && form.controls.email.touched) {
+              <span class="error">A valid email is required</span>
+            }
+
+            <p class="label">Password</p>
+            <input
+              type="password"
+              formControlName="password"
+              class="form-control s-form-field"
+              placeholder="Enter Your Password"
+            />
+
+            @if (form.controls.password.invalid && form.controls.password.touched) {
+              <span class="error">Password is required</span>
+            }
+
+            <p class="small-text f-light">
+              New to Clockwork?
+              <a routerLink="/catalog" class="cursor-pointer">Browse catalog</a>
+            </p>
+
+            <button type="submit" class="btn btn-01 mt-4 new-btn bg-black">
+              <span>Log In</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

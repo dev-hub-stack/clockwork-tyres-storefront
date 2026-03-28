@@ -1,0 +1,16 @@
+@use './assets/css/main.scss';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  background: #fff;
+}

@@ -1,0 +1,131 @@
+<section class="catalog-toolbar">
+  <div class="container-fluid mt-3">
+    <div class="row">
+      <div class="col-md-5">
+        <div class="catalog-chip">Tyres</div>
+      </div>
+      <div class="col-md-7">
+        <div class="d-flex justify-content-md-end sort-by-responsive toolbar-right">
+          <ul class="list-inline mb-0 d-inline-flex align-items-center d-flex">
+            <li class="list-inline-item f-small ml-xl-3 text-uppercase">View</li>
+            <li class="list-inline-item">
+              <div class="form-group mb-0">
+                <select class="form-control dr-list new-select-box">
+                  <option>18 items per page</option>
+                </select>
+              </div>
+            </li>
+            <li class="list-inline-item f-small ml-xl-4 text-uppercase">Sort By:</li>
+            <li class="list-inline-item">
+              <div class="form-group mb-0">
+                <select class="form-control dr-list new-select-box">
+                  <option>Price, low to high</option>
+                </select>
+              </div>
+            </li>
+            <li class="ml-xl-4">
+              <img src="/assets/img/download-icon.svg" alt="Download" width="28" />
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="catalog-results mt-3 mb-5">
+  <div class="container-fluid">
+    <div class="row">
+      <aside class="col-lg-3">
+        <div class="filter-panel">
+          <div class="filter-header">
+            <span>Filter By:</span>
+            <button type="button">Clear All</button>
+          </div>
+
+          <label class="filter-check">
+            <input type="checkbox" />
+            <span>Run Flat</span>
+          </label>
+
+          <label class="filter-check">
+            <input type="checkbox" />
+            <span>Exclude Supplier Stock</span>
+          </label>
+
+          <div class="filter-group">
+            <span>Minimum Quantity</span>
+            <strong>+</strong>
+          </div>
+          <div class="filter-group">
+            <span>Brands</span>
+            <strong>+</strong>
+          </div>
+          <div class="filter-group">
+            <span>Year</span>
+            <strong>+</strong>
+          </div>
+          <div class="filter-group">
+            <span>Load Index</span>
+            <strong>+</strong>
+          </div>
+          <div class="filter-group">
+            <span>Speed Rating</span>
+            <strong>+</strong>
+          </div>
+        </div>
+      </aside>
+
+      <div class="col-lg-9">
+        <div class="results-header">
+          <span class="size-badge">325/30R21</span>
+          <span class="showing-text">Showing {{ products.length }} products</span>
+        </div>
+
+        <div class="catalog-grid">
+          @for (product of products; track product.sku) {
+            <article class="catalog-card">
+              <div class="catalog-card-media">
+                <img [src]="product.image" [alt]="product.subtitle" />
+              </div>
+
+              <div class="catalog-card-body">
+                <div class="brand-mark">clockwork tyres</div>
+                <h3>{{ product.subtitle }}</h3>
+
+                <dl class="product-specs">
+                  <div>
+                    <dt>Size:</dt>
+                    <dd>{{ product.size }}</dd>
+                  </div>
+                  <div>
+                    <dt>SKU:</dt>
+                    <dd>{{ product.sku }}</dd>
+                  </div>
+                  <div>
+                    <dt>Origin:</dt>
+                    <dd>Japan</dd>
+                  </div>
+                  <div>
+                    <dt>Year:</dt>
+                    <dd>2025</dd>
+                  </div>
+                </dl>
+
+                <div class="price-row">
+                  <span class="price-label">Price:</span>
+                  <strong>{{ product.price | currency: 'AED ' }}</strong>
+                </div>
+
+                <div class="card-actions">
+                  <span class="stock-text">{{ product.stock }} in stock</span>
+                  <button type="button" class="btn add-cart-btn">ADD TO CART</button>
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

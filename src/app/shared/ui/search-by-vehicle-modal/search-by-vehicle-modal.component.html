@@ -1,0 +1,62 @@
+<div class="legacy-modal-backdrop" (click)="closed.emit()">
+  <div class="modal-dialog" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+    <div class="modal-content vehicle-modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title">Search by Vehicle</h5>
+        <button type="button" class="close" aria-label="Close" (click)="closed.emit()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body border-0">
+        <div class="grid-row-box grid-row-box2">
+          <div class="form-group">
+            <select class="form-control search-inputs" [(ngModel)]="make">
+              @for (item of makes; track item) {
+                <option [value]="item">{{ item }}</option>
+              }
+            </select>
+            <i class="fa fa-sort-desc"></i>
+          </div>
+
+          <div class="form-group">
+            <select class="form-control search-inputs" [(ngModel)]="model">
+              @for (item of models; track item) {
+                <option [value]="item">{{ item }}</option>
+              }
+            </select>
+            <i class="fa fa-sort-desc"></i>
+          </div>
+
+          <div class="form-group">
+            <select class="form-control search-inputs" [(ngModel)]="year">
+              @for (item of years; track item) {
+                <option [value]="item">{{ item }}</option>
+              }
+            </select>
+            <i class="fa fa-sort-desc"></i>
+          </div>
+
+          <div class="form-group">
+            <select class="form-control search-inputs" [(ngModel)]="subModel">
+              @for (item of subModels; track item) {
+                <option [value]="item">{{ item }}</option>
+              }
+            </select>
+            <i class="fa fa-sort-desc"></i>
+          </div>
+
+          <div class="form-group">
+            <button type="button" class="btn btn-02 f-large addcart new-btn bg-black w-auto go-btn-pad">
+              Go
+            </button>
+          </div>
+        </div>
+
+        <div class="modal-footnote">
+          Please note: this is the first migrated visual shell for the legacy Clockwork vehicle search.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

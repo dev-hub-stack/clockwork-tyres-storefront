@@ -1,0 +1,79 @@
+<section class="desktop-navbar">
+  <div class="logo-bar position-relative">
+    <div class="container-fluid">
+      <div class="row new-mobile-setting">
+        <div class="col-5 col-md-4 col-xl-3 logo-res">
+          <a routerLink="/catalog" class="logoimag">
+            <img src="/assets/img/new-logo.png" class="img-fluid header-logo" alt="Clockwork" />
+          </a>
+        </div>
+
+        <nav class="navbar navbar-expand-md navbar-light justify-content-center p-md-0 mr-md-auto">
+          <div class="justify-content-center">
+            <div class="navbar-nav">
+              <ul class="list-inline text-center d-flex mb-0 create-gap">
+                <li class="list-inline-item dropdown">
+                  <a class="cp" routerLink="/catalog">Products</a>
+                </li>
+                <li class="list-inline-item">
+                  <span class="cp nav-label">Suppliers</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+
+        <div class="col-4 col-md-3 col-xl-3 incld-btnhvr d-flex align-items-center justify-content-end">
+          <a routerLink="/login" class="dropdown-toggle">
+            <span class="account-text">My Account</span>
+          </a>
+
+          <a routerLink="/catalog" class="cart-icon" aria-label="Cart">
+            <i class="fa fa-shopping-cart icon"></i>
+            <small class="cart-count">0</small>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="navbar-section">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-6 col-md-6 col-lg-3">
+          <button class="w-100 h-100 br-25 bg-white text-black" type="button" (click)="showVehicleModal.set(true)">
+            Search by Vehicle
+          </button>
+        </div>
+        <div class="col-sm-6 col-md-6 col-lg-3">
+          <button class="w-100 h-100 br-25 bg-white text-black" type="button" (click)="showSizeModal.set(true)">
+            Search by Size
+          </button>
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-6">
+          <form class="search-form">
+            <div class="header-search d-flex">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Search by brand, model, part number..."
+                aria-label="Search catalog"
+              />
+              <button class="btn btn-search" type="button" aria-label="Search">
+                <img src="/assets/img/black-search-icon.svg" alt="" />
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+@if (showVehicleModal()) {
+  <app-search-by-vehicle-modal (closed)="showVehicleModal.set(false)"></app-search-by-vehicle-modal>
+}
+
+@if (showSizeModal()) {
+  <app-search-by-size-modal (closed)="showSizeModal.set(false)"></app-search-by-size-modal>
+}
