@@ -151,6 +151,26 @@
   }
 }
 
+.submit-banner {
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  border-radius: 12px;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.submit-banner-success {
+  background: #eefaf2;
+  border: 1px solid #b9e0c3;
+  color: #1c5c2f;
+}
+
+.submit-banner-error {
+  background: #fff0ef;
+  border: 1px solid #f1c0ba;
+  color: #9f2418;
+}
+
 .auth-subtitle {
   display: inline-flex;
   align-items: center;
@@ -212,6 +232,11 @@
   border-radius: 10px;
   font-family: $primaryfont;
   font-weight: 700;
+
+  &:disabled {
+    opacity: 0.72;
+    cursor: not-allowed;
+  }
 }
 
 @media (max-width: 1199px) {

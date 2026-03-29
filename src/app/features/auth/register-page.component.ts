@@ -2,13 +2,15 @@ import { isPlatformBrowser } from '@angular/common';
 import { Component, DestroyRef, inject, PLATFORM_ID, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   BusinessAccountMode,
   BusinessPlanPreference,
   BusinessRegistrationApiService,
+  BusinessRegistrationSuccessData,
   CountryOption
 } from '../../core/auth';
+import { STOREFRONT_PATHS } from '../../core/storefront-routes';
 
 type RegistrationRoleOption = {
   value: BusinessAccountMode;
@@ -34,6 +36,7 @@ export class RegisterPageComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly registrationApi = inject(BusinessRegistrationApiService);
 
   protected readonly benefits = [
@@ -65,6 +68,7 @@ export class RegisterPageComponent {
   protected readonly countries = signal<CountryOption[]>([]);
   protected readonly submitError = signal<string | null>(null);
   protected readonly submitSuccess = signal<string | null>(null);
+  protected readonly registrationSummary = signal<BusinessRegistrationSuccessData | null>(null);
   protected readonly isSubmitting = signal(false);
   protected readonly selectedDocumentName = signal<string>('');
 
@@ -115,6 +119,7 @@ export class RegisterPageComponent {
     this.form.markAllAsTouched();
     this.submitError.set(null);
     this.submitSuccess.set(null);
+    this.registrationSummary.set(null);
 
     if (this.form.invalid) {
       return;
@@ -148,6 +153,7 @@ export class RegisterPageComponent {
           this.submitSuccess.set(
             response.message || 'Registration request submitted successfully.'
           );
+          this.registrationSummary.set(response.data);
           this.form.reset({
             businessName: '',
             email: '',
@@ -205,5 +211,16 @@ export class RegisterPageComponent {
       countries[0];
 
     return preferredCountry?.countryName ?? '';
+  }
+
+  protected continueToLogin(): void {
+    const email = this.registrationSummary()?.owner.email ?? this.form.controls.email.value ?? '';
+
+    void this.router.navigate([`/${STOREFRONT_PATHS.login}`], {
+      queryParams: {
+        registered: 1,
+        email
+      }
+    });
   }
 }

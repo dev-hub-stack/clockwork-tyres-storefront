@@ -1,7 +1,8 @@
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { inject, Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { catchError, map, Observable, of, throwError } from 'rxjs';
+import { STOREFRONT_AUTH_API_ENDPOINTS, StorefrontAuthApiEndpoints } from './auth-api.tokens';
 import {
   BusinessRegistrationPayload,
   BusinessRegistrationSuccess,
@@ -27,12 +28,17 @@ export class BusinessRegistrationApiService {
   private readonly http = inject(HttpClient);
   private readonly platformId = inject(PLATFORM_ID);
 
+  constructor(
+    @Inject(STOREFRONT_AUTH_API_ENDPOINTS) private readonly endpoints: StorefrontAuthApiEndpoints
+  ) {
+  }
+
   loadCountries(): Observable<CountryOption[]> {
     if (!isPlatformBrowser(this.platformId)) {
       return of(FALLBACK_COUNTRIES);
     }
 
-    return this.http.get<CountriesApiResponse>('/api/countries').pipe(
+    return this.http.get<CountriesApiResponse>(this.endpoints.countries).pipe(
       map((response) => response.data?.countries ?? []),
       map((countries) => (countries.length ? countries : FALLBACK_COUNTRIES)),
       catchError(() => of(FALLBACK_COUNTRIES))
@@ -46,10 +52,8 @@ export class BusinessRegistrationApiService {
     formData.append('password', payload.password);
     formData.append('country', payload.country);
     formData.append('business_name', payload.businessName.trim());
-    formData.append('name', payload.businessName.trim());
     formData.append('account_mode', payload.accountMode);
     formData.append('plan_preference', payload.planPreference);
-    formData.append('type', payload.accountMode === 'supplier' ? 'Brand' : 'Retailer');
     formData.append('accepts_terms', String(payload.acceptsTerms));
     formData.append('accepts_privacy', String(payload.acceptsPrivacy));
     formData.append('registration_source', 'clockwork-tyres-storefront');
@@ -60,7 +64,7 @@ export class BusinessRegistrationApiService {
     );
 
     return this.http.post<BusinessRegistrationSuccess>(
-      '/api/auth/business-register',
+      this.endpoints.register,
       formData
     ).pipe(
       catchError((error: HttpErrorResponse) =>

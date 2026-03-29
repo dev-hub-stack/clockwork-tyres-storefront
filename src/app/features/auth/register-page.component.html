@@ -48,7 +48,17 @@
 
       @if (submitSuccess()) {
         <div class="submit-banner submit-banner-success">
-          {{ submitSuccess() }}
+          <div>{{ submitSuccess() }}</div>
+
+          @if (registrationSummary(); as summary) {
+            <div class="submit-summary">
+              <strong>{{ summary.account.name }}</strong>
+              <span>
+                {{ summary.account.account_type_label }} account on the
+                {{ summary.subscription.plan_label }} plan
+              </span>
+            </div>
+          }
         </div>
       }
 
@@ -188,8 +198,18 @@
           </p>
         </div>
 
+        @if (registrationSummary()) {
+          <button
+            type="button"
+            class="btn btn-01 mt-3 new-btn bg-outline"
+            (click)="continueToLogin()"
+          >
+            <span>Continue to Business Login</span>
+          </button>
+        }
+
         <button type="submit" class="btn btn-01 mt-4 new-btn bg-black" [disabled]="isSubmitting()">
-          <span>{{ isSubmitting() ? 'Submitting…' : 'Register Business' }}</span>
+          <span>{{ isSubmitting() ? 'Submitting...' : 'Register Business' }}</span>
         </button>
       </form>
     </div>

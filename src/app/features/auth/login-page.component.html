@@ -42,6 +42,18 @@
         <p>Use your business email and password to continue into the storefront workspace.</p>
       </div>
 
+      @if (registrationNotice()) {
+        <div class="submit-banner submit-banner-success">
+          {{ registrationNotice() }}
+        </div>
+      }
+
+      @if (submitError()) {
+        <div class="submit-banner submit-banner-error">
+          {{ submitError() }}
+        </div>
+      }
+
       <form class="signup-form" [formGroup]="form" (ngSubmit)="submit()">
         <label class="label" for="email">Email</label>
         <input
@@ -84,8 +96,8 @@
           </p>
         </div>
 
-        <button type="submit" class="btn btn-01 mt-4 new-btn bg-black">
-          <span>Log In</span>
+        <button type="submit" class="btn btn-01 mt-4 new-btn bg-black" [disabled]="isSubmitting()">
+          <span>{{ isSubmitting() ? 'Logging in...' : 'Log In' }}</span>
         </button>
       </form>
     </div>
