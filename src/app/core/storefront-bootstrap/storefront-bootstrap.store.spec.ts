@@ -20,6 +20,48 @@ describe('StorefrontBootstrapStore', () => {
     expect(store.fitmentMode()).toBe('search-by-vehicle');
     expect(store.source()).toBe('route');
 
+    store.setCategories([
+      {
+        id: 'tyres',
+        label: 'Tyres',
+        enabled: true,
+        launch_category: true,
+        features: {
+          catalog: {
+            key: 'catalog',
+            mode: 'enabled',
+            enabled: true
+          }
+        },
+        search_by_size_fields: [
+          { key: 'width', label: 'Width', type: 'number', required: true }
+        ],
+        search_by_vehicle_fields: [
+          { key: 'make', label: 'Make', type: 'select', required: true }
+        ],
+        spec_fields: ['size']
+      },
+      {
+        id: 'wheels',
+        label: 'Wheels',
+        enabled: false,
+        launch_category: false,
+        features: {
+          catalog: {
+            key: 'catalog',
+            mode: 'disabled',
+            enabled: false
+          }
+        },
+        search_by_size_fields: [],
+        search_by_vehicle_fields: [],
+        spec_fields: []
+      }
+    ], {
+      active: 'tyres',
+      enabled: ['tyres']
+    });
+
     store.setEndpoints({
       bootstrap: '/api/storefront/bootstrap',
       account_context: '/api/account-context',
@@ -38,6 +80,11 @@ describe('StorefrontBootstrapStore', () => {
       product_detail: '/api/product/{slug}/{sku}',
       search_sizes: '/api/search-sizes',
       search_vehicles: '/api/search-vehicles'
+    });
+    expect(store.categories()?.[0].features?.catalog?.enabled).toBe(true);
+    expect(store.categoryDefaults()).toEqual({
+      active: 'tyres',
+      enabled: ['tyres']
     });
 
     store.setAccountContext({

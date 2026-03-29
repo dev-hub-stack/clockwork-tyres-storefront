@@ -2,6 +2,8 @@ import { computed, inject, Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot } from '@angular/router';
 import {
   StorefrontBootstrapAccountContext,
+  StorefrontBootstrapApiCategory,
+  StorefrontBootstrapApiCategoryDefaults,
   StorefrontBootstrapResolvedState,
   StorefrontBootstrapRouteState,
   StorefrontBootstrapApiEndpoints,
@@ -18,6 +20,8 @@ export class StorefrontBootstrapService {
   readonly route = this.store.route;
   readonly account = this.store.account;
   readonly endpoints = this.store.endpoints;
+  readonly categories = this.store.categories;
+  readonly categoryDefaults = this.store.categoryDefaults;
   readonly resolved = this.store.resolved;
   readonly isReady = this.store.isReady;
   readonly mode = this.store.mode;
@@ -42,6 +46,13 @@ export class StorefrontBootstrapService {
 
   setEndpoints(endpoints: StorefrontBootstrapApiEndpoints | null): void {
     this.store.setEndpoints(endpoints);
+  }
+
+  setCategories(
+    categories: StorefrontBootstrapApiCategory[] | null,
+    categoryDefaults: StorefrontBootstrapApiCategoryDefaults | null = null
+  ): void {
+    this.store.setCategories(categories, categoryDefaults);
   }
 
   updateResolvedContext(resolved: Partial<StorefrontBootstrapResolvedState>): void {

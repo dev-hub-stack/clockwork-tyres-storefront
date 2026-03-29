@@ -68,7 +68,27 @@ describe('StorefrontBootstrapApiService', () => {
           }
         },
         categories: [
-          { id: 'tyres', label: 'Tyres', enabled: true, launch_status: 'live' }
+          {
+            id: 'tyres',
+            label: 'Tyres',
+            enabled: true,
+            launch_category: true,
+            launch_status: 'live',
+            features: {
+              catalog: {
+                key: 'catalog',
+                mode: 'enabled',
+                enabled: true
+              }
+            },
+            search_by_size_fields: [
+              { key: 'width', label: 'Width', type: 'number', required: true }
+            ],
+            search_by_vehicle_fields: [
+              { key: 'make', label: 'Make', type: 'select', required: true }
+            ],
+            spec_fields: ['size']
+          }
         ],
         category_defaults: {
           active: 'tyres',
@@ -93,6 +113,12 @@ describe('StorefrontBootstrapApiService', () => {
       search_vehicles: '/api/search-vehicles'
     });
     expect(bootstrap.account()?.accountName).toBe('Alpha Tyres');
+    expect(bootstrap.categories()?.[0].launch_category).toBe(true);
+    expect(bootstrap.categories()?.[0].features?.catalog?.enabled).toBe(true);
+    expect(bootstrap.categoryDefaults()).toEqual({
+      active: 'tyres',
+      enabled: ['tyres']
+    });
     expect(bootstrap.resolved().mode).toBe('retail-store');
     expect(bootstrap.resolved().category).toBe('tyres');
   });

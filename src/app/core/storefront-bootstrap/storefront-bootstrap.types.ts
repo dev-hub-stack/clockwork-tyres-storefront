@@ -1,4 +1,5 @@
 import { CatalogCategoryId } from '../catalog-categories';
+import type { CatalogCategoryBootstrapContract } from '../catalog-categories';
 import { FitmentSearchMode } from '../fitment';
 import { StorefrontMode } from '../storefront-data';
 import {
@@ -22,12 +23,7 @@ export interface StorefrontBootstrapAccountContext {
   enabledCategories: CatalogCategoryId[];
 }
 
-export interface StorefrontBootstrapApiCategory {
-  id: string;
-  label: string;
-  enabled: boolean;
-  launch_status?: string | null;
-}
+export type StorefrontBootstrapApiCategory = CatalogCategoryBootstrapContract;
 
 export interface StorefrontBootstrapApiCategoryDefaults {
   active: string | null;
@@ -119,5 +115,7 @@ export interface StorefrontBootstrapState {
   route: StorefrontBootstrapRouteState;
   account: StorefrontBootstrapAccountContext | null;
   endpoints: StorefrontBootstrapApiEndpoints | null;
+  categories: StorefrontBootstrapApiCategory[] | null;
+  categoryDefaults: StorefrontBootstrapApiCategoryDefaults | null;
   resolved: StorefrontBootstrapResolvedState;
 }

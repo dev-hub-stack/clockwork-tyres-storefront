@@ -31,6 +31,24 @@ export type CatalogCategorySearchField = {
   placeholder?: string;
 };
 
+export type CatalogCategoryBootstrapFeatureState = {
+  key: CatalogCategoryFeatureKey;
+  mode: CatalogCategoryMode;
+  enabled: boolean;
+};
+
+export type CatalogCategoryBootstrapContract = {
+  id: CatalogCategoryId;
+  label: string;
+  enabled: boolean;
+  launch_category?: boolean;
+  launch_status?: string | null;
+  features?: Partial<Record<CatalogCategoryFeatureKey, CatalogCategoryBootstrapFeatureState>>;
+  search_by_size_fields?: CatalogCategorySearchField[];
+  search_by_vehicle_fields?: CatalogCategorySearchField[];
+  spec_fields?: string[];
+};
+
 export type CatalogCategoryConfig = {
   id: CatalogCategoryId;
   label: string;
@@ -48,4 +66,3 @@ export type CatalogCategoryViewModel = CatalogCategoryConfig & {
   isSelectable: boolean;
   isReadOnly: boolean;
 };
-

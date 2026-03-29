@@ -4,6 +4,8 @@ import { isPlatformBrowser } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
 import {
   mapStorefrontBootstrapApiAccountContext,
+  normalizeStorefrontBootstrapApiCategories,
+  normalizeStorefrontBootstrapApiCategoryDefaults,
   normalizeStorefrontBootstrapApiEndpoints,
   normalizeStorefrontBootstrapAccountContext
 } from './storefront-bootstrap.helpers';
@@ -42,6 +44,11 @@ export class StorefrontBootstrapApiService {
 
       this.bootstrap.setEndpoints(
         normalizeStorefrontBootstrapApiEndpoints(response.data.endpoints ?? null)
+      );
+
+      this.bootstrap.setCategories(
+        normalizeStorefrontBootstrapApiCategories(response.data.categories ?? null),
+        normalizeStorefrontBootstrapApiCategoryDefaults(response.data.category_defaults ?? null)
       );
 
       const accountContext = mapStorefrontBootstrapApiAccountContext(
