@@ -167,7 +167,7 @@ export const routes: Routes = [
     ]
   },
   {
-    path: 'login',
+    path: STOREFRONT_PATHS.login,
     loadComponent: () =>
       import('./features/auth/login-page.component').then(
         (m) => m.LoginPageComponent

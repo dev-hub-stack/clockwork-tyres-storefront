@@ -1,7 +1,7 @@
 import { ActivatedRouteSnapshot, ParamMap } from '@angular/router';
 import { CatalogCategoryId } from './catalog-categories';
 import { FitmentSearchMode } from './fitment';
-import { StorefrontModeInput } from './storefront-mode';
+import type { StorefrontModeInput } from './storefront-mode';
 
 export const STOREFRONT_PATHS = {
   home: '',
