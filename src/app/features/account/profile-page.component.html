@@ -1,121 +1,135 @@
 <div class="profile-page">
-  <h3 class="section-heading">
-    Personal Information
+  <header class="section-header">
+    <div>
+      <span class="section-eyebrow">Profile</span>
+      <h3 class="section-heading">Personal Information</h3>
+      <p class="section-copy">
+        Keep your business details, contact information, and password aligned with the account
+        used across the storefront.
+      </p>
+    </div>
+
     <span class="action-links">
       <button type="button" class="edit-link" (click)="toggleEditForm()">
         {{ showEditForm() ? 'Hide form' : 'Edit' }} <i class="fa fa-edit" aria-hidden="true"></i>
       </button>
     </span>
-  </h3>
+  </header>
 
-  @if (!showEditForm()) {
-    <div class="row info-grid">
-      <div class="col-lg-6">
-        <div class="field-row">
-          <span class="field-label">Business Name:</span>
-          <span class="field-value">{{ profile().businessName }}</span>
+  <div class="profile-card">
+    @if (!showEditForm()) {
+      <div class="row info-grid">
+        <div class="col-lg-6">
+          <div class="field-row">
+            <span class="field-label">Business Name:</span>
+            <span class="field-value">{{ profile().businessName }}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">Business Address:</span>
+            <span class="field-value">{{ profile().address }}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">Country:</span>
+            <span class="field-value">{{ profile().country }}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">License Number:</span>
+            <span class="field-value">{{ profile().licenseNumber }}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">Expiry:</span>
+            <span class="field-value">{{ profile().expiry }}</span>
+          </div>
         </div>
-        <div class="field-row">
-          <span class="field-label">Business Address:</span>
-          <span class="field-value">{{ profile().address }}</span>
-        </div>
-        <div class="field-row">
-          <span class="field-label">Country:</span>
-          <span class="field-value">{{ profile().country }}</span>
-        </div>
-        <div class="field-row">
-          <span class="field-label">License Number:</span>
-          <span class="field-value">{{ profile().licenseNumber }}</span>
-        </div>
-        <div class="field-row">
-          <span class="field-label">Expiry:</span>
-          <span class="field-value">{{ profile().expiry }}</span>
+
+        <div class="col-lg-6">
+          <div class="field-row">
+            <span class="field-label">Email:</span>
+            <span class="field-value">{{ profile().email }}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">Website:</span>
+            <span class="field-value">{{ profile().website }}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">Instagram:</span>
+            <span class="field-value">{{ profile().instagram }}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">Contact:</span>
+            <span class="field-value">{{ profile().contactName }}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">Phone:</span>
+            <span class="field-value">{{ profile().phone }}</span>
+          </div>
         </div>
       </div>
+    } @else {
+      <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="edit-form">
+        <div class="row">
+          <div class="col-md-6 form-field">
+            <label for="businessName">Business Name</label>
+            <input id="businessName" type="text" formControlName="businessName" class="form-control" />
+          </div>
+          <div class="col-md-6 form-field">
+            <label for="address">Address</label>
+            <input id="address" type="text" formControlName="address" class="form-control" />
+          </div>
+          <div class="col-md-6 form-field">
+            <label for="licenseNumber">License Number</label>
+            <input id="licenseNumber" type="text" formControlName="licenseNumber" class="form-control" />
+          </div>
+          <div class="col-md-6 form-field">
+            <label for="expiry">License Expiry</label>
+            <input id="expiry" type="date" formControlName="expiry" class="form-control" />
+          </div>
+          <div class="col-md-6 form-field">
+            <label for="country">Country</label>
+            <input id="country" type="text" formControlName="country" class="form-control" />
+          </div>
+          <div class="col-md-6 form-field">
+            <label for="email">Email</label>
+            <input id="email" type="email" formControlName="email" class="form-control" />
+          </div>
+          <div class="col-md-6 form-field">
+            <label for="website">Website</label>
+            <input id="website" type="text" formControlName="website" class="form-control" />
+          </div>
+          <div class="col-md-6 form-field">
+            <label for="instagram">Instagram</label>
+            <input id="instagram" type="text" formControlName="instagram" class="form-control" />
+          </div>
+          <div class="col-md-6 form-field">
+            <label for="contactName">Contact Name</label>
+            <input id="contactName" type="text" formControlName="contactName" class="form-control" />
+          </div>
+          <div class="col-md-6 form-field">
+            <label for="phone">Phone</label>
+            <input id="phone" type="text" formControlName="phone" class="form-control" />
+          </div>
+        </div>
 
-      <div class="col-lg-6">
-        <div class="field-row">
-          <span class="field-label">Email:</span>
-          <span class="field-value">{{ profile().email }}</span>
+        <div class="button-row">
+          <button type="submit" class="btn primary-btn">Save Profile</button>
         </div>
-        <div class="field-row">
-          <span class="field-label">Website:</span>
-          <span class="field-value">{{ profile().website }}</span>
-        </div>
-        <div class="field-row">
-          <span class="field-label">Instagram:</span>
-          <span class="field-value">{{ profile().instagram }}</span>
-        </div>
-        <div class="field-row">
-          <span class="field-label">Contact:</span>
-          <span class="field-value">{{ profile().contactName }}</span>
-        </div>
-        <div class="field-row">
-          <span class="field-label">Phone:</span>
-          <span class="field-value">{{ profile().phone }}</span>
-        </div>
-      </div>
-    </div>
-  } @else {
-    <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="edit-form">
-      <div class="row">
-        <div class="col-md-6 form-field">
-          <label for="businessName">Business Name</label>
-          <input id="businessName" type="text" formControlName="businessName" class="form-control" />
-        </div>
-        <div class="col-md-6 form-field">
-          <label for="address">Address</label>
-          <input id="address" type="text" formControlName="address" class="form-control" />
-        </div>
-        <div class="col-md-6 form-field">
-          <label for="licenseNumber">License Number</label>
-          <input id="licenseNumber" type="text" formControlName="licenseNumber" class="form-control" />
-        </div>
-        <div class="col-md-6 form-field">
-          <label for="expiry">License Expiry</label>
-          <input id="expiry" type="date" formControlName="expiry" class="form-control" />
-        </div>
-        <div class="col-md-6 form-field">
-          <label for="country">Country</label>
-          <input id="country" type="text" formControlName="country" class="form-control" />
-        </div>
-        <div class="col-md-6 form-field">
-          <label for="email">Email</label>
-          <input id="email" type="email" formControlName="email" class="form-control" />
-        </div>
-        <div class="col-md-6 form-field">
-          <label for="website">Website</label>
-          <input id="website" type="text" formControlName="website" class="form-control" />
-        </div>
-        <div class="col-md-6 form-field">
-          <label for="instagram">Instagram</label>
-          <input id="instagram" type="text" formControlName="instagram" class="form-control" />
-        </div>
-        <div class="col-md-6 form-field">
-          <label for="contactName">Contact Name</label>
-          <input id="contactName" type="text" formControlName="contactName" class="form-control" />
-        </div>
-        <div class="col-md-6 form-field">
-          <label for="phone">Phone</label>
-          <input id="phone" type="text" formControlName="phone" class="form-control" />
-        </div>
+      </form>
+    }
+  </div>
+
+  <div class="password-section profile-card">
+    <header class="section-header compact">
+      <div>
+        <span class="section-eyebrow">Security</span>
+        <h3 class="section-heading">Change Password</h3>
       </div>
 
-      <div class="button-row">
-        <button type="submit" class="btn primary-btn">Save Profile</button>
-      </div>
-    </form>
-  }
-
-  <div class="password-section">
-    <h3 class="section-heading">
-      Change Password
       <span class="action-links">
         <button type="button" class="edit-link" (click)="togglePasswordForm()">
           {{ showPasswordForm() ? 'Hide' : 'Change Password' }}
         </button>
       </span>
-    </h3>
+    </header>
 
     @if (showPasswordForm()) {
       <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" class="password-form">
@@ -153,6 +167,8 @@
           <button type="submit" class="btn primary-btn">Update Password</button>
         </div>
       </form>
+    } @else {
+      <p class="section-copy muted">Use this section to update your password when needed.</p>
     }
   </div>
 </div>

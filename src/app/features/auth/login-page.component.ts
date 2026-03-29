@@ -12,6 +12,19 @@ import { RouterLink } from '@angular/router';
 export class LoginPageComponent {
   private readonly formBuilder = inject(FormBuilder);
 
+  protected readonly benefits = [
+    '24/7 online ordering access',
+    'Own stock first, then approved supplier stock',
+    'Order history, invoices, and account controls',
+    'Retail and wholesale access from one business account'
+  ];
+
+  protected readonly accountModes = [
+    { label: 'Retailer', note: 'Storefront ordering' },
+    { label: 'Supplier', note: 'Wholesale preview' },
+    { label: 'Both', note: 'Shared account access' }
+  ];
+
   protected readonly form = this.formBuilder.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]]

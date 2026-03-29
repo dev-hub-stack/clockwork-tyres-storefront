@@ -49,8 +49,7 @@ export class CheckoutPageComponent {
     }),
     purchaseOrderNo: ['CW-PO-2034'],
     orderNotes: ['Please call before delivery.'],
-    deliveryOption: ['Delivery', Validators.required],
-    paymentMethod: ['Debit/Credit Card', Validators.required]
+    deliveryOption: ['Delivery', Validators.required]
   });
 
   protected readonly subtotal = computed(() =>
@@ -62,6 +61,8 @@ export class CheckoutPageComponent {
   protected readonly grandTotal = computed(
     () => this.subtotal() + this.shippingCost() + this.tax()
   );
+  protected readonly paymentMessage =
+    'Payments are handled in store only. This checkout captures the order and reserved stock.';
 
   constructor() {
     this.checkoutForm.controls.shippingSameAsBilling.valueChanges

@@ -1,46 +1,56 @@
 @if (!selectedOrder()) {
   <div class="orders-page">
-    <h4 class="page-title">Search Order By</h4>
-
-    <form [formGroup]="searchForm" (ngSubmit)="applyFilters()" class="search-form">
-      <div class="order-boxes">
-        <div class="custom-label">
-          <div class="form-group mb-0">
-            <input id="searchOrderNumber" type="text" formControlName="orderNumber" placeholder="" />
-            <label for="searchOrderNumber">Search Order</label>
-          </div>
-        </div>
-
-        <div class="custom-label">
-          <div class="form-group mb-0">
-            <input id="dateFrom" type="date" formControlName="dateFrom" />
-            <label for="dateFrom">From</label>
-          </div>
-        </div>
-
-        <div class="custom-label">
-          <div class="form-group mb-0">
-            <input id="dateTo" type="date" formControlName="dateTo" />
-            <label for="dateTo">To</label>
-          </div>
-        </div>
-
-        <div class="custom-label">
-          <div class="form-group mb-0">
-            <label for="orderStatus">Status</label>
-            <select id="orderStatus" class="form-control" formControlName="orderStatus">
-              <option value="">All Order Status</option>
-              <option value="processing">Processing</option>
-              <option value="shipped">Shipped</option>
-              <option value="completed">Completed</option>
-              <option value="cancelled">Cancelled</option>
-            </select>
-          </div>
-        </div>
-
-        <button type="submit" class="btn invoice-btn-search w-100">Search Order</button>
+    <header class="section-header">
+      <div>
+        <span class="section-eyebrow">Orders</span>
+        <h4 class="page-title">Search Order By</h4>
+        <p class="section-copy">
+          Review recent invoices and fulfilment history from the same Clockwork account.
+        </p>
       </div>
-    </form>
+    </header>
+
+    <div class="search-card">
+      <form [formGroup]="searchForm" (ngSubmit)="applyFilters()" class="search-form">
+        <div class="order-boxes">
+          <div class="custom-label">
+            <div class="form-group mb-0">
+              <input id="searchOrderNumber" type="text" formControlName="orderNumber" placeholder="" />
+              <label for="searchOrderNumber">Search Order</label>
+            </div>
+          </div>
+
+          <div class="custom-label">
+            <div class="form-group mb-0">
+              <input id="dateFrom" type="date" formControlName="dateFrom" />
+              <label for="dateFrom">From</label>
+            </div>
+          </div>
+
+          <div class="custom-label">
+            <div class="form-group mb-0">
+              <input id="dateTo" type="date" formControlName="dateTo" />
+              <label for="dateTo">To</label>
+            </div>
+          </div>
+
+          <div class="custom-label">
+            <div class="form-group mb-0">
+              <label for="orderStatus">Status</label>
+              <select id="orderStatus" class="form-control" formControlName="orderStatus">
+                <option value="">All Order Status</option>
+                <option value="processing">Processing</option>
+                <option value="shipped">Shipped</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="btn invoice-btn-search w-100">Search Order</button>
+        </div>
+      </form>
+    </div>
 
     @if (filteredOrders().length) {
       <div class="dashboard-table table-responsive">
@@ -90,10 +100,13 @@
       <i class="fa fa-long-arrow-left" aria-hidden="true"></i>
     </button>
 
-    <div class="detail-header">
-      <h5>Order Number: {{ order?.id }}</h5>
+    <header class="detail-header">
+      <div>
+        <span class="section-eyebrow">Order detail</span>
+        <h5>Order Number: {{ order?.id }}</h5>
+      </div>
       <h5>Order Date: {{ order?.createdAt | date: 'mediumDate' }}</h5>
-    </div>
+    </header>
 
     <div class="row address-grid">
       <div class="col-md-4">

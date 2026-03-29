@@ -22,6 +22,11 @@ export const routes: Routes = [
         redirectTo: ''
       },
       {
+        path: 'feature',
+        pathMatch: 'full',
+        redirectTo: ''
+      },
+      {
         path: 'catalog',
         loadComponent: () =>
           import('./features/catalog/catalog-page.component').then(
@@ -94,6 +99,11 @@ export const routes: Routes = [
           )
       },
       {
+        path: 'cart/account',
+        pathMatch: 'full',
+        redirectTo: '/login'
+      },
+      {
         path: 'account',
         loadComponent: () =>
           import('./features/account/account-shell.component').then(
@@ -127,6 +137,31 @@ export const routes: Routes = [
               )
           }
         ]
+      },
+      {
+        path: 'my-account',
+        pathMatch: 'full',
+        redirectTo: 'account/profile'
+      },
+      {
+        path: 'my-account/my-profile',
+        pathMatch: 'full',
+        redirectTo: 'account/profile'
+      },
+      {
+        path: 'my-account/address-books',
+        pathMatch: 'full',
+        redirectTo: 'account/addresses'
+      },
+      {
+        path: 'my-account/my-invoices',
+        pathMatch: 'full',
+        redirectTo: 'account/orders'
+      },
+      {
+        path: 'profile-dashboard',
+        pathMatch: 'full',
+        redirectTo: 'account/orders'
       }
     ]
   },

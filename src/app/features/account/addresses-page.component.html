@@ -1,10 +1,17 @@
 <div class="addresses-page">
-  <div class="header-row">
-    <h3>Address Book</h3>
+  <header class="section-header">
+    <div>
+      <span class="section-eyebrow">Addresses</span>
+      <h3>Address Book</h3>
+      <p class="section-copy">
+        Save delivery and billing locations for faster ordering and cleaner fulfilment.
+      </p>
+    </div>
+
     <button type="button" class="btn action-btn" (click)="openNewAddressForm()">
       Add New Address <i class="fa fa-edit" aria-hidden="true"></i>
     </button>
-  </div>
+  </header>
 
   @if (!showForm()) {
     <div class="row">

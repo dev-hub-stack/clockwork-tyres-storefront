@@ -1,83 +1,89 @@
-<div class="full-height">
-  <div class="login-left">
-    <div class="login-left-inner">
-      <div class="login-logo">
-        <a routerLink="/catalog">
-          <img src="/assets/img/new-logo.png" alt="Clockwork" />
-        </a>
-      </div>
+<section class="auth-shell">
+  <div class="auth-hero">
+    <div class="auth-brand">
+      <a routerLink="/catalog" aria-label="Clockwork Tyres home">
+        <img src="/assets/img/new-logo.png" alt="Clockwork Tyres" />
+      </a>
+    </div>
 
-      <ul>
+    <div class="auth-copy">
+      <span class="auth-eyebrow">Clockwork access</span>
+      <h1>One business account for retail and wholesale ordering.</h1>
+      <p>
+        The legacy Clockwork flow stays familiar: fast catalog access, order history, live account
+        controls, and the same business workspace whether you trade as a retailer, supplier, or both.
+      </p>
+    </div>
+
+    <ul class="auth-benefit-list">
+      @for (benefit of benefits; track benefit) {
         <li>
-          <span>
-            <img src="/assets/img/icon-24.png" alt="" />
-          </span>
-          24/7 Online ordering access
+          <span class="benefit-dot"></span>
+          <span>{{ benefit }}</span>
         </li>
-        <li>
-          <span>
-            <img src="/assets/img/box-icon.png" alt="" />
-          </span>
-          Manage orders from multiple suppliers
-        </li>
-        <li>
-          <span>
-            <img src="/assets/img/order-icon.png" alt="" />
-          </span>
-          Order history, tracking and invoices
-        </li>
-        <li>
-          <span>
-            <img src="/assets/img/folder-icon.png" alt="" />
-          </span>
-          Live inventory and pricing
-        </li>
-      </ul>
+      }
+    </ul>
+
+    <div class="auth-mode-strip">
+      @for (mode of accountModes; track mode.label) {
+        <article>
+          <strong>{{ mode.label }}</strong>
+          <span>{{ mode.note }}</span>
+        </article>
+      }
     </div>
   </div>
 
-  <div class="login-right">
-    <div class="login-right-inner">
-      <div class="login-right-scroll overflow-auto">
-        <div class="login-box">
-          <h3 class="small-30">Log in to your account</h3>
+  <div class="auth-panel">
+    <div class="auth-card">
+      <div class="auth-card-header">
+        <span class="auth-subtitle">Secure access</span>
+        <h2>Log in to your account</h2>
+        <p>Use your business email and password to continue into the storefront workspace.</p>
+      </div>
 
-          <form class="signup-form" [formGroup]="form" (ngSubmit)="submit()">
-            <p class="label">Email</p>
-            <input
-              formControlName="email"
-              type="email"
-              class="form-control s-form-field"
-              placeholder="Enter Your Email Address"
-            />
+      <form class="signup-form" [formGroup]="form" (ngSubmit)="submit()">
+        <label class="label" for="email">Email</label>
+        <input
+          id="email"
+          formControlName="email"
+          type="email"
+          class="form-control s-form-field"
+          placeholder="Enter your email address"
+        />
 
-            @if (form.controls.email.invalid && form.controls.email.touched) {
-              <span class="error">A valid email is required</span>
-            }
+        @if (form.controls.email.invalid && form.controls.email.touched) {
+          <span class="error">A valid email is required</span>
+        }
 
-            <p class="label">Password</p>
-            <input
-              type="password"
-              formControlName="password"
-              class="form-control s-form-field"
-              placeholder="Enter Your Password"
-            />
+        <label class="label" for="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          class="form-control s-form-field"
+          placeholder="Enter your password"
+        />
 
-            @if (form.controls.password.invalid && form.controls.password.touched) {
-              <span class="error">Password is required</span>
-            }
+        @if (form.controls.password.invalid && form.controls.password.touched) {
+          <span class="error">Password is required</span>
+        }
 
-            <p class="small-text f-light">
-              New to Clockwork?
-              <a routerLink="/catalog" class="cursor-pointer">Browse catalog</a>
-            </p>
-
-            <button type="submit" class="btn btn-01 mt-4 new-btn bg-black">
-              <span>Log In</span>
-            </button>
-          </form>
+        <div class="auth-actions">
+          <p class="small-text f-light">
+            New here?
+            <a routerLink="/catalog" class="cursor-pointer">Browse the catalog</a>
+          </p>
+          <p class="small-text f-light">
+            Need an account?
+            <a href="mailto:ops@clockworktyres.ae">Contact onboarding</a>
+          </p>
         </div>
-      </div>
+
+        <button type="submit" class="btn btn-01 mt-4 new-btn bg-black">
+          <span>Log In</span>
+        </button>
+      </form>
     </div>
   </div>
-</div>
+</section>

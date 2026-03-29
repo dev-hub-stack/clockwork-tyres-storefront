@@ -47,6 +47,35 @@ export class ProductDetailPageComponent {
     () => this.product().gallery[this.activeImageIndex()] ?? this.product().gallery[0]
   );
 
+  protected readonly activeCategoryLabel = computed(() => {
+    const category = this.product().category;
+
+    return category === 'wheels' ? 'Wheels' : 'Tyres';
+  });
+
+  protected readonly priceBreakdown = computed(() => {
+    const product = this.product();
+
+    return {
+      compareAtPrice: product.compareAtPrice ?? null,
+      price: product.price,
+      availabilityOrigin: product.availability.origin,
+      supplierCount: product.availability.supplierCount
+    };
+  });
+
+  protected readonly availabilitySummary = computed(() => {
+    const product = this.product();
+
+    return {
+      label: product.availabilityBadge,
+      quantity: product.availability.quantity,
+      showQuantity: product.availability.showQuantity,
+      supplierCount: product.availability.supplierCount,
+      origin: product.availability.origin
+    };
+  });
+
   protected readonly sizeTabs = computed(() => {
     const uniqueTabs = new Set(this.product().options.map((option) => this.getRimSizeLabel(option.size)));
     return [...uniqueTabs];
@@ -70,6 +99,19 @@ export class ProductDetailPageComponent {
 
     return rows;
   });
+
+  protected readonly heroStats = computed(() => {
+    const product = this.product();
+
+    return [
+      { label: 'Category', value: this.activeCategoryLabel() },
+      { label: 'Size', value: product.size },
+      { label: 'SKU', value: product.sku },
+      { label: 'Supplier stock', value: `${product.availability.supplierCount}` }
+    ];
+  });
+
+  protected readonly isTyreLaunch = computed(() => this.product().category === 'tyres');
 
   constructor() {
     effect(() => {
@@ -100,5 +142,25 @@ export class ProductDetailPageComponent {
   protected getRimSizeLabel(size: string): string {
     const rimSize = size.split('R')[1];
     return rimSize ? `${rimSize}"` : size;
+  }
+
+  protected formatAvailabilityText(): string {
+    const summary = this.availabilitySummary();
+
+    if (summary.showQuantity) {
+      return `${summary.label} (${summary.quantity})`;
+    }
+
+    return summary.label;
+  }
+
+  protected getQuantityCopy(): string {
+    const summary = this.availabilitySummary();
+
+    if (summary.origin === 'own') {
+      return 'Own stock';
+    }
+
+    return 'Approved supplier stock';
   }
 }

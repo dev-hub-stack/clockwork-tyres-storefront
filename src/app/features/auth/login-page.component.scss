@@ -1,184 +1,259 @@
 @use '../../../assets/css/styles/variables' as *;
 
-.full-height {
-  background-image: url('/assets/img/login-bg.png');
+.auth-shell {
   min-height: 100vh;
-  display: flex;
-  background-color: #2e2e2f;
-  background-size: cover;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(420px, 0.9fr);
+  background:
+    linear-gradient(135deg, rgba(18, 18, 19, 0.94), rgba(46, 46, 47, 0.94)),
+    url('/assets/img/login-bg.png') center/cover no-repeat;
   font-family: $primaryfont;
 }
 
-.login-left {
-  padding: 0 0 0 90px;
-  display: flex;
-  align-items: center;
-  width: 40%;
-}
-
-.login-left-inner {
+.auth-hero {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  padding: 56px 64px 56px 92px;
+  color: #fff;
+}
 
-  ul {
-    padding-left: 0;
+.auth-brand {
+  margin-bottom: 34px;
+
+  img {
+    width: min(320px, 70vw);
   }
+}
+
+.auth-copy {
+  max-width: 640px;
+}
+
+.auth-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 12px;
+  margin-bottom: 18px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.auth-copy h1 {
+  margin: 0 0 16px;
+  font-size: clamp(2rem, 2.5vw, 3.35rem);
+  font-weight: 700;
+  line-height: 1.08;
+}
+
+.auth-copy p {
+  max-width: 580px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.84);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.auth-benefit-list {
+  display: grid;
+  gap: 16px;
+  margin: 34px 0 0;
+  padding: 0;
+  max-width: 620px;
+  list-style: none;
 
   li {
     display: flex;
-    align-items: center;
-    list-style: none;
-    margin-bottom: 30px;
-    font-size: 1.3rem;
-    color: #fff;
-  }
-
-  span {
-    height: 40px;
-    width: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 15px;
-  }
-
-  img {
-    max-width: 100%;
-    max-height: 100%;
+    align-items: flex-start;
+    gap: 14px;
+    font-size: 1rem;
+    line-height: 1.5;
   }
 }
 
-.login-logo {
-  margin-bottom: 50px;
+.benefit-dot {
+  width: 16px;
+  height: 16px;
+  margin-top: 4px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.14);
+  flex: 0 0 auto;
+}
 
-  img {
-    width: 300px;
+.auth-mode-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 38px;
+
+  article {
+    padding: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+
+    strong,
+    span {
+      display: block;
+    }
+
+    strong {
+      margin-bottom: 4px;
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    span {
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 0.92rem;
+      line-height: 1.4;
+    }
   }
 }
 
-.login-right {
-  min-height: 100vh;
-  width: 60%;
+.auth-panel {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 30px 0;
+  padding: 32px 28px;
 }
 
-.login-right-inner {
-  display: flex;
-}
-
-.login-right-scroll {
-  height: auto;
-}
-
-.login-box {
-  width: min(520px, calc(100vw - 48px));
+.auth-card {
+  width: min(540px, calc(100vw - 40px));
+  padding: 42px;
   background: #fff;
-  border-radius: 28px;
-  padding: 44px;
+  border-radius: 24px;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
 }
 
-.small-30 {
-  font-family: $primaryfont;
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 28px;
+.auth-card-header {
+  margin-bottom: 22px;
+
+  h2 {
+    margin: 0 0 10px;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  p {
+    margin: 0;
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
 }
 
-.label,
-.small-text {
-  font-family: $primaryfont;
+.auth-subtitle {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  margin-bottom: 14px;
+  color: #595fdd;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.signup-form {
+  display: grid;
 }
 
 .label {
-  margin: 16px 0 10px;
-  font-weight: 600;
+  margin: 14px 0 10px;
+  font-weight: 700;
 }
 
 .s-form-field {
-  min-height: 56px;
+  min-height: 54px;
   border: 2px solid #111;
   border-radius: 10px;
   font-family: $primaryfont;
-}
-
-.small-text {
-  margin-top: 18px;
-}
-
-.small-text a {
-  text-decoration: underline;
-  color: #111;
-  font-weight: 700;
 }
 
 .error {
   display: block;
   margin-top: 8px;
   color: #d93025;
-  font-family: $primaryfont;
+  font-size: 0.88rem;
+}
+
+.auth-actions {
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.small-text {
+  margin: 0;
+
+  a {
+    color: #111;
+    font-weight: 700;
+    text-decoration: underline;
+  }
 }
 
 .bg-black {
+  min-width: 180px;
+  min-height: 52px;
+  margin-top: 18px;
   border-color: #000;
   background: #000;
   color: #fff;
-  min-width: 180px;
-  min-height: 54px;
   border-radius: 10px;
   font-family: $primaryfont;
   font-weight: 700;
 }
 
-@media (max-width: 991px) {
-  .full-height {
-    padding: 0 30px;
+@media (max-width: 1199px) {
+  .auth-shell {
+    grid-template-columns: 1fr;
   }
 
-  .login-left {
-    padding: 0;
+  .auth-hero {
+    padding: 44px 32px 24px;
   }
 
-  .login-right {
-    justify-content: flex-end;
+  .auth-panel {
+    padding-top: 0;
+    padding-bottom: 40px;
   }
 }
 
 @media (max-width: 767px) {
-  .full-height {
-    flex-direction: column-reverse;
+  .auth-shell {
     background-image: none;
-    padding: 20px 0;
-    background-color: transparent;
-  }
-
-  .login-left {
-    width: 100%;
-    padding: 20px;
-    justify-content: center;
     background-color: #2e2e2f;
   }
 
-  .login-right {
-    width: 100%;
-    min-height: 1vh;
-    justify-content: center;
+  .auth-hero {
+    padding: 24px 20px;
   }
 
-  .login-box {
-    width: calc(100vw - 32px);
+  .auth-copy h1 {
+    font-size: 1.8rem;
+  }
+
+  .auth-mode-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-card {
+    width: calc(100vw - 28px);
     padding: 28px 20px;
     border-radius: 20px;
   }
 
-  .small-30 {
-    font-size: 1.6rem;
-  }
-
-  .login-left-inner li {
-    font-size: 1rem;
+  .auth-card-header h2 {
+    font-size: 1.55rem;
   }
 }

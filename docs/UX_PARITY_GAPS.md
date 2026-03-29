@@ -2,171 +2,100 @@
 
 Date: March 29, 2026
 
-Purpose: track the biggest remaining gaps between the legacy Clockwork storefront and the Angular 21 storefront, ordered by pixel-perfect alignment priority.
+Purpose: a practical next-pass parity map for the new Angular 21 storefront against the legacy Clockwork storefront.
 
-This is a storefront-only gap list. It focuses on the screens George will notice first:
+Scope: storefront only. This covers the screens George will notice first and the legacy routes/behaviors we still need to preserve or consciously defer.
 
-- home
-- search
-- listing
-- PDP
+## Current Storefront Coverage
+
+The new storefront already has the right screen family in place:
+
+- home shell
+- header
+- search by size modal
+- search by vehicle modal
+- listing/catalog
+- product detail
 - cart
-- account
+- checkout
+- login
+- account profile, addresses, and orders
 
-## Priority 1: Header, Home, And Search Entry
+The main remaining work is visual parity, interaction rhythm, and a few legacy route behaviors.
 
-### 1. Legacy header composition is not fully matched
+## Next-Pass Parity Map
 
-- Type: `visual` + `behavioral`
-- Legacy reference: [header.component.html](C:/Users/Dell/Documents/Gerorge/dealer-portal-Angular/src/app/includes/header/header.component.html)
-- Current target: [clockwork-header.component.html](C:/Users/Dell/Documents/Gerorge/clockwork-tyres-storefront/src/app/shared/ui/clockwork-header/clockwork-header.component.html)
+| Area | Legacy reference | Current target | Parity status | Next pass focus |
+| --- | --- | --- | --- | --- |
+| Home | [feature.component.html](C:/Users/Dell/Documents/Gerorge/dealer-portal-Angular/src/app/pages/feature/feature.component.html), [new-home.component.html](C:/Users/Dell/Documents/Gerorge/dealer-portal-Angular/src/app/pages/new-home/new-home.component.html) | [home-shell.component.html](C:/Users/Dell/Documents/Gerorge/clockwork-tyres-storefront/src/app/features/home/home-shell.component.html) | Partial | Match first-screen hierarchy, hero rhythm, trust copy, CTA spacing, and the legacy sense of density on desktop and mobile. |
+| Header | [header.component.html](C:/Users/Dell/Documents/Gerorge/dealer-portal-Angular/src/app/includes/header/header.component.html) | [clockwork-header.component.html](C:/Users/Dell/Documents/Gerorge/clockwork-tyres-storefront/src/app/shared/ui/clockwork-header/clockwork-header.component.html) | Partial | Lock the two-row rhythm, icon balance, modal trigger placement, and spacing around search/account/cart actions. |
+| Search by size modal | [search-by-size.component.html](C:/Users/Dell/Documents/Gerorge/dealer-portal-Angular/src/app/shared/components/search-by-size/search-by-size.component.html) | [search-by-size-modal.component.html](C:/Users/Dell/Documents/Gerorge/clockwork-tyres-storefront/src/app/shared/ui/search-by-size-modal/search-by-size-modal.component.html) | Close | Keep the legacy modal shell and section rhythm, while preserving category-aware field rendering and the rear-size toggle. |
+| Search by vehicle modal | [search-by-vehicle.component.html](C:/Users/Dell/Documents/Gerorge/dealer-portal-Angular/src/app/shared/components/search-by-vehicle/search-by-vehicle.component.html) | [search-by-vehicle-modal.component.html](C:/Users/Dell/Documents/Gerorge/clockwork-tyres-storefront/src/app/shared/ui/search-by-vehicle-modal/search-by-vehicle-modal.component.html) | Close | Match the select/input spacing, dropdown chrome, footnote tone, and the exact handoff feel into listing results. |
+| Listing / catalog | [wheels-listing.component.html](C:/Users/Dell/Documents/Gerorge/dealer-portal-Angular/src/app/pages/wheels/wheels-listing/wheels-listing.component.html) | [catalog-page.component.html](C:/Users/Dell/Documents/Gerorge/clockwork-tyres-storefront/src/app/features/catalog/catalog-page.component.html) | Partial | Tighten toolbar density, filter rail spacing, mobile filter behavior, and the result grid rhythm. |
+| Product card | [wheel-single.component.html](C:/Users/Dell/Documents/Gerorge/dealer-portal-Angular/src/app/pages/wheels/wheel-single/wheel-single.component.html) | [catalog-page.component.html](C:/Users/Dell/Documents/Gerorge/clockwork-tyres-storefront/src/app/features/catalog/catalog-page.component.html) | Partial | Match image crop, text stack, price/stock placement, and CTA alignment without reintroducing wheel-only assumptions. |
+| PDP | [wheels-detail.component.html](C:/Users/Dell/Documents/Gerorge/dealer-portal-Angular/src/app/pages/wheels/wheels-detail/wheels-detail.component.html) | [product-detail-page.component.html](C:/Users/Dell/Documents/Gerorge/clockwork-tyres-storefront/src/app/features/catalog/product-detail-page.component.html) | Partial | Refine gallery proportions, thumbnail cadence, spec table spacing, and the "more size & options" block feel. |
+| Cart | [shopping-cart.component.html](C:/Users/Dell/Documents/Gerorge/dealer-portal-Angular/src/app/cart/shopping-cart/shopping-cart.component.html) | [cart-page.component.html](C:/Users/Dell/Documents/Gerorge/clockwork-tyres-storefront/src/app/features/cart/cart-page.component.html) | Partial | Match table density, totals placement, action button placement, and the legacy empty-state feel. |
+| Checkout | [checkout.component.html](C:/Users/Dell/Documents/Gerorge/dealer-portal-Angular/src/app/cart/checkout/checkout.component.html) | [checkout-page.component.html](C:/Users/Dell/Documents/Gerorge/clockwork-tyres-storefront/src/app/features/cart/checkout-page.component.html) | Partial | Keep the legacy checkout grouping and spacing, but preserve launch rules: no payment capture yet. |
+| Login | [login.component.html](C:/Users/Dell/Documents/Gerorge/dealer-portal-Angular/src/app/pages/login/login.component.html) | [login-page.component.html](C:/Users/Dell/Documents/Gerorge/clockwork-tyres-storefront/src/app/features/auth/login-page.component.html) | Partial | Match the visual framing and form rhythm; keep the new auth flow clean and brand-consistent. |
+| Account | [dashboard.component.html](C:/Users/Dell/Documents/Gerorge/dealer-portal-Angular/src/app/pages/dashboard/dashboard.component.html), [my-accounts.component.html](C:/Users/Dell/Documents/Gerorge/dealer-portal-Angular/src/app/my-accounts/my-accounts.component.html) | [account-shell.component.html](C:/Users/Dell/Documents/Gerorge/clockwork-tyres-storefront/src/app/features/account/account-shell.component.html), [profile-page.component.html](C:/Users/Dell/Documents/Gerorge/clockwork-tyres-storefront/src/app/features/account/profile-page.component.html), [addresses-page.component.html](C:/Users/Dell/Documents/Gerorge/clockwork-tyres-storefront/src/app/features/account/addresses-page.component.html), [orders-page.component.html](C:/Users/Dell/Documents/Gerorge/clockwork-tyres-storefront/src/app/features/account/orders-page.component.html) | Partial | Match tab rhythm, content density, and the old account-shell feel without copying admin-only legacy pages into the storefront. |
 
-Gap:
+## What Is Already Close Enough
 
-- the legacy two-row header rhythm and exact spacing still need pixel-level alignment
-- modal trigger placement and icon balance need closer matching
-- home/search entry interactions still need final parity checks
+These areas are good enough to keep building while the parity work continues:
 
-### 2. Home/search landing composition is still simplified
-
-- Type: `visual` + `behavioral`
-- Legacy reference: [feature.component.html](C:/Users/Dell/Documents/Gerorge/dealer-portal-Angular/src/app/pages/feature/feature.component.html) and [new-home.component.html](C:/Users/Dell/Documents/Gerorge/dealer-portal-Angular/src/app/pages/new-home/new-home.component.html)
-- Current target: storefront shell and search modals in `clockwork-tyres-storefront`
-
-Gap:
-
-- the home page hero/content rhythm is not yet fully recreated
-- legacy entry points for vehicle and size search need exact spacing and prominence matching
-- banner, trust-copy, and first-screen hierarchy still need a pixel pass
-
-## Priority 2: Listing And Filters
-
-### 3. Listing toolbar and filter rail are not yet pixel-perfect
-
-- Type: `visual` + `behavioral`
-- Legacy reference: [wheels-listing.component.html](C:/Users/Dell/Documents/Gerorge/dealer-portal-Angular/src/app/pages/wheels/wheels-listing/wheels-listing.component.html)
-- Current target: [catalog-page.component.html](C:/Users/Dell/Documents/Gerorge/clockwork-tyres-storefront/src/app/features/catalog/catalog-page.component.html)
-
-Gap:
-
-- the toolbar density, sort/view controls, and filter rail spacing still differ from legacy
-- filter drawer behavior and mobile interaction need final parity checks
-- list/grid affordance still needs the same feel as legacy Clockwork
-
-### 4. Product card density and metadata layout still differ
-
-- Type: `visual` + `data-contract`
-- Legacy reference: [wheel-single.component.html](C:/Users/Dell/Documents/Gerorge/dealer-portal-Angular/src/app/pages/wheels/wheel-single/wheel-single.component.html)
-- Current target: [catalog-page.component.html](C:/Users/Dell/Documents/Gerorge/clockwork-tyres-storefront/src/app/features/catalog/catalog-page.component.html)
-
-Gap:
-
-- spacing between image, brand, subtitle, size, stock, and CTA still needs a tighter legacy match
-- the new tyre card contract is cleaner, but some legacy wheel-era metadata placement still has to be re-expressed visually
-- stock and CTA alignment needs another pixel pass on desktop and mobile
-
-### 5. Search-by-size and search-by-vehicle flows need final contract parity
-
-- Type: `behavioral` + `data-contract`
-- Legacy references:
-  - [search-by-size.component.ts](C:/Users/Dell/Documents/Gerorge/dealer-portal-Angular/src/app/shared/components/search-by-size/search-by-size.component.ts)
-  - [search-by-vehicle.component.ts](C:/Users/Dell/Documents/Gerorge/dealer-portal-Angular/src/app/shared/components/search-by-vehicle/search-by-vehicle.component.ts)
-- Current target: storefront search modals in `clockwork-tyres-storefront`
-
-Gap:
-
-- the new app preserves the journey, but the exact query-param and field mapping still needs final category-aware parity work
-- vehicle search and size search should feel identical in flow timing, transitions, and result handoff
-- the search experience still needs a final review for loading states and empty states
-
-## Priority 3: PDP
-
-### 6. Product detail gallery and spec block need the last visual pass
-
-- Type: `visual` + `behavioral`
-- Legacy reference: [wheels-detail.component.html](C:/Users/Dell/Documents/Gerorge/dealer-portal-Angular/src/app/pages/wheels/wheels-detail/wheels-detail.component.html)
-- Current target: [product-detail-page.component.html](C:/Users/Dell/Documents/Gerorge/clockwork-tyres-storefront/src/app/features/catalog/product-detail-page.component.html)
-
-Gap:
-
-- the image gallery layout, thumbnail rhythm, and summary block proportions still need refinement
-- spec and fitment sections are structurally correct but not yet fully pixel-aligned
-- the "more size & options" table still needs a closer legacy-style spacing pass
-
-### 7. PDP option and fitment behavior still needs refinement
-
-- Type: `behavioral` + `data-contract`
-- Legacy reference: [wheels-detail.component.ts](C:/Users/Dell/Documents/Gerorge/dealer-portal-Angular/src/app/pages/wheels/wheels-detail/wheels-detail.component.ts)
-- Current target: [product-detail-page.component.ts](C:/Users/Dell/Documents/Gerorge/clockwork-tyres-storefront/src/app/features/catalog/product-detail-page.component.ts)
-
-Gap:
-
-- option selection, fitment messaging, and related options still need final behavior parity checks
-- the tyre contract is intentionally different, but the interaction pattern should still feel like Clockwork
-- inventory-driven CTA behavior should be reviewed against the legacy feel
-
-## Priority 4: Cart And Account
-
-### 8. Cart summary and checkout layout still need the final legacy feel
-
-- Type: `visual` + `behavioral`
-- Legacy references:
-  - [shopping-cart.component.html](C:/Users/Dell/Documents/Gerorge/dealer-portal-Angular/src/app/cart/shopping-cart/shopping-cart.component.html)
-  - [checkout.component.html](C:/Users/Dell/Documents/Gerorge/dealer-portal-Angular/src/app/cart/checkout/checkout.component.html)
-- Current targets:
-  - [cart-page.component.html](C:/Users/Dell/Documents/Gerorge/clockwork-tyres-storefront/src/app/features/cart/cart-page.component.html)
-  - [checkout-page.component.html](C:/Users/Dell/Documents/Gerorge/clockwork-tyres-storefront/src/app/features/cart/checkout-page.component.html)
-
-Gap:
-
-- table rhythm, totals placement, and action button positioning still need visual matching
-- shipping/billing form sections should be checked against the legacy nesting and spacing
-- empty states and preview-only states need one more alignment pass
-
-### 9. Account shell and order/address pages are functional but not yet identical
-
-- Type: `visual` + `data-contract`
-- Legacy references:
-  - [dashboard.component.html](C:/Users/Dell/Documents/Gerorge/dealer-portal-Angular/src/app/pages/dashboard/dashboard.component.html)
-  - [my-accounts.component.html](C:/Users/Dell/Documents/Gerorge/dealer-portal-Angular/src/app/my-accounts/my-accounts.component.html)
-- Current targets:
-  - [account-shell.component.html](C:/Users/Dell/Documents/Gerorge/clockwork-tyres-storefront/src/app/features/account/account-shell.component.html)
-  - [addresses-page.component.html](C:/Users/Dell/Documents/Gerorge/clockwork-tyres-storefront/src/app/features/account/addresses-page.component.html)
-  - [orders-page.component.html](C:/Users/Dell/Documents/Gerorge/clockwork-tyres-storefront/src/app/features/account/orders-page.component.html)
-
-Gap:
-
-- the account shell is cleaner than legacy, but the tab rhythm and content density still need a final visual comparison
-- address and order data are now shared and typed, but the presentation should be checked against the legacy feel
-- some legacy account concepts are intentionally not being copied, so parity here is visual rather than structural
-
-## Data-Contract Gaps That Still Matter Most
-
-These are the biggest contract mismatches still worth tracking for pixel-perfect work:
-
-- the legacy wheel contract is still the reference for spacing and density, even though the new tyre contract is cleaner
-- search results still depend on category-specific fields and fitment mapping
-- merged own-stock plus supplier-stock presentation needs backend/contract clarity before the final visual pass
-- catalog cards and PDP specs still need final category adapters so the UI never has to infer missing meaning
-
-## What Is Already Good Enough For Now
-
-These areas are close enough to continue building without waiting for pixel perfection:
-
-- overall storefront shell
-- modern Angular 21 structure
+- Angular 21 app structure and routing
+- category-aware fitment foundation
 - supplier-preview mode gating
-- shared data layer scaffolding
-- account data wiring
+- overall storefront shell and navigation flow
 
-## Next Parity Pass
+## Notable Legacy Routes And Behaviors Still To Keep In Mind
 
-The next visual review should be done in this order:
+The legacy app contains more routes and behaviors than the new storefront exposes today. Some should be preserved as compatibility redirects; others should remain in the CRM/admin side instead of the public storefront.
+
+### Keep As Compatibility Or Light Redirects
+
+- `serchvehicle` should keep redirecting to `search-by-vehicle`
+- `wheelbrand`, `wheelbrand/:brand`, and `wheelbrand/:brand/:product` are legacy SEO routes that may need redirects or category-aware equivalents later
+- `search-by-size` and `search-by-vehicle` should continue to hand off into the catalog/listing flow in the same way the legacy app did
+- legacy product detail deep links should stay resolvable to the new PDP if the SKU/route contract changes later
+
+### Park For Later Or Move To CRM/Admin
+
+- `vendor-login`
+- `reset-password`
+- `process-payment`
+- `order-confirm`
+- `thank-you`
+- `cancel-order`
+- `installments`
+- `downloads`
+- `tutorials`
+- `contact-us`
+- `landing-page`
+- footer/legal pages such as privacy, terms, delivery, and returns
+- old account subpages such as invoices, integration, plans, downloads, wishlist, and inventory-related views
+
+### Legacy Home/Promo Routes Worth Remembering
+
+- `feature`
+- `new-home`
+- `new-products`
+- `alloy-wheels`
+- `clearnce-wheels`
+- `suppliers`
+- `search`
+
+These are useful as reference for content structure and SEO patterns, even if they are not part of the first storefront release.
+
+## Next Practical Parity Pass
+
+If we want the fastest route to George-level parity, the next review order should be:
 
 1. header and home/search entry
-2. listing toolbar, filter rail, and product card
-3. PDP gallery and spec block
-4. cart summary and checkout layout
-5. account shell, orders, and addresses
+2. search modals
+3. listing and product card
+4. PDP
+5. cart and checkout
+6. login and account shell
 
-If we keep the next pass in this order, we will get the fastest route to pixel-perfect alignment with the least rework.
+That order gives us the highest visual impact first while keeping the new category-aware foundation intact.

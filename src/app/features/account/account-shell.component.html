@@ -1,29 +1,51 @@
 <section class="account-shell">
-  <div class="container-fluid pt-5 pb-5">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="account-tabs">
-          <div class="nav nav-pills account-tabs-nav" aria-orientation="vertical">
-            <a
-              routerLink="/account/profile"
-              routerLinkActive="active"
-              class="nav-link"
-              [routerLinkActiveOptions]="{ exact: true }"
-            >
-              Profile
-            </a>
-            <a routerLink="/account/addresses" routerLinkActive="active" class="nav-link">
-              Addresses
-            </a>
-            <a routerLink="/account/orders" routerLinkActive="active" class="nav-link">
-              Orders
-            </a>
-          </div>
+  <div class="container-fluid">
+    <header class="account-hero">
+      <div class="account-hero-copy">
+        <span class="account-eyebrow">My Account</span>
+        <h1>{{ profile().businessName }}</h1>
+        <p>
+          Manage profile details, delivery addresses, and order history from the same business
+          workspace that powers the storefront.
+        </p>
+      </div>
+
+      <div class="account-hero-stats">
+        @for (stat of accountStats(); track stat.label) {
+          <article>
+            <span>{{ stat.label }}</span>
+            <strong>{{ stat.value }}</strong>
+          </article>
+        }
+      </div>
+    </header>
+
+    <div class="account-layout">
+      <aside class="account-sidebar">
+        <div class="account-summary-card">
+          <span class="account-subtitle">Business summary</span>
+          <h2>{{ profile().accountType | titlecase }}</h2>
+          <p>{{ profile().wholesaleEnabled ? 'Wholesale enabled' : 'Retail-only access' }}</p>
+          <p>{{ profile().retailEnabled ? 'Retail storefront access enabled' : 'Retail access disabled' }}</p>
+          <div class="account-mode-pill">{{ modeLabel() }}</div>
         </div>
 
-        <div class="account-content">
-          <router-outlet></router-outlet>
-        </div>
+        <nav class="account-nav" aria-label="Account navigation">
+          @for (item of accountNav; track item.link) {
+            <a
+              [routerLink]="item.link"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: item.exact }"
+              class="account-nav-link"
+            >
+              {{ item.label }}
+            </a>
+          }
+        </nav>
+      </aside>
+
+      <div class="account-content">
+        <router-outlet></router-outlet>
       </div>
     </div>
   </div>

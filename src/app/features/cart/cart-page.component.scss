@@ -4,6 +4,11 @@
   font-family: $primaryfont;
 }
 
+.cart-shell {
+  margin-bottom: 64px;
+  margin-top: 48px;
+}
+
 .cart-header {
   display: flex;
   align-items: center;
@@ -18,6 +23,15 @@
   }
 }
 
+.eyebrow {
+  color: #667085;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  margin: 0 0 6px;
+  text-transform: uppercase;
+}
+
 .empty-cart-btn {
   background: transparent;
   border: 0;
@@ -29,6 +43,7 @@
 
 .cart-table {
   border: 1px solid #d8d8d8;
+  margin-bottom: 0;
 
   thead th {
     background: #f1f1f1;
@@ -46,6 +61,15 @@
 .product-image-cell {
   width: 150px;
 
+  .product-image-wrap {
+    align-items: center;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+  }
+
   img {
     max-width: 120px;
     object-fit: contain;
@@ -53,21 +77,64 @@
 }
 
 .description-cell {
-  h2 {
-    font-size: 1.3rem;
-    font-weight: 700;
+  min-width: 280px;
+
+  .item-title-row {
+    align-items: flex-start;
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
     margin-bottom: 10px;
   }
 
-  h3 {
-    font-size: 0.95rem;
-    font-weight: 500;
-    margin-bottom: 8px;
-
-    span {
-      font-weight: 700;
-    }
+  h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 0;
   }
+
+  .item-metadata {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .item-metadata span {
+    font-size: 0.93rem;
+    font-weight: 500;
+  }
+
+  .item-metadata strong {
+    font-weight: 700;
+    margin-right: 6px;
+  }
+}
+
+.source-pill {
+  background: #eef2f6;
+  border: 1px solid #cad5df;
+  border-radius: 999px;
+  color: #0f2138;
+  flex: 0 0 auto;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 6px 10px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.source-pill-own {
+  background: #edf6ee;
+  border-color: #c5e0c7;
+  color: #165a2a;
+}
+
+.stock-note {
+  color: #667085;
+  font-size: 0.88rem;
+  line-height: 1.45;
 }
 
 .price-cell {
@@ -104,6 +171,14 @@
   }
 }
 
+.quantity-note {
+  color: #667085;
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin-top: 6px;
+  text-align: center;
+}
+
 .remove-cell {
   text-align: center;
 }
@@ -123,6 +198,7 @@
 }
 
 .summary-card {
+  background: #fbfbfc;
   border: 1px solid #d8d8d8;
   padding: 28px;
   position: sticky;
@@ -133,6 +209,17 @@
     font-weight: 700;
     margin-bottom: 24px;
   }
+}
+
+.summary-footnote {
+  background: #fff;
+  border: 1px dashed #d7cbb0;
+  color: #8a6f2f;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.5;
+  margin-top: 18px;
+  padding: 12px 14px;
 }
 
 .summary-row {
@@ -222,7 +309,15 @@
     flex-direction: column;
   }
 
+  .description-cell .item-title-row {
+    flex-direction: column;
+  }
+
   .summary-card {
     padding: 20px;
+  }
+
+  .product-image-cell {
+    width: 120px;
   }
 }
