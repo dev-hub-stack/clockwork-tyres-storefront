@@ -1,11 +1,10 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable } from '@angular/core';
 import { CatalogCategoryId } from '../catalog-categories';
 import {
   StorefrontCartLine,
   StorefrontCartViewLine,
   StorefrontCatalogItem,
   StorefrontCatalogViewItem,
-  StorefrontDataState,
   StorefrontAddress,
   StorefrontMode,
   StorefrontOrder,
@@ -13,43 +12,40 @@ import {
   StorefrontPdpViewItem,
   StorefrontProfile
 } from './storefront-data.models';
-import { storefrontMockState } from './storefront-data.mock';
+import {
+  STOREFRONT_DATA_REPOSITORY,
+  StorefrontDataRepository
+} from './storefront-data.repository';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StorefrontDataStore {
-  private readonly state = signal<StorefrontDataState>(storefrontMockState);
+  private readonly repository: StorefrontDataRepository = inject(STOREFRONT_DATA_REPOSITORY);
 
-  readonly mode = computed(() => this.state().mode);
-  readonly activeCategory = computed(() => this.state().activeCategory);
-  readonly profile = computed(() => this.state().profile);
-  readonly addresses = computed(() => this.state().addresses);
-  readonly orders = computed(() => this.state().orders);
+  readonly mode = computed(() => this.repository.state().mode);
+  readonly activeCategory = computed(() => this.repository.state().activeCategory);
+  readonly profile = computed(() => this.repository.state().profile);
+  readonly addresses = computed(() => this.repository.state().addresses);
+  readonly orders = computed(() => this.repository.state().orders);
   readonly catalog = computed(() =>
-    this.buildCatalogView(this.state().catalog, this.mode(), this.activeCategory())
+    this.buildCatalogView(this.repository.state().catalog, this.mode(), this.activeCategory())
   );
-  readonly cart = computed(() => this.buildCartView(this.state().cart, this.mode()));
+  readonly cart = computed(() => this.buildCartView(this.repository.state().cart, this.mode()));
 
   setMode(mode: StorefrontMode): void {
-    this.state.update((state) => ({
-      ...state,
-      mode
-    }));
+    this.repository.setMode(mode);
   }
 
   setCategory(category: CatalogCategoryId): void {
-    this.state.update((state) => ({
-      ...state,
-      activeCategory: category
-    }));
+    this.repository.setCategory(category);
   }
 
   getCatalogItems(
     mode: StorefrontMode = this.mode(),
     category: CatalogCategoryId = this.activeCategory()
   ): StorefrontCatalogViewItem[] {
-    return this.buildCatalogView(this.state().catalog, mode, category);
+    return this.buildCatalogView(this.repository.state().catalog, mode, category);
   }
 
   getFeaturedCatalogItems(
@@ -72,7 +68,7 @@ export class StorefrontDataStore {
     mode: StorefrontMode = this.mode(),
     category: CatalogCategoryId = this.activeCategory()
   ): StorefrontPdpViewItem | undefined {
-    const item = this.state().pdp[slug];
+    const item = this.repository.state().pdp[slug];
 
     if (!item || item.category !== category) {
       return undefined;
@@ -82,74 +78,47 @@ export class StorefrontDataStore {
   }
 
   getCartItems(mode: StorefrontMode = this.mode()): StorefrontCartViewLine[] {
-    return this.buildCartView(this.state().cart, mode);
+    return this.buildCartView(this.repository.state().cart, mode);
   }
 
   getProfile(): StorefrontProfile {
-    return this.state().profile;
+    return this.repository.state().profile;
   }
 
   updateProfile(profile: StorefrontProfile): void {
-    this.state.update((state) => ({
-      ...state,
-      profile
-    }));
+    this.repository.updateProfile(profile);
   }
 
   getAddresses(): StorefrontAddress[] {
-    return this.state().addresses;
+    return this.repository.state().addresses;
   }
 
   addAddress(address: StorefrontAddress): void {
-    this.state.update((state) => ({
-      ...state,
-      addresses: [...state.addresses, address]
-    }));
+    this.repository.addAddress(address);
   }
 
   updateAddress(addressId: number, nextAddress: StorefrontAddress): void {
-    this.state.update((state) => ({
-      ...state,
-      addresses: state.addresses.map((address) =>
-        address.id === addressId ? nextAddress : address
-      )
-    }));
+    this.repository.updateAddress(addressId, nextAddress);
   }
 
   deleteAddress(addressId: number): void {
-    this.state.update((state) => ({
-      ...state,
-      addresses: state.addresses.filter((address) => address.id !== addressId)
-    }));
+    this.repository.deleteAddress(addressId);
   }
 
   getOrders(): StorefrontOrder[] {
-    return this.state().orders;
+    return this.repository.getOrders();
   }
 
   updateCartLineQuantity(lineId: number, quantity: number): void {
-    this.state.update((state) => ({
-      ...state,
-      cart: state.cart.map((line) =>
-        line.id === lineId
-          ? { ...line, quantity: Math.max(1, quantity) }
-          : line
-      )
-    }));
+    this.repository.updateCartLineQuantity(lineId, quantity);
   }
 
   removeCartLine(lineId: number): void {
-    this.state.update((state) => ({
-      ...state,
-      cart: state.cart.filter((line) => line.id !== lineId)
-    }));
+    this.repository.removeCartLine(lineId);
   }
 
   clearCart(): void {
-    this.state.update((state) => ({
-      ...state,
-      cart: []
-    }));
+    this.repository.clearCart();
   }
 
   getModeCapabilities(mode: StorefrontMode = this.mode()): { cartEnabled: boolean; checkoutEnabled: boolean } {
