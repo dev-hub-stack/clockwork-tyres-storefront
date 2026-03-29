@@ -142,6 +142,7 @@ The storefront can safely show:
 - low stock
 - out of stock
 - available to order
+- one merged product card when the same tyre exists from own stock plus supplier-backed stock
 
 The storefront should not assume it can show:
 
@@ -246,6 +247,7 @@ export type ProductDetail = {
     unitAmount: number;
     setAmount?: number | null;
     saleAmount?: number | null;
+    pricingLevel?: 'retail' | 'wholesale_level_1' | 'wholesale_level_2' | 'wholesale_level_3' | null;
   };
   availability: {
     status: 'in-stock' | 'low-stock' | 'out-of-stock' | 'available-to-order';
@@ -285,6 +287,7 @@ Notes:
 - keep detail data product-centric
 - avoid embedding UI tabs into the domain model
 - UI-specific tab grouping should be derived in the feature layer
+- preserve hidden source options outside the customer-facing contract so retailer admin can choose supplier manually later
 
 ### Cart Contract
 
@@ -441,6 +444,7 @@ In the new app:
 - keep the visual layout
 - rebuild the data contract cleanly
 - let mode determine whether transactional CTAs exist
+- keep source aggregation out of presentational components
 
 #### Cart and checkout
 
@@ -466,9 +470,10 @@ The next engineering slices should follow this order:
 
 1. Finalize typed catalog and product-detail contracts in the domain/data-access layer.
 2. Connect feature components to `src/app/core/storefront-mode` instead of local CTA rules.
-3. Build a small adapter from backend/domain responses into the recommended contract shapes.
-4. Gate cart and checkout entry points entirely through storefront mode checks.
-5. Keep supplier-preview data filtering outside presentation components.
+3. Add merged product aggregation support for own stock plus hidden supplier-backed stock.
+4. Build a small adapter from backend/domain responses into the recommended contract shapes.
+5. Gate cart and checkout entry points entirely through storefront mode checks.
+6. Keep supplier-preview data filtering and supplier-source option handling outside presentation components.
 
 ## Working Assumptions Until Product Rules Change
 
@@ -478,5 +483,6 @@ The next engineering slices should follow this order:
 - transactional CTAs are hidden in supplier-preview
 - storefront account scope stays minimal
 - supplier-management flows remain outside this repo
+- the same tyre should render as one merged storefront entry even when multiple hidden sources exist
 
 If any of these assumptions change, update this document and the storefront mode config together.
