@@ -1,0 +1,183 @@
+<section class="product-detail-page">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <a routerLink="/catalog" class="back-link">
+          <i class="fa fa-long-arrow-left" aria-hidden="true"></i>
+        </a>
+      </div>
+
+      <div class="col-md-5 col-xl-5">
+        <div class="detail-gallery">
+          <div class="mobile-title d-md-none">
+            <h2>{{ product().brand }}</h2>
+            <span>{{ product().model }}</span>
+          </div>
+
+          <div class="detail-gallery-main">
+            <img [src]="activeImage()" [alt]="product().model" />
+          </div>
+
+          <div class="detail-gallery-thumbs">
+            @for (image of product().images; track image; let index = $index) {
+              <button
+                type="button"
+                class="thumb-button"
+                [class.active]="activeImageIndex() === index"
+                (click)="setActiveImage(index)"
+              >
+                <img [src]="image" [alt]="product().model + ' image ' + (index + 1)" />
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-7 col-xl-7">
+        <div class="detail-panel">
+          <div class="product-top">
+            <div class="product-copy">
+              <h2 class="d-none d-md-block">{{ product().brand }}</h2>
+              <div class="subtitle d-none d-md-flex flex-column">
+                <span>{{ product().model }}</span>
+                <small>{{ product().subline }}</small>
+              </div>
+              <span class="sku-label">SKU : {{ product().sku }}</span>
+            </div>
+
+            <div class="price-stack">
+              <div class="price-line">
+                <span>MSRP:</span>
+                <strong>{{ product().msrp | currency: 'AED' : 'symbol-narrow' : '1.0-0' }}</strong>
+              </div>
+              <div class="price-line emphasis">
+                <span>Your Price:</span>
+                <strong>{{ product().yourPrice | currency: 'AED' : 'symbol-narrow' : '1.0-0' }}</strong>
+              </div>
+              @if (product().salePrice) {
+                <div class="price-line emphasis sale">
+                  <span>Sale Price:</span>
+                  <strong>
+                    {{ (product().salePrice ?? 0) | currency: 'AED' : 'symbol-narrow' : '1.0-0' }}
+                  </strong>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="purchase-row">
+            <div class="quantity-and-stock">
+              <div class="quantity-box">
+                <div class="quantity-control">
+                  <button type="button" (click)="decrementQuantity()">-</button>
+                  <input type="number" [value]="quantity()" readonly />
+                  <button type="button" (click)="incrementQuantity()">+</button>
+                </div>
+                <label>Quantity</label>
+              </div>
+
+              <p class="stock-note">{{ product().stockText }}</p>
+            </div>
+
+            <a routerLink="/cart" class="btn cart-btn text-uppercase">Add To Cart</a>
+          </div>
+
+          <div class="spec-card">
+            <div class="spec-card-header">Specifications</div>
+
+            <div class="spec-card-body">
+              @for (row of product().specifications; track row.leftLabel) {
+                <div class="spec-row">
+                  <div class="spec-cell">
+                    <span class="spec-label">{{ row.leftLabel }}:</span>
+                    <span>{{ row.leftValue }}</span>
+                  </div>
+                  <div class="spec-cell">
+                    @if (row.rightLabel && row.rightValue) {
+                      <span class="spec-label">{{ row.rightLabel }}:</span>
+                      <span>{{ row.rightValue }}</span>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="fits-card">
+            <div class="fits-card-header">Fits</div>
+            <div class="fits-card-body">
+              <ul>
+                @for (fit of product().fits; track fit) {
+                  <li>{{ fit }}</li>
+                }
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row more-options-row">
+      <div class="col-12">
+        <h2 class="section-title">More Size &amp; Options</h2>
+      </div>
+
+      <div class="col-12">
+        <ul class="size-tabs">
+          @for (tab of product().sizeTabs; track tab) {
+            <li>
+              <button
+                type="button"
+                class="size-tab"
+                [class.active]="selectedTab() === tab"
+                (click)="selectTab(tab)"
+              >
+                {{ tab }}
+              </button>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <div class="col-12">
+        <div class="table-responsive">
+          <table class="table details-table">
+            <thead>
+              <tr>
+                <th>Part No.</th>
+                <th>Pattern</th>
+                <th>Size</th>
+                <th>Load Index</th>
+                <th>Speed Rating</th>
+                <th>Season</th>
+                <th>Stock</th>
+                <th></th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (option of filteredOptions(); track option.sku) {
+                <tr>
+                  <td>{{ option.sku }}</td>
+                  <td>{{ option.pattern }}</td>
+                  <td>{{ option.size }}</td>
+                  <td>{{ option.loadIndex }}</td>
+                  <td>{{ option.speedRating }}</td>
+                  <td>{{ option.season }}</td>
+                  <td>
+                    <span [class]="option.status === 'in-stock' ? 'in-stock' : 'out-stock'">
+                      {{ option.stock }}
+                    </span>
+                  </td>
+                  <td>
+                    <a [routerLink]="['/product', option.slug]" class="view-link">View</a>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -124,6 +124,11 @@
   }
 }
 
+.product-link {
+  color: inherit;
+  text-decoration: none;
+}
+
 .catalog-card-body {
   padding: 20px;
   font-family: $primaryfont;
@@ -183,6 +188,7 @@ h3 {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  margin-bottom: 12px;
 }
 
 .stock-text {
@@ -198,6 +204,15 @@ h3 {
   color: #fff;
   font-family: $primaryfont;
   font-weight: 700;
+}
+
+.details-link {
+  color: #111;
+  font-family: $primaryfont;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-decoration: underline;
 }
 
 @media (max-width: 1199px) {

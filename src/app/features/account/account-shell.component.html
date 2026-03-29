@@ -1,0 +1,30 @@
+<section class="account-shell">
+  <div class="container-fluid pt-5 pb-5">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="account-tabs">
+          <div class="nav nav-pills account-tabs-nav" aria-orientation="vertical">
+            <a
+              routerLink="/account/profile"
+              routerLinkActive="active"
+              class="nav-link"
+              [routerLinkActiveOptions]="{ exact: true }"
+            >
+              Profile
+            </a>
+            <a routerLink="/account/addresses" routerLinkActive="active" class="nav-link">
+              Addresses
+            </a>
+            <a routerLink="/account/orders" routerLinkActive="active" class="nav-link">
+              Orders
+            </a>
+          </div>
+        </div>
+
+        <div class="account-content">
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

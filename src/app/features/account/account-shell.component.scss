@@ -1,0 +1,73 @@
+@use '../../../assets/css/styles/variables' as *;
+
+.account-shell {
+  font-family: $primaryfont;
+}
+
+.account-tabs {
+  margin-bottom: 20px;
+}
+
+.account-tabs-nav {
+  border-bottom: 1px solid #aeaeae;
+  display: flex;
+  justify-content: space-between;
+
+  .nav-link {
+    color: #000;
+    background: transparent;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    flex: 1;
+    font-weight: 600;
+    margin-bottom: -1px;
+    padding: 10px 0 15px;
+    position: relative;
+    text-align: center;
+
+    &::after {
+      width: 1px;
+      height: 70%;
+      background-color: #aeaeae;
+      position: absolute;
+      right: 0;
+      top: 50%;
+      content: '';
+      transform: translateY(-50%);
+    }
+
+    &:last-child::after {
+      display: none;
+    }
+
+    &.active {
+      border-color: #111;
+    }
+  }
+}
+
+.account-content {
+  background: #fff;
+  padding: 20px 40px;
+}
+
+@media (max-width: 767px) {
+  .account-tabs {
+    overflow: hidden;
+  }
+
+  .account-tabs-nav {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+
+    .nav-link {
+      min-width: 165px;
+      padding: 10px 24px 15px;
+    }
+  }
+
+  .account-content {
+    padding: 20px 0;
+  }
+}

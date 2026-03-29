@@ -1,0 +1,99 @@
+<div class="addresses-page">
+  <div class="header-row">
+    <h3>Address Book</h3>
+    <button type="button" class="btn action-btn" (click)="openNewAddressForm()">
+      Add New Address <i class="fa fa-edit" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  @if (!showForm()) {
+    <div class="row">
+      @for (address of addresses(); track address.id) {
+        <div class="col-md-6">
+          <div class="address-card">
+            <div class="card-actions">
+              <button type="button" class="inline-action" (click)="editAddress(address)">
+                Edit <i class="fa fa-edit" aria-hidden="true"></i>
+              </button>
+              <span>|</span>
+              <button type="button" class="inline-action" (click)="deleteAddress(address.id)">
+                Delete <i class="fa fa-trash" aria-hidden="true"></i>
+              </button>
+            </div>
+
+            <div class="address-fields">
+              <div class="field-row">
+                <span class="field-label">Saved As:</span>
+                <span>{{ address.nickname }}</span>
+              </div>
+              <div class="field-row">
+                <span class="field-label">Phone:</span>
+                <span>{{ address.phone }}</span>
+              </div>
+              <div class="field-row">
+                <span class="field-label">Address:</span>
+                <span>{{ address.address }}</span>
+              </div>
+              <div class="field-row">
+                <span class="field-label">City:</span>
+                <span>{{ address.city }}</span>
+              </div>
+              <div class="field-row">
+                <span class="field-label">State:</span>
+                <span>{{ address.state }}</span>
+              </div>
+              <div class="field-row">
+                <span class="field-label">Country:</span>
+                <span>{{ address.country }}</span>
+              </div>
+              <div class="field-row">
+                <span class="field-label">Zip Code:</span>
+                <span>{{ address.zip }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <form [formGroup]="addressForm" (ngSubmit)="saveAddress()" class="address-form">
+      <div class="row">
+        <div class="col-md-6 form-field">
+          <label for="nickname">Saved As</label>
+          <input id="nickname" type="text" formControlName="nickname" class="form-control" />
+        </div>
+        <div class="col-md-6 form-field">
+          <label for="phone">Phone</label>
+          <input id="phone" type="text" formControlName="phone" class="form-control" />
+        </div>
+        <div class="col-md-6 form-field">
+          <label for="address">Address</label>
+          <input id="address" type="text" formControlName="address" class="form-control" />
+        </div>
+        <div class="col-md-6 form-field">
+          <label for="city">City</label>
+          <input id="city" type="text" formControlName="city" class="form-control" />
+        </div>
+        <div class="col-md-6 form-field">
+          <label for="state">State</label>
+          <input id="state" type="text" formControlName="state" class="form-control" />
+        </div>
+        <div class="col-md-6 form-field">
+          <label for="country">Country</label>
+          <input id="country" type="text" formControlName="country" class="form-control" />
+        </div>
+        <div class="col-md-6 form-field">
+          <label for="zip">Zip Code</label>
+          <input id="zip" type="text" formControlName="zip" class="form-control" />
+        </div>
+      </div>
+
+      <div class="button-row">
+        <button type="submit" class="btn primary-btn">
+          {{ editingAddressId() ? 'Update Address' : 'Save Address' }}
+        </button>
+        <button type="button" class="btn secondary-btn" (click)="cancelForm()">Cancel</button>
+      </div>
+    </form>
+  }
+</div>

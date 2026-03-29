@@ -1,0 +1,302 @@
+<section class="checkout-page cartForm">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-6">
+        <ul class="list-inline progress-steps">
+          <li class="list-inline-item active">
+            <span>1</span>
+            <p>Billing Details</p>
+          </li>
+          <li class="list-inline-item">
+            <span>2</span>
+            <p>Confirm Order</p>
+          </li>
+        </ul>
+
+        <h2 class="form-title">Billing &amp; Shipping Details</h2>
+
+        <form [formGroup]="checkoutForm" (ngSubmit)="submitOrder()" class="checkout-form">
+          <div class="form-row-grid">
+            <label for="savedAddress">My Addresses</label>
+            <select
+              id="savedAddress"
+              formControlName="savedAddress"
+              class="form-control custom-input"
+              (change)="applySavedAddress($any($event.target).value)"
+            >
+              <option value="">Select Address</option>
+              @for (address of savedAddresses; track address.id) {
+                <option [value]="address.id">{{ address.nickname }}</option>
+              }
+            </select>
+          </div>
+
+          <div formGroupName="billing">
+            <div class="form-section">
+              <h3>Billing</h3>
+
+              <div class="form-row-grid">
+                <label for="billingBusinessName">Business Name*</label>
+                <input
+                  id="billingBusinessName"
+                  type="text"
+                  formControlName="businessName"
+                  class="form-control custom-input"
+                />
+              </div>
+
+              <div class="form-row-grid">
+                <label for="billingCountry">Country*</label>
+                <input
+                  id="billingCountry"
+                  type="text"
+                  formControlName="country"
+                  class="form-control custom-input"
+                />
+              </div>
+
+              <div class="form-row-grid">
+                <label for="billingState">State*</label>
+                <input
+                  id="billingState"
+                  type="text"
+                  formControlName="state"
+                  class="form-control custom-input"
+                />
+              </div>
+
+              <div class="form-row-grid">
+                <label for="billingCity">City*</label>
+                <input
+                  id="billingCity"
+                  type="text"
+                  formControlName="city"
+                  class="form-control custom-input"
+                />
+              </div>
+
+              <div class="form-row-grid">
+                <label for="billingZip">Zip Code*</label>
+                <input
+                  id="billingZip"
+                  type="text"
+                  formControlName="zip"
+                  class="form-control custom-input"
+                />
+              </div>
+
+              <div class="form-row-grid">
+                <label for="billingAddress">Address*</label>
+                <input
+                  id="billingAddress"
+                  type="text"
+                  formControlName="address"
+                  class="form-control custom-input"
+                />
+              </div>
+
+              <div class="form-row-grid">
+                <label for="billingPhone">Phone*</label>
+                <input
+                  id="billingPhone"
+                  type="text"
+                  formControlName="phone"
+                  class="form-control custom-input"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="option-row">
+            <label>
+              <input type="checkbox" formControlName="shippingSameAsBilling" />
+              Shipping details same as billing details
+            </label>
+          </div>
+
+          @if (!shippingSameAsBilling()) {
+            <div formGroupName="shipping" class="form-section shipping-section">
+              <h3>Shipping</h3>
+
+              <div class="form-row-grid">
+                <label for="shippingBusinessName">Business Name*</label>
+                <input
+                  id="shippingBusinessName"
+                  type="text"
+                  formControlName="businessName"
+                  class="form-control custom-input"
+                />
+              </div>
+
+              <div class="form-row-grid">
+                <label for="shippingCountry">Country*</label>
+                <input
+                  id="shippingCountry"
+                  type="text"
+                  formControlName="country"
+                  class="form-control custom-input"
+                />
+              </div>
+
+              <div class="form-row-grid">
+                <label for="shippingState">State*</label>
+                <input
+                  id="shippingState"
+                  type="text"
+                  formControlName="state"
+                  class="form-control custom-input"
+                />
+              </div>
+
+              <div class="form-row-grid">
+                <label for="shippingCity">City*</label>
+                <input
+                  id="shippingCity"
+                  type="text"
+                  formControlName="city"
+                  class="form-control custom-input"
+                />
+              </div>
+
+              <div class="form-row-grid">
+                <label for="shippingZip">Zip Code*</label>
+                <input
+                  id="shippingZip"
+                  type="text"
+                  formControlName="zip"
+                  class="form-control custom-input"
+                />
+              </div>
+
+              <div class="form-row-grid">
+                <label for="shippingAddress">Address*</label>
+                <input
+                  id="shippingAddress"
+                  type="text"
+                  formControlName="address"
+                  class="form-control custom-input"
+                />
+              </div>
+
+              <div class="form-row-grid">
+                <label for="shippingPhone">Phone*</label>
+                <input
+                  id="shippingPhone"
+                  type="text"
+                  formControlName="phone"
+                  class="form-control custom-input"
+                />
+              </div>
+            </div>
+          }
+
+          <div class="form-row-grid">
+            <label for="purchaseOrderNo">PO Number (Optional)</label>
+            <input
+              id="purchaseOrderNo"
+              type="text"
+              formControlName="purchaseOrderNo"
+              class="form-control custom-input"
+            />
+          </div>
+
+          <div class="form-row-grid textarea-row">
+            <label for="orderNotes">Order Notes (Optional)</label>
+            <textarea
+              id="orderNotes"
+              formControlName="orderNotes"
+              rows="5"
+              class="form-control custom-input"
+            ></textarea>
+          </div>
+
+          <div class="choice-section">
+            <h3>Select Delivery Options</h3>
+            <label>
+              <input type="radio" value="Pick up from warehouse" formControlName="deliveryOption" />
+              Pick up from warehouse
+            </label>
+            <label>
+              <input type="radio" value="Delivery" formControlName="deliveryOption" />
+              Delivery
+            </label>
+          </div>
+
+          <div class="choice-section">
+            <h3>Select Payment Options</h3>
+            <label>
+              <input type="radio" value="Debit/Credit Card" formControlName="paymentMethod" />
+              Debit/Credit Card
+            </label>
+            <label>
+              <input type="radio" value="Bank Transfer" formControlName="paymentMethod" />
+              Bank Transfer
+            </label>
+            <label>
+              <input type="radio" value="Account Credit" formControlName="paymentMethod" />
+              Account Credit
+            </label>
+          </div>
+
+          <div class="submit-row">
+            <button type="submit" class="btn confirm-btn">Confirm Order</button>
+          </div>
+
+          <div class="list-ul">
+            <a routerLink="/catalog">Continue Shopping</a>
+            <a routerLink="/cart">Back to Cart</a>
+          </div>
+        </form>
+      </div>
+
+      <div class="col-lg-6 right-shipping">
+        <h2 class="review-title">Order Review</h2>
+
+        @for (item of checkoutItems; track item.id) {
+          <div class="review-item">
+            <div class="review-item-media">
+              <img [src]="item.image" [alt]="item.model" class="img-fluid" />
+              <span class="item-count">{{ item.quantity }}</span>
+            </div>
+
+            <div class="review-item-copy">
+              <h3>{{ item.brand }} <br />{{ item.model }}</h3>
+              <p>
+                <span>Part Number:</span> {{ item.sku }}<br />
+                <span>Size:</span> {{ item.size }}
+              </p>
+            </div>
+
+            <div class="review-item-price">
+              <h4>{{ item.total | currency: 'AED' : 'symbol-narrow' : '1.0-0' }}</h4>
+            </div>
+          </div>
+        }
+
+        <div class="summary-divider"></div>
+
+        <div class="order-details">
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <strong>{{ subtotal() | currency: 'AED' : 'symbol-narrow' : '1.0-0' }}</strong>
+          </div>
+          <div class="summary-row">
+            <span>Shipping</span>
+            <strong>{{ shippingCost() | currency: 'AED' : 'symbol-narrow' : '1.0-0' }}</strong>
+          </div>
+          <div class="summary-row">
+            <span>Tax</span>
+            <strong>{{ tax() | currency: 'AED' : 'symbol-narrow' : '1.0-0' }}</strong>
+          </div>
+
+          <div class="summary-divider"></div>
+
+          <div class="summary-row total">
+            <span>Total</span>
+            <strong>{{ grandTotal() | currency: 'AED' : 'symbol-narrow' : '1.0-0' }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -85,13 +85,21 @@
         <div class="catalog-grid">
           @for (product of products; track product.sku) {
             <article class="catalog-card">
-              <div class="catalog-card-media">
+              <a
+                class="catalog-card-media product-link"
+                [routerLink]="['/product', product.slug]"
+                [attr.aria-label]="'View ' + product.subtitle"
+              >
                 <img [src]="product.image" [alt]="product.subtitle" />
-              </div>
+              </a>
 
               <div class="catalog-card-body">
                 <div class="brand-mark">clockwork tyres</div>
-                <h3>{{ product.subtitle }}</h3>
+                <h3>
+                  <a class="product-link" [routerLink]="['/product', product.slug]">
+                    {{ product.subtitle }}
+                  </a>
+                </h3>
 
                 <dl class="product-specs">
                   <div>
@@ -121,6 +129,10 @@
                   <span class="stock-text">{{ product.stock }} in stock</span>
                   <button type="button" class="btn add-cart-btn">ADD TO CART</button>
                 </div>
+
+                <a class="details-link" [routerLink]="['/product', product.slug]">
+                  View Details
+                </a>
               </div>
             </article>
           }

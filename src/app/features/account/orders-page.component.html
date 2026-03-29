@@ -1,0 +1,186 @@
+@if (!selectedOrder()) {
+  <div class="orders-page">
+    <h4 class="page-title">Search Order By</h4>
+
+    <form [formGroup]="searchForm" (ngSubmit)="applyFilters()" class="search-form">
+      <div class="order-boxes">
+        <div class="custom-label">
+          <div class="form-group mb-0">
+            <input id="searchOrderNumber" type="text" formControlName="orderNumber" placeholder="" />
+            <label for="searchOrderNumber">Search Order</label>
+          </div>
+        </div>
+
+        <div class="custom-label">
+          <div class="form-group mb-0">
+            <input id="dateFrom" type="date" formControlName="dateFrom" />
+            <label for="dateFrom">From</label>
+          </div>
+        </div>
+
+        <div class="custom-label">
+          <div class="form-group mb-0">
+            <input id="dateTo" type="date" formControlName="dateTo" />
+            <label for="dateTo">To</label>
+          </div>
+        </div>
+
+        <div class="custom-label">
+          <div class="form-group mb-0">
+            <label for="orderStatus">Status</label>
+            <select id="orderStatus" class="form-control" formControlName="orderStatus">
+              <option value="">All Order Status</option>
+              <option value="Processing">Processing</option>
+              <option value="Shipped">Shipped</option>
+              <option value="Completed">Completed</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="btn invoice-btn-search w-100">Search Order</button>
+      </div>
+    </form>
+
+    @if (filteredOrders().length) {
+      <div class="dashboard-table table-responsive">
+        <table class="table cart-table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Order No.</th>
+              <th>Supplier</th>
+              <th>Status</th>
+              <th>Tracking No</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (order of filteredOrders(); track order.id) {
+              <tr>
+                <td>{{ order.createdAt | date: 'mediumDate' }}</td>
+                <td>
+                  <button type="button" class="order-number" (click)="viewOrder(order)">
+                    #{{ order.id }}
+                  </button>
+                </td>
+                <td>{{ order.supplier }}</td>
+                <td>
+                  <span [class]="'status-pill ' + statusClass(order.status)">{{ order.status }}</span>
+                </td>
+                <td>{{ order.trackingNumber }}</td>
+                <td>
+                  <button type="button" class="btn invoice-btn w-100" (click)="viewOrder(order)">
+                    View
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <h3 class="empty-orders">No Orders Found</h3>
+    }
+  </div>
+} @else {
+  @let order = selectedOrder();
+  <div class="order-detail-page">
+    <button type="button" class="back-link" (click)="backToList()">
+      <i class="fa fa-long-arrow-left" aria-hidden="true"></i>
+    </button>
+
+    <div class="detail-header">
+      <h5>Order Number: {{ order?.id }}</h5>
+      <h5>Order Date: {{ order?.createdAt | date: 'mediumDate' }}</h5>
+    </div>
+
+    <div class="row address-grid">
+      <div class="col-md-4">
+        <p>
+          <span class="bold">Delivery For:</span><br />
+          {{ order?.shippingAddress?.name }}<br />
+          {{ order?.shippingAddress?.phone }}
+        </p>
+      </div>
+      <div class="col-md-4">
+        <p>
+          <span class="bold">Shipping Address:</span><br />
+          {{ order?.shippingAddress?.address }}<br />
+          {{ order?.shippingAddress?.city }}, {{ order?.shippingAddress?.country }}<br />
+          {{ order?.shippingAddress?.phone }}
+        </p>
+      </div>
+      <div class="col-md-4">
+        <p>
+          <span class="bold">Billing Address:</span><br />
+          {{ order?.billing?.address }}<br />
+          {{ order?.billing?.city }}, {{ order?.billing?.country }}<br />
+          {{ order?.billing?.phone }}
+        </p>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table cart-table table-bordered">
+        <thead>
+          <tr class="bg-row">
+            <th>Product</th>
+            <th>Description</th>
+            <th>Quantity</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (item of order?.items ?? []; track item.id) {
+            <tr>
+              <td class="image-cell">
+                <img [src]="item.image" [alt]="item.name" class="img-fluid" />
+              </td>
+              <td>
+                <h2>{{ item.name }}</h2>
+                <h3><span>Part Number</span> {{ item.sku }}</h3>
+                <h3><span>Size</span> {{ item.size }}</h3>
+              </td>
+              <td>{{ item.quantity }}</td>
+              <td>{{ item.price | currency: 'AED' : 'symbol-narrow' : '1.0-0' }}</td>
+            </tr>
+          }
+
+          <tr>
+            <td colspan="4" class="totals-cell">
+              Sub Total:
+              {{ (order?.subtotal ?? 0) | currency: 'AED' : 'symbol-narrow' : '1.0-0' }}
+            </td>
+          </tr>
+          <tr>
+            <td colspan="4" class="totals-cell">
+              Shipping:
+              {{ (order?.shipping ?? 0) | currency: 'AED' : 'symbol-narrow' : '1.0-0' }}
+            </td>
+          </tr>
+          <tr>
+            <td colspan="4" class="totals-cell">
+              VAT:
+              {{ (order?.vat ?? 0) | currency: 'AED' : 'symbol-narrow' : '1.0-0' }}
+            </td>
+          </tr>
+          <tr>
+            <td colspan="4" class="totals-cell total">
+              Total:
+              {{ (order?.total ?? 0) | currency: 'AED' : 'symbol-narrow' : '1.0-0' }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="status-footer">
+      Status:
+      <span [class]="'status-pill ' + statusClass(order?.status ?? 'Processing')">
+        {{ order?.status }}
+      </span>
+    </p>
+  </div>
+}
