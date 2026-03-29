@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { CatalogCategoryService } from '../../core/catalog-categories';
 import { FitmentService } from '../../core/fitment';
 import { StorefrontDataService } from '../../core/storefront-data';
+import { buildCatalogQueryParams } from '../../core/storefront-routes';
 
 @Component({
   selector: 'app-catalog-page',
@@ -38,14 +39,6 @@ export class CatalogPageComponent {
     return summary.length ? summary : [this.activeCategory().label];
   });
   protected readonly productQueryParams = computed(() => {
-    const params: Record<string, string> = {
-      fitmentMode: this.fitment.searchMode()
-    };
-
-    if (this.activeCategory().id !== 'tyres') {
-      params['category'] = this.activeCategory().id;
-    }
-
-    return params;
+    return buildCatalogQueryParams(this.activeCategory().id, this.fitment.searchMode());
   });
 }

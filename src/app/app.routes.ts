@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { StorefrontLayoutComponent } from './core/layout/storefront-layout.component';
+import { STOREFRONT_PATHS } from './core/storefront-routes';
 
 export const routes: Routes = [
   {
@@ -17,24 +18,24 @@ export const routes: Routes = [
         }
       },
       {
-        path: 'home',
+        path: STOREFRONT_PATHS.homeAlias,
         pathMatch: 'full',
-        redirectTo: ''
+        redirectTo: STOREFRONT_PATHS.home
       },
       {
-        path: 'feature',
+        path: STOREFRONT_PATHS.featureAlias,
         pathMatch: 'full',
-        redirectTo: ''
+        redirectTo: STOREFRONT_PATHS.home
       },
       {
-        path: 'catalog',
+        path: STOREFRONT_PATHS.catalog,
         loadComponent: () =>
           import('./features/catalog/catalog-page.component').then(
             (m) => m.CatalogPageComponent
           )
       },
       {
-        path: 'tyres',
+        path: STOREFRONT_PATHS.tyres,
         loadComponent: () =>
           import('./features/catalog/catalog-page.component').then(
             (m) => m.CatalogPageComponent
@@ -44,7 +45,7 @@ export const routes: Routes = [
         }
       },
       {
-        path: 'wheels',
+        path: STOREFRONT_PATHS.wheels,
         loadComponent: () =>
           import('./features/catalog/catalog-page.component').then(
             (m) => m.CatalogPageComponent
@@ -54,7 +55,7 @@ export const routes: Routes = [
         }
       },
       {
-        path: 'search-by-size',
+        path: STOREFRONT_PATHS.searchBySize,
         loadComponent: () =>
           import('./features/catalog/catalog-page.component').then(
             (m) => m.CatalogPageComponent
@@ -64,7 +65,7 @@ export const routes: Routes = [
         }
       },
       {
-        path: 'search-by-vehicle',
+        path: STOREFRONT_PATHS.searchByVehicle,
         loadComponent: () =>
           import('./features/catalog/catalog-page.component').then(
             (m) => m.CatalogPageComponent
@@ -74,37 +75,37 @@ export const routes: Routes = [
         }
       },
       {
-        path: 'serchvehicle',
-        redirectTo: 'search-by-vehicle'
+        path: STOREFRONT_PATHS.legacySearchByVehicle,
+        redirectTo: STOREFRONT_PATHS.searchByVehicle
       },
       {
-        path: 'product/:sku',
+        path: `${STOREFRONT_PATHS.product}/:sku`,
         loadComponent: () =>
           import('./features/catalog/product-detail-page.component').then(
             (m) => m.ProductDetailPageComponent
           )
       },
       {
-        path: 'cart',
+        path: STOREFRONT_PATHS.cart,
         loadComponent: () =>
           import('./features/cart/cart-page.component').then(
             (m) => m.CartPageComponent
           )
       },
       {
-        path: 'cart/checkout',
+        path: STOREFRONT_PATHS.checkout,
         loadComponent: () =>
           import('./features/cart/checkout-page.component').then(
             (m) => m.CheckoutPageComponent
           )
       },
       {
-        path: 'cart/account',
+        path: STOREFRONT_PATHS.cartAccount,
         pathMatch: 'full',
-        redirectTo: '/login'
+        redirectTo: `/${STOREFRONT_PATHS.login}`
       },
       {
-        path: 'account',
+        path: STOREFRONT_PATHS.account,
         loadComponent: () =>
           import('./features/account/account-shell.component').then(
             (m) => m.AccountShellComponent
@@ -113,24 +114,24 @@ export const routes: Routes = [
           {
             path: '',
             pathMatch: 'full',
-            redirectTo: 'profile'
+            redirectTo: STOREFRONT_PATHS.accountProfile
           },
           {
-            path: 'profile',
+            path: STOREFRONT_PATHS.accountProfile,
             loadComponent: () =>
               import('./features/account/profile-page.component').then(
                 (m) => m.ProfilePageComponent
               )
           },
           {
-            path: 'addresses',
+            path: STOREFRONT_PATHS.accountAddresses,
             loadComponent: () =>
               import('./features/account/addresses-page.component').then(
                 (m) => m.AddressesPageComponent
               )
           },
           {
-            path: 'orders',
+            path: STOREFRONT_PATHS.accountOrders,
             loadComponent: () =>
               import('./features/account/orders-page.component').then(
                 (m) => m.OrdersPageComponent
@@ -139,29 +140,29 @@ export const routes: Routes = [
         ]
       },
       {
-        path: 'my-account',
+        path: STOREFRONT_PATHS.myAccount,
         pathMatch: 'full',
-        redirectTo: 'account/profile'
+        redirectTo: `${STOREFRONT_PATHS.account}/${STOREFRONT_PATHS.accountProfile}`
       },
       {
-        path: 'my-account/my-profile',
+        path: STOREFRONT_PATHS.myProfile,
         pathMatch: 'full',
-        redirectTo: 'account/profile'
+        redirectTo: `${STOREFRONT_PATHS.account}/${STOREFRONT_PATHS.accountProfile}`
       },
       {
-        path: 'my-account/address-books',
+        path: STOREFRONT_PATHS.myAddresses,
         pathMatch: 'full',
-        redirectTo: 'account/addresses'
+        redirectTo: `${STOREFRONT_PATHS.account}/${STOREFRONT_PATHS.accountAddresses}`
       },
       {
-        path: 'my-account/my-invoices',
+        path: STOREFRONT_PATHS.myInvoices,
         pathMatch: 'full',
-        redirectTo: 'account/orders'
+        redirectTo: `${STOREFRONT_PATHS.account}/${STOREFRONT_PATHS.accountOrders}`
       },
       {
-        path: 'profile-dashboard',
+        path: STOREFRONT_PATHS.profileDashboard,
         pathMatch: 'full',
-        redirectTo: 'account/orders'
+        redirectTo: `${STOREFRONT_PATHS.account}/${STOREFRONT_PATHS.accountOrders}`
       }
     ]
   },

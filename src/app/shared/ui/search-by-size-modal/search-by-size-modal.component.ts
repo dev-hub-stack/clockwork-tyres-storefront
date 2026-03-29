@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CatalogCategoryService } from '../../../core/catalog-categories';
 import { FitmentService, type FitmentSearchFieldDefinition } from '../../../core/fitment';
+import { STOREFRONT_PATHS, buildCatalogQueryParams } from '../../../core/storefront-routes';
 
 type SizeFieldSection = {
   id: 'primary' | 'front' | 'rear';
@@ -120,10 +121,9 @@ export class SearchBySizeModalComponent {
       query
     });
 
-    void this.router.navigate(['/search-by-size'], {
+    void this.router.navigate([`/${STOREFRONT_PATHS.searchBySize}`], {
       queryParams: {
-        ...(this.activeCategory().id !== 'tyres' ? { category: this.activeCategory().id } : {}),
-        fitmentMode: 'search-by-size',
+        ...buildCatalogQueryParams(this.activeCategory().id, 'search-by-size'),
         search_by_size: true,
         ...query
       }

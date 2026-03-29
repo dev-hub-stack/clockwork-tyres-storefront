@@ -1,5 +1,5 @@
 import { Injectable, computed, signal } from '@angular/core';
-import { CatalogCategoryId } from '../catalog-categories/catalog-category.types';
+import { CatalogCategoryId, resolveCatalogCategoryId } from '../catalog-categories';
 import {
   buildFitmentSearchSummary,
   buildFitmentProviderViewModel,
@@ -72,7 +72,7 @@ export class FitmentStore {
     if (context.provider !== undefined) {
       this.setProvider(context.provider);
     } else if (context.category !== undefined) {
-      this.setProvider(context.category === 'wheels' ? 'wheels' : 'tyres');
+      this.setProvider(resolveCatalogCategoryId(context.category));
     }
 
     if (context.mode !== undefined) {

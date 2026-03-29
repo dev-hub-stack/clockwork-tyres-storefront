@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { CatalogCategoryId } from '../catalog-categories';
+import { CatalogCategoryId, resolveCatalogCategoryId } from '../catalog-categories';
 import { FitmentStore } from './fitment.store';
 import {
   FitmentProviderInput,
@@ -28,7 +28,7 @@ export class FitmentService {
 
   setCategory(categoryId: CatalogCategoryId | string | null | undefined): void {
     if (categoryId) {
-      this.store.setProvider(categoryId === 'wheels' ? 'wheels' : 'tyres');
+      this.store.setProvider(resolveCatalogCategoryId(categoryId));
     }
   }
 

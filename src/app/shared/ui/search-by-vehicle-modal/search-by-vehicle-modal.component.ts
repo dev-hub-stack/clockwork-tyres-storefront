@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CatalogCategoryService } from '../../../core/catalog-categories';
 import { FitmentService, type FitmentSearchFieldDefinition } from '../../../core/fitment';
+import { STOREFRONT_PATHS, buildCatalogQueryParams } from '../../../core/storefront-routes';
 
 @Component({
   selector: 'app-search-by-vehicle-modal',
@@ -74,10 +75,9 @@ export class SearchByVehicleModalComponent {
       query
     });
 
-    void this.router.navigate(['/search-by-vehicle'], {
+    void this.router.navigate([`/${STOREFRONT_PATHS.searchByVehicle}`], {
       queryParams: {
-        ...(this.activeCategory().id !== 'tyres' ? { category: this.activeCategory().id } : {}),
-        fitmentMode: 'search-by-vehicle',
+        ...buildCatalogQueryParams(this.activeCategory().id, 'search-by-vehicle'),
         searchByVehicle: true,
         ...query
       }
