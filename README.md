@@ -84,6 +84,7 @@ Feature components should talk to facades and repositories, not directly to `Htt
 - [Setup Prerequisites](docs/setup-prerequisites.md)
 - [Legacy UI Reuse Audit](docs/legacy-clockwork-ui-reuse-audit.md)
 - [Storefront Contract Foundation](docs/STOREFRONT_CONTRACT_FOUNDATION.md)
+- [Storefront Bootstrap](docs/storefront-bootstrap.md)
 - [UX Parity Gaps](docs/UX_PARITY_GAPS.md)
 
 ## Current Status
@@ -97,6 +98,7 @@ Current progress includes:
 - migrated header, login, listing, PDP, cart, checkout, and account shells
 - supplier preview mode gating
 - category-capable storefront foundation with `tyres` active and `wheels` structurally supported
+- session/bootstrap seam for future backend account and category context
 - fitment-aware search state for `search by size` and `search by vehicle`
 - legacy-compatible entry routes such as `/search-by-size`, `/search-by-vehicle`, `/serchvehicle`, and `/wheels`
 

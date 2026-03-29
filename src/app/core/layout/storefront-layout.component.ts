@@ -1,13 +1,13 @@
 import { Component, computed, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { filter, map, startWith } from 'rxjs';
+import { StorefrontBootstrapService } from '../storefront-bootstrap';
 import { ClockworkHeaderComponent } from '../../shared/ui/clockwork-header/clockwork-header.component';
 import { CatalogCategoryService } from '../catalog-categories';
 import { FitmentService } from '../fitment';
 import { StorefrontDataService } from '../storefront-data';
 import { StorefrontModeStore } from '../storefront-mode';
-import { extractFitmentQueryParams, resolveStorefrontRouteContext } from '../storefront-routes';
-import { filter, map, startWith } from 'rxjs';
 
 @Component({
   selector: 'app-storefront-layout',
@@ -21,36 +21,43 @@ export class StorefrontLayoutComponent {
   private readonly router = inject(Router);
   private readonly catalogCategories = inject(CatalogCategoryService);
   private readonly fitment = inject(FitmentService);
+  private readonly storefrontBootstrap = inject(StorefrontBootstrapService);
   private readonly storefrontData = inject(StorefrontDataService);
   private readonly storefrontMode = inject(StorefrontModeStore);
 
-  private readonly routeContext = toSignal(
+  private readonly routeSnapshot = toSignal(
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd),
-      map(() => resolveStorefrontRouteContext(this.route.snapshot)),
-      startWith(resolveStorefrontRouteContext(this.route.snapshot))
+      map(() => this.route.snapshot),
+      startWith(this.route.snapshot)
     ),
-    { initialValue: resolveStorefrontRouteContext(this.route.snapshot) }
+    { initialValue: this.route.snapshot }
   );
 
   protected readonly modeViewModel = this.storefrontMode.viewModel;
   protected readonly activeCategory = this.catalogCategories.activeCategory;
   protected readonly fitmentViewModel = this.fitment.viewModel;
-  protected readonly showStorefrontHeader = computed(() => this.routeContext().showStorefrontHeader);
+  protected readonly showStorefrontHeader = computed(() => {
+    return this.routeSnapshot().data['useStorefrontHeader'] !== false;
+  });
 
   constructor() {
     effect(() => {
-      const nextRouteContext = this.routeContext();
-      this.storefrontMode.setMode(nextRouteContext.storefrontMode);
-      this.storefrontData.setMode(this.storefrontMode.modeId());
+      this.storefrontBootstrap.syncFromSnapshot(this.routeSnapshot());
+    });
 
-      const categoryId = this.catalogCategories.resolveCategoryId(nextRouteContext.category);
-      this.catalogCategories.setCategory(categoryId);
-      this.storefrontData.setCategory(categoryId);
+    effect(() => {
+      const session = this.storefrontBootstrap.session();
+
+      this.storefrontMode.setMode(session.resolved.mode, session.resolved.modeContext);
+      this.storefrontData.setMode(session.resolved.mode);
+
+      this.catalogCategories.setCategory(session.resolved.category);
+      this.storefrontData.setCategory(session.resolved.category);
       this.fitment.setContext({
-        category: categoryId,
-        mode: nextRouteContext.fitmentMode,
-        query: extractFitmentQueryParams(nextRouteContext.query)
+        category: session.resolved.category,
+        mode: session.resolved.fitmentMode,
+        query: session.route.query
       });
     });
   }
