@@ -1,4 +1,4 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   ActivatedRoute,
@@ -18,6 +18,7 @@ type StorefrontRouteContext = {
   category: string | null;
   fitmentMode: string | null;
   storefrontMode: string | null;
+  showStorefrontHeader: boolean;
   query: Record<string, string>;
 };
 
@@ -48,6 +49,7 @@ export class StorefrontLayoutComponent {
   protected readonly modeViewModel = this.storefrontMode.viewModel;
   protected readonly activeCategory = this.catalogCategories.activeCategory;
   protected readonly fitmentViewModel = this.fitment.viewModel;
+  protected readonly showStorefrontHeader = computed(() => this.routeContext().showStorefrontHeader);
 
   constructor() {
     effect(() => {
@@ -86,6 +88,7 @@ export class StorefrontLayoutComponent {
       category: query['category'] ?? categoryFromData,
       fitmentMode: this.resolveFitmentMode(query, fitmentModeFromData),
       storefrontMode: query['mode'] ?? null,
+      showStorefrontHeader: this.getBooleanRouteData(leafSnapshot, 'useStorefrontHeader', true),
       query
     };
   }
@@ -106,6 +109,15 @@ export class StorefrontLayoutComponent {
   ): string | null {
     const value = snapshot.data[key];
     return typeof value === 'string' ? value : null;
+  }
+
+  private getBooleanRouteData(
+    snapshot: ActivatedRouteSnapshot,
+    key: string,
+    fallback: boolean
+  ): boolean {
+    const value = snapshot.data[key];
+    return typeof value === 'boolean' ? value : fallback;
   }
 
   private collectQueryParams(paramMap: ActivatedRouteSnapshot['queryParamMap']): Record<string, string> {

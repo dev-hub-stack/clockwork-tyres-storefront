@@ -2,7 +2,7 @@ import { Component, computed, inject, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CatalogCategoryService } from '../../../core/catalog-categories';
-import { FitmentService } from '../../../core/fitment';
+import { FitmentService, type FitmentSearchFieldDefinition } from '../../../core/fitment';
 
 @Component({
   selector: 'app-search-by-vehicle-modal',
@@ -32,14 +32,15 @@ export class SearchByVehicleModalComponent {
   protected readonly searchFields = computed(() =>
     this.fitment.getSearchFields('search-by-vehicle', this.activeCategory().id)
   );
-  protected readonly formValues: Record<string, string | boolean> = {
-    make: 'Audi',
-    model: '3 Series',
-    year: '2024'
-  };
+  protected readonly formValues: Record<string, string | boolean> = {};
 
   protected getOptions(fieldKey: string): string[] {
     return this.vehicleFieldOptions[fieldKey] ?? [];
+  }
+
+  protected getPlaceholder(field: FitmentSearchFieldDefinition, index: number): string {
+    const prefix = index + 1;
+    return field.placeholder ?? `${prefix} | ${field.label}`;
   }
 
   protected getFieldValue(fieldKey: string): string {

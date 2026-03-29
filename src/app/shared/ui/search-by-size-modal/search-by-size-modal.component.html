@@ -8,61 +8,174 @@
         </button>
       </div>
 
-      <div class="modal-body border-0">
-        <h6>{{ activeCategory().label }} Fitment</h6>
-        <div class="grid-row-box">
-          @for (field of searchFields(); track field.key) {
-            <div class="form-group">
-              @if (field.type === 'select') {
-                <select
-                  class="form-control search-inputs"
-                  [ngModel]="getFieldValue(field.key)"
-                  (ngModelChange)="updateField(field.key, $event)"
-                  [ngModelOptions]="{ standalone: true }"
-                >
-                  <option value="">{{ field.label }}</option>
-                  @for (item of getOptions(field.key); track item) {
-                    <option [value]="item">{{ item }}</option>
+      <form (ngSubmit)="submit()">
+        <div class="modal-body border-0">
+          <h6>{{ getSectionTitle('primary') }}</h6>
+
+          @if (primaryFields().length) {
+            <div class="grid-row-box">
+              @for (field of primaryFields(); track field.key; let index = $index) {
+                <div class="form-group">
+                  @if (field.type === 'select') {
+                    <div class="select-field-shell">
+                      <select
+                        class="form-control search-inputs"
+                        [ngModel]="getFieldValue(field.key)"
+                        (ngModelChange)="updateField(field.key, $event)"
+                        [ngModelOptions]="{ standalone: true }"
+                      >
+                        <option value="">{{ getPlaceholder(field, index) }}</option>
+                        @for (item of getOptions(field.key); track item) {
+                          <option [value]="item">{{ item }}</option>
+                        }
+                      </select>
+                      <i class="fa fa-sort-desc" aria-hidden="true"></i>
+                    </div>
+                  } @else if (field.type === 'toggle') {
+                    <label class="toggle-field">
+                      <input
+                        type="checkbox"
+                        [ngModel]="getToggleValue(field.key)"
+                        (ngModelChange)="updateField(field.key, $event)"
+                        [ngModelOptions]="{ standalone: true }"
+                      />
+                      <span>{{ field.label }}</span>
+                    </label>
+                  } @else {
+                    <input
+                      class="form-control search-inputs"
+                      [type]="field.type === 'number' ? 'number' : 'text'"
+                      [placeholder]="getPlaceholder(field, index)"
+                      [ngModel]="getFieldValue(field.key)"
+                      (ngModelChange)="updateField(field.key, $event)"
+                      [ngModelOptions]="{ standalone: true }"
+                    />
                   }
-                </select>
-              } @else if (field.type === 'toggle') {
-                <label class="toggle-field">
-                  <input
-                    type="checkbox"
-                    [ngModel]="getToggleValue(field.key)"
-                    (ngModelChange)="updateField(field.key, $event)"
-                    [ngModelOptions]="{ standalone: true }"
-                  />
-                  <span>{{ field.label }}</span>
-                </label>
-              } @else {
-                <input
-                  class="form-control search-inputs"
-                  [type]="field.type === 'number' ? 'number' : 'text'"
-                  [placeholder]="field.label"
-                  [ngModel]="getFieldValue(field.key)"
-                  (ngModelChange)="updateField(field.key, $event)"
-                  [ngModelOptions]="{ standalone: true }"
-                />
+                </div>
               }
             </div>
           }
+
+          @if (frontFields().length) {
+            <h6 class="mt-4">{{ getSectionTitle('front') }}</h6>
+            <div class="grid-row-box">
+              @for (field of frontFields(); track field.key; let index = $index) {
+                <div class="form-group">
+                  @if (field.type === 'select') {
+                    <div class="select-field-shell">
+                      <select
+                        class="form-control search-inputs"
+                        [ngModel]="getFieldValue(field.key)"
+                        (ngModelChange)="updateField(field.key, $event)"
+                        [ngModelOptions]="{ standalone: true }"
+                      >
+                        <option value="">{{ getPlaceholder(field, index) }}</option>
+                        @for (item of getOptions(field.key); track item) {
+                          <option [value]="item">{{ item }}</option>
+                        }
+                      </select>
+                      <i class="fa fa-sort-desc" aria-hidden="true"></i>
+                    </div>
+                  } @else if (field.type === 'toggle') {
+                    <label class="toggle-field">
+                      <input
+                        type="checkbox"
+                        [ngModel]="getToggleValue(field.key)"
+                        (ngModelChange)="updateField(field.key, $event)"
+                        [ngModelOptions]="{ standalone: true }"
+                      />
+                      <span>{{ field.label }}</span>
+                    </label>
+                  } @else {
+                    <input
+                      class="form-control search-inputs"
+                      [type]="field.type === 'number' ? 'number' : 'text'"
+                      [placeholder]="getPlaceholder(field, index)"
+                      [ngModel]="getFieldValue(field.key)"
+                      (ngModelChange)="updateField(field.key, $event)"
+                      [ngModelOptions]="{ standalone: true }"
+                    />
+                  }
+                </div>
+              }
+            </div>
+          }
+
+          @if (rearFields().length) {
+            <h6 class="mt-4">
+              <a
+                class="toggle-link"
+                role="button"
+                (click)="toggleRearSizeFields()"
+                [attr.aria-expanded]="showRearSizeFields()"
+              >
+                <i
+                  class="fa"
+                  [class.fa-plus-circle]="!showRearSizeFields()"
+                  [class.fa-minus-circle]="showRearSizeFields()"
+                  aria-hidden="true"
+                ></i>
+                {{ showRearSizeFields() ? 'Hide rear wheel size' : 'Add different rear wheel size?' }}
+              </a>
+            </h6>
+
+            @if (showRearSizeFields()) {
+              <div id="show-div-details">
+                <h6>{{ getSectionTitle('rear') }}</h6>
+                <div class="grid-row-box">
+                  @for (field of rearFields(); track field.key; let index = $index) {
+                    <div class="form-group">
+                      @if (field.type === 'select') {
+                        <div class="select-field-shell">
+                          <select
+                            class="form-control search-inputs"
+                            [ngModel]="getFieldValue(field.key)"
+                            (ngModelChange)="updateField(field.key, $event)"
+                            [ngModelOptions]="{ standalone: true }"
+                          >
+                            <option value="">{{ getPlaceholder(field, index) }}</option>
+                            @for (item of getOptions(field.key); track item) {
+                              <option [value]="item">{{ item }}</option>
+                            }
+                          </select>
+                          <i class="fa fa-sort-desc" aria-hidden="true"></i>
+                        </div>
+                      } @else if (field.type === 'toggle') {
+                        <label class="toggle-field">
+                          <input
+                            type="checkbox"
+                            [ngModel]="getToggleValue(field.key)"
+                            (ngModelChange)="updateField(field.key, $event)"
+                            [ngModelOptions]="{ standalone: true }"
+                          />
+                          <span>{{ field.label }}</span>
+                        </label>
+                      } @else {
+                        <input
+                          class="form-control search-inputs"
+                          [type]="field.type === 'number' ? 'number' : 'text'"
+                          [placeholder]="getPlaceholder(field, index)"
+                          [ngModel]="getFieldValue(field.key)"
+                          (ngModelChange)="updateField(field.key, $event)"
+                          [ngModelOptions]="{ standalone: true }"
+                        />
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          }
+
+          <div class="modal-footnote">
+            The visual shell stays close to legacy Clockwork, while the field set adapts to the active product category.
+          </div>
         </div>
 
-        <div class="modal-footnote">
-          The visual shell stays close to legacy Clockwork, while the field set adapts to the active product category.
+        <div class="modal-footer border-0">
+          <button type="submit" class="btn btn-02 f-large addcart new-btn bg-black w-auto go-btn-pad">Go</button>
         </div>
-      </div>
-
-      <div class="modal-footer border-0">
-        <button
-          type="button"
-          class="btn btn-02 f-large addcart new-btn bg-black w-auto go-btn-pad"
-          (click)="submit()"
-        >
-          Go
-        </button>
-      </div>
+      </form>
     </div>
   </div>
 </div>

@@ -1,0 +1,120 @@
+<div class="home-shell">
+  <header class="landing-header">
+    <div class="landing-header__top">
+      <div class="container landing-header__top-inner">
+        <div class="landing-header__switch">
+          <a routerLink="/" class="is-active">For Retailers</a>
+          <span>For Suppliers</span>
+        </div>
+
+        <a routerLink="/login" class="landing-header__login">Retailer Login</a>
+      </div>
+    </div>
+
+    <div class="landing-header__main">
+      <div class="container landing-header__main-inner">
+        <a routerLink="/" class="landing-header__brand" aria-label="Clockwork Tyres home">
+          <img src="/assets/img/new-logo.png" alt="Clockwork Tyres" />
+        </a>
+
+        <nav class="landing-header__nav" aria-label="Landing navigation">
+          <a href="#overview">Overview</a>
+          <a href="#search">Search</a>
+          <a href="#platform">Platform</a>
+        </nav>
+
+        <div class="landing-header__actions">
+          <a routerLink="/catalog" class="btn btn--header-ghost">Browse catalog</a>
+          <a routerLink="/login" class="btn btn--header-primary">Get Started</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero__backdrop"></div>
+    <div class="container hero__grid">
+      <div class="hero__copy">
+        <span class="hero__eyebrow">Clockwork Tyres</span>
+        <h1>Tyre-first commerce with the same Clockwork energy.</h1>
+        <p class="hero__lede">
+          A familiar, inventory-led storefront for retailers and suppliers. Search by vehicle, search by size, and
+          move through a merged stock view that keeps your own stock first and approved supplier stock behind it.
+        </p>
+
+        <div class="hero__actions">
+          <a routerLink="/search-by-vehicle" class="btn btn--primary">Search by vehicle</a>
+          <a routerLink="/search-by-size" class="btn btn--secondary">Search by size</a>
+          <a routerLink="/catalog" class="btn btn--ghost">Browse catalog</a>
+        </div>
+
+        <div class="hero__chips">
+          <span>Own stock first</span>
+          <span>Supplier stock merged</span>
+          <span>Tyre-first launch</span>
+          <span>Wheels later</span>
+        </div>
+      </div>
+
+      <div class="hero__visual">
+        <div class="hero__frame">
+          <img src="/assets/img/banner1.png" alt="Clockwork Tyres landing visual" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="highlights">
+    <div class="container">
+      <div class="highlights__grid">
+        @for (item of highlights; track item.label) {
+          <article class="highlight-card">
+            <span class="highlight-card__label">{{ item.label }}</span>
+            <p class="highlight-card__value">{{ item.value }}</p>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  @for (section of sections; track section.title) {
+    <section class="story" [id]="section.id" [class.story--reverse]="section.reverse">
+      <div class="container">
+        <div class="story__grid">
+          <div class="story__copy">
+            <span class="story__eyebrow">{{ section.eyebrow }}</span>
+            <h2>{{ section.title }}</h2>
+            <p>{{ section.copy }}</p>
+            <ul>
+              @for (bullet of section.bullets; track bullet) {
+                <li>{{ bullet }}</li>
+              }
+            </ul>
+            <a [routerLink]="section.ctaLink" class="story__cta">{{ section.ctaLabel }}</a>
+          </div>
+
+          <div class="story__visual">
+            <div class="story__frame">
+              <img [src]="section.image" [alt]="section.imageAlt" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  }
+
+  <section class="footer-cta">
+    <div class="container">
+      <div class="footer-cta__card">
+        <div>
+          <span>Ready for launch</span>
+          <h2>Start with tyres, keep the Clockwork storefront feel, and leave the wheel seam ready for later.</h2>
+        </div>
+        <div class="footer-cta__actions">
+          <a routerLink="/cart" class="btn btn--primary">View cart</a>
+          <a routerLink="/account/orders" class="btn btn--ghost">Orders</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

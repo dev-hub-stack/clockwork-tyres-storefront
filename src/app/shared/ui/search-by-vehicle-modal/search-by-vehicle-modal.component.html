@@ -8,61 +8,63 @@
         </button>
       </div>
 
-      <div class="modal-body border-0">
-        <div class="grid-row-box grid-row-box2">
-          @for (field of searchFields(); track field.key) {
-            <div class="form-group">
-              @if (field.type === 'toggle') {
-                <label class="toggle-field">
+      <form (ngSubmit)="submit()">
+        <div class="modal-body border-0">
+          <div class="grid-row-box grid-row-box2">
+            @for (field of searchFields(); track field.key; let index = $index) {
+              <div class="form-group">
+                @if (field.type === 'toggle') {
+                  <label class="toggle-field">
+                    <input
+                      type="checkbox"
+                      [ngModel]="getToggleValue(field.key)"
+                      (ngModelChange)="updateField(field.key, $event)"
+                      [ngModelOptions]="{ standalone: true }"
+                    />
+                    <span>{{ field.label }}</span>
+                  </label>
+                } @else if (field.type === 'select') {
+                  <div class="select-field-shell">
+                    <select
+                      class="form-control search-inputs"
+                      [ngModel]="getFieldValue(field.key)"
+                      (ngModelChange)="updateField(field.key, $event)"
+                      [ngModelOptions]="{ standalone: true }"
+                    >
+                      <option value="">{{ getPlaceholder(field, index) }}</option>
+                      @for (item of getOptions(field.key); track item) {
+                        <option [value]="item">{{ item }}</option>
+                      }
+                    </select>
+                    <i class="fa fa-sort-desc" aria-hidden="true"></i>
+                  </div>
+                } @else {
                   <input
-                    type="checkbox"
-                    [ngModel]="getToggleValue(field.key)"
+                    class="form-control search-inputs"
+                    [type]="field.type === 'number' ? 'number' : 'text'"
+                    [placeholder]="getPlaceholder(field, index)"
+                    [ngModel]="getFieldValue(field.key)"
                     (ngModelChange)="updateField(field.key, $event)"
                     [ngModelOptions]="{ standalone: true }"
                   />
-                  <span>{{ field.label }}</span>
-                </label>
-              } @else if (field.type === 'select') {
-                <select
-                  class="form-control search-inputs"
-                  [ngModel]="getFieldValue(field.key)"
-                  (ngModelChange)="updateField(field.key, $event)"
-                  [ngModelOptions]="{ standalone: true }"
-                >
-                  <option value="">{{ field.label }}</option>
-                  @for (item of getOptions(field.key); track item) {
-                    <option [value]="item">{{ item }}</option>
-                  }
-                </select>
-                <i class="fa fa-sort-desc"></i>
-              } @else {
-                <input
-                  class="form-control search-inputs"
-                  [type]="field.type === 'number' ? 'number' : 'text'"
-                  [placeholder]="field.label"
-                  [ngModel]="getFieldValue(field.key)"
-                  (ngModelChange)="updateField(field.key, $event)"
-                  [ngModelOptions]="{ standalone: true }"
-                />
-              }
-            </div>
-          }
+                }
+              </div>
+            }
 
-          <div class="form-group">
-            <button
-              type="button"
-              class="btn btn-02 f-large addcart new-btn bg-black w-auto go-btn-pad"
-              (click)="submit()"
-            >
-              Go
-            </button>
+            <div class="form-group">
+              <button type="submit" class="btn btn-02 f-large addcart new-btn bg-black w-auto go-btn-pad">
+                Go
+              </button>
+            </div>
+          </div>
+
+          <div class="modal-footnote">
+            The vehicle-search flow keeps the legacy Clockwork interaction pattern while adapting fields per category.
           </div>
         </div>
 
-        <div class="modal-footnote">
-          The vehicle-search flow keeps the legacy Clockwork interaction pattern while adapting fields per category.
-        </div>
-      </div>
+        <div class="modal-footer border-0"></div>
+      </form>
     </div>
   </div>
 </div>

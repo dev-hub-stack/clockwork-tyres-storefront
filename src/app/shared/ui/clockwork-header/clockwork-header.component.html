@@ -1,40 +1,40 @@
 <section class="desktop-navbar">
-  <div class="logo-bar position-relative">
-    <div class="container-fluid">
-      <div class="row new-mobile-setting">
-        <div class="col-5 col-md-4 col-xl-3 logo-res">
-          <a routerLink="/catalog" [queryParams]="catalogQueryParams()" class="logoimag">
-            <img src="/assets/img/new-logo.png" class="img-fluid header-logo" alt="Clockwork" />
-          </a>
-        </div>
+  <div class="logo-bar">
+    <div class="container-fluid header-shell">
+      <div class="brand-row">
+        <a routerLink="/catalog" [queryParams]="catalogQueryParams()" class="logoimag" aria-label="Clockwork home">
+          <img src="/assets/img/new-logo.png" class="img-fluid header-logo" alt="Clockwork" />
+        </a>
 
-        <nav class="navbar navbar-expand-md navbar-light justify-content-center p-md-0 mr-md-auto">
-          <div class="justify-content-center">
-            <div class="navbar-nav">
-              <ul class="list-inline text-center d-flex mb-0 create-gap">
-                <li class="list-inline-item dropdown">
-                  <a class="cp" routerLink="/catalog" [queryParams]="catalogQueryParams()">Products</a>
-                </li>
-                <li class="list-inline-item">
-                  <span class="cp nav-label">Suppliers</span>
-                </li>
-                <li class="list-inline-item">
-                  <span class="category-pill">{{ activeCategory().label }}</span>
-                </li>
-              </ul>
-            </div>
-          </div>
+        <nav class="primary-nav navbar navbar-expand-md navbar-light p-0" aria-label="Primary navigation">
+          <ul class="list-inline text-center d-flex mb-0 create-gap">
+            <li class="list-inline-item dropdown">
+              <a class="cp nav-link-item" routerLink="/catalog" [queryParams]="catalogQueryParams()">Products</a>
+            </li>
+            <li class="list-inline-item">
+              <span class="cp nav-link-item nav-label">Suppliers</span>
+            </li>
+            <li class="list-inline-item">
+              <span class="category-pill">{{ activeCategory().label }}</span>
+            </li>
+          </ul>
         </nav>
 
-        <div class="col-4 col-md-3 col-xl-3 incld-btnhvr d-flex align-items-center justify-content-end">
-          <a routerLink="/account/profile" class="dropdown-toggle">
-            <span class="account-text">My Account</span>
+        <div class="incld-btnhvr d-flex align-items-center justify-content-end">
+          <a routerLink="/account/profile" class="account-link">
+            <span class="account-meta">
+              <span class="account-text">My Account</span>
+              <small>Dashboard</small>
+            </span>
           </a>
 
           @if (cartEnabled()) {
             <a routerLink="/cart" class="cart-icon" aria-label="Cart">
-              <i class="fa fa-shopping-cart icon"></i>
-              <small class="cart-count">{{ cartCount() }}</small>
+              <span class="cart-icon-plate">
+                <i class="fa fa-shopping-cart icon" aria-hidden="true"></i>
+                <small class="cart-count">{{ cartCount() }}</small>
+              </span>
+              <span class="cart-text">Cart</span>
             </a>
           } @else {
             <span class="preview-pill">{{ modeViewModel().label }}</span>
@@ -45,33 +45,33 @@
   </div>
 
   <div class="navbar-section">
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-sm-6 col-md-6 col-lg-3">
-          <button class="w-100 h-100 br-25 bg-white text-black" type="button" (click)="showVehicleModal.set(true)">
-            Search {{ activeCategory().label }} by Vehicle
-          </button>
-        </div>
-        <div class="col-sm-6 col-md-6 col-lg-3">
-          <button class="w-100 h-100 br-25 bg-white text-black" type="button" (click)="showSizeModal.set(true)">
-            Search {{ activeCategory().label }} by Size
-          </button>
-        </div>
-        <div class="col-sm-12 col-md-12 col-lg-6">
-          <form class="search-form">
-            <div class="header-search d-flex">
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Search by brand, model, part number..."
-                aria-label="Search catalog"
-              />
-              <button class="btn btn-search" type="button" aria-label="Search">
-                <img src="/assets/img/black-search-icon.svg" alt="" />
-              </button>
-            </div>
-          </form>
-        </div>
+    <div class="container-fluid header-shell">
+      <div class="search-grid">
+        <button class="search-cta search-vehicle" type="button" (click)="showVehicleModal.set(true)">
+          <span class="search-kicker">Fitment</span>
+          <span class="search-title">Search {{ activeCategory().label }} by Vehicle</span>
+          <span class="search-subtitle">Match by make, model and year</span>
+        </button>
+
+        <button class="search-cta search-size" type="button" (click)="showSizeModal.set(true)">
+          <span class="search-kicker">Fitment</span>
+          <span class="search-title">Search {{ activeCategory().label }} by Size</span>
+          <span class="search-subtitle">Filter by the exact fit you need</span>
+        </button>
+
+        <form class="search-form">
+          <div class="header-search d-flex">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Search by brand, model, part number..."
+              aria-label="Search catalog"
+            />
+            <button class="btn btn-search" type="button" aria-label="Search">
+              <img src="/assets/img/black-search-icon.svg" alt="" />
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>

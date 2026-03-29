@@ -8,8 +8,18 @@ export const routes: Routes = [
     children: [
       {
         path: '',
+        loadComponent: () =>
+          import('./features/home/home-shell.component').then(
+            (m) => m.HomeShellComponent
+          ),
+        data: {
+          useStorefrontHeader: false
+        }
+      },
+      {
+        path: 'home',
         pathMatch: 'full',
-        redirectTo: 'catalog'
+        redirectTo: ''
       },
       {
         path: 'catalog',

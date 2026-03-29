@@ -1,4 +1,6 @@
-<app-clockwork-header></app-clockwork-header>
+@if (showStorefrontHeader()) {
+  <app-clockwork-header></app-clockwork-header>
+}
 
 @if (!activeCategory().enabled) {
   <section class="category-banner">

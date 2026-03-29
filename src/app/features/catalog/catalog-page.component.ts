@@ -20,6 +20,18 @@ export class CatalogPageComponent {
   protected readonly activeCategory = this.catalogCategories.activeCategory;
   protected readonly products = this.storefrontData.catalog;
   protected readonly cartEnabled = this.storefrontData.cartEnabled;
+  protected readonly productCount = computed(() => this.products().length);
+  protected readonly catalogSummary = computed(() => {
+    if (!this.activeCategory().enabled) {
+      return 'Category structured for launch, but not enabled yet.';
+    }
+
+    return 'Merged own stock first, then approved supplier stock.';
+  });
+  protected readonly brandSuggestions = computed(() => {
+    const brands = new Set(this.products().map(product => product.brand));
+    return Array.from(brands).slice(0, 6);
+  });
   protected readonly categoryDisabled = computed(() => !this.activeCategory().enabled);
   protected readonly searchSummaryChips = computed(() => {
     const summary = this.fitment.searchSummary();

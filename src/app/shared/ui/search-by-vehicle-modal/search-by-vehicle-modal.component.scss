@@ -1,5 +1,9 @@
 @use '../../../../assets/css/styles/variables' as *;
 
+:host {
+  display: block;
+}
+
 .legacy-modal-backdrop {
   position: fixed;
   inset: 0;
@@ -14,15 +18,40 @@
 .modal-dialog {
   width: min(1200px, 100%);
   max-width: 1200px;
+  margin: 0;
 }
 
 .vehicle-modal-content {
-  border-radius: 28px;
-  overflow: hidden;
   border: 0;
+  border-radius: 28px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+}
+
+.modal-header,
+.modal-body,
+.modal-footer {
+  padding-inline: 32px;
+}
+
+.modal-header {
+  padding-top: 28px;
+  padding-bottom: 12px;
+}
+
+.modal-body {
+  padding-top: 0;
+  padding-bottom: 8px;
+}
+
+.modal-footer {
+  justify-content: flex-end;
+  padding-top: 0;
+  padding-bottom: 28px;
 }
 
 .modal-title {
+  color: #111;
   font-size: 2rem;
   font-family: $primaryfont;
   font-weight: 700;
@@ -34,24 +63,36 @@
   gap: 16px;
 }
 
+.select-field-shell {
+  position: relative;
+}
+
 .form-group {
   margin-bottom: 0;
-  position: relative;
+  min-width: 0;
 }
 
 .search-inputs {
   border: 2px solid #000;
   border-radius: 14px;
-  height: 56px;
+  height: 58px;
   color: #111;
   font-family: $primaryfont;
+  font-size: 15px;
   font-weight: 600;
+  padding-inline: 18px 44px;
+  width: 100%;
 }
 
-.form-group .fa {
+.search-inputs:focus {
+  border-color: #000;
+  box-shadow: none;
+}
+
+.select-field-shell .fa {
   position: absolute;
   right: 16px;
-  top: 14px;
+  top: 16px;
   pointer-events: none;
 }
 
@@ -61,11 +102,16 @@
   border-radius: 14px;
   display: flex;
   gap: 12px;
-  height: 56px;
+  height: 58px;
   margin: 0;
   padding: 0 18px;
   font-family: $primaryfont;
+  font-size: 15px;
   font-weight: 600;
+}
+
+.toggle-field input {
+  margin: 0;
 }
 
 .go-btn-pad {
@@ -80,9 +126,31 @@
   margin-top: 20px;
   color: #444;
   font-family: $primaryfont;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.close {
+  background: transparent;
+  border: 0;
+  color: #111;
+  font-size: 2rem;
+  line-height: 1;
+  opacity: 1;
+  padding: 0;
 }
 
 @media (max-width: 991px) {
+  .legacy-modal-backdrop {
+    padding: 16px;
+  }
+
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding-inline: 24px;
+  }
+
   .grid-row-box2 {
     grid-template-columns: 1fr 1fr;
   }
@@ -91,6 +159,12 @@
 @media (max-width: 575px) {
   .legacy-modal-backdrop {
     padding: 12px;
+  }
+
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding-inline: 18px;
   }
 
   .grid-row-box2 {

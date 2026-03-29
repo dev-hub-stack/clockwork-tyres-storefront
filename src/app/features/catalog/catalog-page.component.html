@@ -1,96 +1,159 @@
-<section class="catalog-toolbar">
-  <div class="container-fluid mt-3">
-    <div class="row">
-      <div class="col-md-5">
+<section class="catalog-shell">
+  <div class="container-fluid">
+    <header class="catalog-toolbar">
+      <div class="catalog-toolbar-left">
         <div class="catalog-chip">{{ activeCategory().label }}</div>
-      </div>
-      <div class="col-md-7">
-        <div class="d-flex justify-content-md-end sort-by-responsive toolbar-right">
-          <ul class="list-inline mb-0 d-inline-flex align-items-center d-flex">
-            <li class="list-inline-item f-small ml-xl-3 text-uppercase">View</li>
-            <li class="list-inline-item">
-              <div class="form-group mb-0">
-                <select class="form-control dr-list new-select-box">
-                  <option>18 items per page</option>
-                </select>
-              </div>
-            </li>
-            <li class="list-inline-item f-small ml-xl-4 text-uppercase">Sort By:</li>
-            <li class="list-inline-item">
-              <div class="form-group mb-0">
-                <select class="form-control dr-list new-select-box">
-                  <option>Price, low to high</option>
-                </select>
-              </div>
-            </li>
-            <li class="ml-xl-4">
-              <img src="/assets/img/download-icon.svg" alt="Download" width="28" />
-            </li>
-          </ul>
+        <div class="catalog-toolbar-copy">
+          <h1>{{ activeCategory().label }} catalogue</h1>
+          <p>{{ catalogSummary() }}</p>
         </div>
       </div>
-    </div>
-  </div>
-</section>
 
-<section class="catalog-results mt-3 mb-5">
-  <div class="container-fluid">
-    <div class="row">
-      <aside class="col-lg-3">
+      <div class="catalog-toolbar-right">
+        <div class="toolbar-control">
+          <span>View</span>
+          <select class="form-control dr-list new-select-box" aria-label="Items per page">
+            <option>18 items per page</option>
+            <option>30 items per page</option>
+            <option>50 items per page</option>
+          </select>
+        </div>
+
+        <div class="toolbar-control">
+          <span>Sort By:</span>
+          <select class="form-control dr-list new-select-box" aria-label="Sort catalog">
+            <option>Price, low to high</option>
+            <option>Price, high to low</option>
+            <option>Brand</option>
+          </select>
+        </div>
+
+        <button type="button" class="icon-action" aria-label="Download listing">
+          <img src="/assets/img/download-icon.svg" alt="" width="24" />
+        </button>
+      </div>
+    </header>
+
+    <div class="catalog-body">
+      <aside class="catalog-filters">
         <div class="filter-panel">
           <div class="filter-header">
             <span>Filter By:</span>
             <button type="button">Clear All</button>
           </div>
 
-          <label class="filter-check">
-            <input type="checkbox" />
-            <span>Run Flat</span>
-          </label>
+          <div class="filter-quick-controls">
+            <label class="filter-check">
+              <input type="checkbox" />
+              <span>Run Flat</span>
+            </label>
 
-          <label class="filter-check">
-            <input type="checkbox" />
-            <span>Exclude Supplier Stock</span>
-          </label>
+            <label class="filter-check">
+              <input type="checkbox" />
+              <span>Exclude Supplier Stock</span>
+            </label>
+          </div>
 
-          <div class="filter-group">
-            <span>Minimum Quantity</span>
-            <strong>+</strong>
-          </div>
-          <div class="filter-group">
-            <span>Brands</span>
-            <strong>+</strong>
-          </div>
-          <div class="filter-group">
-            <span>Year</span>
-            <strong>+</strong>
-          </div>
-          <div class="filter-group">
-            <span>Load Index</span>
-            <strong>+</strong>
-          </div>
-          <div class="filter-group">
-            <span>Speed Rating</span>
-            <strong>+</strong>
-          </div>
+          <details class="filter-section" open>
+            <summary>
+              <span>Minimum Quantity</span>
+              <strong>+</strong>
+            </summary>
+            <div class="filter-section-body">
+              <div class="quantity-control">
+                <button type="button" class="quantity-step">-</button>
+                <input class="minimum-qty-input" type="text" value="1" aria-label="Minimum quantity" />
+                <button type="button" class="quantity-step">+</button>
+              </div>
+              <button type="button" class="apply-btn">Apply</button>
+            </div>
+          </details>
+
+          <details class="filter-section" open>
+            <summary>
+              <span>Brand</span>
+              <strong>+</strong>
+            </summary>
+            <div class="filter-section-body">
+              <div class="filter-list">
+                @for (brand of brandSuggestions(); track brand) {
+                  <label>
+                    <input type="checkbox" />
+                    <span>{{ brand }}</span>
+                  </label>
+                }
+              </div>
+            </div>
+          </details>
+
+          <details class="filter-section" open>
+            <summary>
+              <span>Size</span>
+              <strong>+</strong>
+            </summary>
+            <div class="filter-section-body">
+              <div class="filter-list">
+                <label>
+                  <input type="checkbox" />
+                  <span>165/65R14</span>
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  <span>185/60R15</span>
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  <span>205/55R16</span>
+                </label>
+              </div>
+            </div>
+          </details>
+
+          <details class="filter-section">
+            <summary>
+              <span>Load Index</span>
+              <strong>+</strong>
+            </summary>
+            <div class="filter-section-body">
+              <select class="form-control dr-list new-select-box">
+                <option>Minimum Load Rating</option>
+              </select>
+            </div>
+          </details>
+
+          <details class="filter-section">
+            <summary>
+              <span>Speed Rating</span>
+              <strong>+</strong>
+            </summary>
+            <div class="filter-section-body">
+              <select class="form-control dr-list new-select-box">
+                <option>Minimum Speed Rating</option>
+              </select>
+            </div>
+          </details>
         </div>
       </aside>
 
-      <div class="col-lg-9">
+      <div class="catalog-results">
         <div class="results-header">
           <div class="result-chip-list">
             @for (chip of searchSummaryChips(); track chip) {
               <span class="size-badge">{{ chip }}</span>
             }
           </div>
-          <span class="showing-text">Showing {{ products().length }} products</span>
+
+          <div class="results-meta">
+            <span class="showing-text">Showing {{ productCount() }} products</span>
+            <span class="results-note">Own stock first, then approved supplier stock.</span>
+          </div>
         </div>
 
         @if (categoryDisabled()) {
           <div class="category-empty-state">
-            <h3>{{ activeCategory().label }} are structurally supported, but not live at launch.</h3>
+            <h3>{{ activeCategory().label }} is structured for launch, but not live yet.</h3>
             <p>
-              The new storefront keeps the legacy Clockwork seams ready for this category, while the live customer journey is currently tyre-first.
+              The new storefront keeps the legacy Clockwork listing seams ready for this category, while the live customer journey remains tyre-first.
             </p>
             <a routerLink="/catalog" class="details-link">Return to the live tyre catalog</a>
           </div>
@@ -108,7 +171,11 @@
                 </a>
 
                 <div class="catalog-card-body">
-                  <div class="brand-mark">clockwork tyres</div>
+                  <div class="catalog-card-headline">
+                    <div class="brand-mark">clockwork tyres</div>
+                    <span class="source-pill">{{ product.priorityRank === 0 ? 'Own stock' : 'Approved supplier' }}</span>
+                  </div>
+
                   <h3>
                     <a class="product-link" [routerLink]="['/product', product.slug]" [queryParams]="productQueryParams()">
                       {{ product.brand }} {{ product.model }}
@@ -148,6 +215,7 @@
                         ({{ product.availability.quantity }})
                       }
                     </span>
+
                     @if (cartEnabled()) {
                       <button type="button" class="btn add-cart-btn">ADD TO CART</button>
                     } @else {

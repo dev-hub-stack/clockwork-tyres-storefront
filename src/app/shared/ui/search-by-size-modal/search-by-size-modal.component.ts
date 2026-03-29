@@ -1,8 +1,14 @@
-import { Component, computed, inject, output } from '@angular/core';
+import { Component, computed, inject, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CatalogCategoryService } from '../../../core/catalog-categories';
-import { FitmentService } from '../../../core/fitment';
+import { FitmentService, type FitmentSearchFieldDefinition } from '../../../core/fitment';
+
+type SizeFieldSection = {
+  id: 'primary' | 'front' | 'rear';
+  title: string;
+  fields: FitmentSearchFieldDefinition[];
+};
 
 @Component({
   selector: 'app-search-by-size-modal',
@@ -17,6 +23,7 @@ export class SearchBySizeModalComponent {
   private readonly fitment = inject(FitmentService);
 
   readonly closed = output<void>();
+  readonly showRearSizeFields = signal(false);
 
   private readonly fieldOptions: Record<string, string[]> = {
     width: ['205', '225', '245', '265', '285', '325'],
@@ -34,10 +41,24 @@ export class SearchBySizeModalComponent {
   protected readonly searchFields = computed(() =>
     this.fitment.getSearchFields('search-by-size', this.activeCategory().id)
   );
+  protected readonly primaryFields = computed(() =>
+    this.searchFields().filter((field) => !this.isSectionField(field.key))
+  );
+  protected readonly frontFields = computed(() =>
+    this.searchFields().filter((field) => this.isFrontSectionField(field.key))
+  );
+  protected readonly rearFields = computed(() =>
+    this.searchFields().filter((field) => this.isRearSectionField(field.key))
+  );
   protected readonly formValues: Record<string, string | boolean> = {};
 
   protected getOptions(fieldKey: string): string[] {
     return this.fieldOptions[fieldKey] ?? [];
+  }
+
+  protected getPlaceholder(field: FitmentSearchFieldDefinition, index: number): string {
+    const prefix = index + 1;
+    return field.placeholder ?? `${prefix} | ${field.label}`;
   }
 
   protected getFieldValue(fieldKey: string): string {
@@ -51,6 +72,34 @@ export class SearchBySizeModalComponent {
 
   protected updateField(fieldKey: string, value: string | boolean): void {
     this.formValues[fieldKey] = value;
+  }
+
+  protected toggleRearSizeFields(): void {
+    this.showRearSizeFields.update((value) => !value);
+  }
+
+  protected isSectionField(fieldKey: string): boolean {
+    return this.isFrontSectionField(fieldKey) || this.isRearSectionField(fieldKey);
+  }
+
+  protected isFrontSectionField(fieldKey: string): boolean {
+    return fieldKey.startsWith('front_');
+  }
+
+  protected isRearSectionField(fieldKey: string): boolean {
+    return fieldKey.startsWith('rear_');
+  }
+
+  protected getSectionTitle(section: SizeFieldSection['id']): string {
+    if (section === 'rear') {
+      return 'Rear Wheel';
+    }
+
+    if (section === 'front') {
+      return 'Front Wheel';
+    }
+
+    return `${this.activeCategory().label} Fitment`;
   }
 
   protected submit(): void {

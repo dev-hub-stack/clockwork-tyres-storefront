@@ -93,6 +93,7 @@ This repository now has a live Angular 21 storefront scaffold, the migrated Cloc
 Current progress includes:
 
 - Angular 21 SSR storefront scaffold
+- marketing home shell with legacy-inspired Clockwork landing structure
 - migrated header, login, listing, PDP, cart, checkout, and account shells
 - supplier preview mode gating
 - category-capable storefront foundation with `tyres` active and `wheels` structurally supported
