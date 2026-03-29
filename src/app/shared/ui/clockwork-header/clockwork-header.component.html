@@ -23,10 +23,29 @@
         <div class="incld-btnhvr d-flex align-items-center justify-content-end">
           <a routerLink="/account/profile" class="account-link">
             <span class="account-meta">
-              <span class="account-text">My Account</span>
-              <small>Dashboard</small>
+              <span class="account-text">
+                {{ businessAccountName() || 'My Account' }}
+              </span>
+              <small>
+                @if (isBusinessAuthenticated()) {
+                  {{ businessAccountTypeLabel() || 'Business session' }}
+
+                  @if (availableAccountCount() > 1) {
+                    <span class="account-count-separator">|</span>
+                    {{ availableAccountCount() }} accounts
+                  }
+                } @else {
+                  Dashboard
+                }
+              </small>
             </span>
           </a>
+
+          @if (isBusinessAuthenticated()) {
+            <button class="logout-link" type="button" (click)="logout()" [disabled]="isLoggingOut()">
+              {{ isLoggingOut() ? 'Signing out...' : 'Log out' }}
+            </button>
+          }
 
           @if (cartEnabled()) {
             <a routerLink="/cart" class="cart-icon" aria-label="Cart">

@@ -109,4 +109,8 @@ export class StorefrontDataService {
   clearCart(): void {
     this.store.clearCart();
   }
+
+  reset(): void {
+    this.store.reset();
+  }
 }

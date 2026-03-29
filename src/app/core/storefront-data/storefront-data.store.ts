@@ -135,6 +135,10 @@ export class StorefrontDataStore {
     this.repository.clearCart();
   }
 
+  reset(): void {
+    this.repository.reset();
+  }
+
   getModeCapabilities(mode: StorefrontMode = this.mode()): { cartEnabled: boolean; checkoutEnabled: boolean } {
     return {
       cartEnabled: mode === 'retail-store',
