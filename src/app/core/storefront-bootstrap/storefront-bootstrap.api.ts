@@ -4,6 +4,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
 import {
   mapStorefrontBootstrapApiAccountContext,
+  normalizeStorefrontBootstrapApiEndpoints,
   normalizeStorefrontBootstrapAccountContext
 } from './storefront-bootstrap.helpers';
 import {
@@ -38,6 +39,10 @@ export class StorefrontBootstrapApiService {
       if (!response?.status || !response.data) {
         return;
       }
+
+      this.bootstrap.setEndpoints(
+        normalizeStorefrontBootstrapApiEndpoints(response.data.endpoints ?? null)
+      );
 
       const accountContext = mapStorefrontBootstrapApiAccountContext(
         response.data.account,

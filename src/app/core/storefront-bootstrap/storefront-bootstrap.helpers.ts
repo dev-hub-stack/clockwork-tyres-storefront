@@ -9,6 +9,7 @@ import {
 } from '../storefront-mode';
 import { resolveStorefrontRouteContext } from '../storefront-routes';
 import {
+  StorefrontBootstrapApiEndpoints,
   StorefrontBootstrapApiAccount,
   StorefrontBootstrapApiCategory,
   StorefrontBootstrapApiCategoryDefaults,
@@ -31,6 +32,7 @@ export function createStorefrontBootstrapState(): StorefrontBootstrapState {
   return {
     route: DEFAULT_ROUTE_STATE,
     account: null,
+    endpoints: null,
     resolved: resolveStorefrontBootstrapState(DEFAULT_ROUTE_STATE, null)
   };
 }
@@ -71,6 +73,24 @@ export function mapStorefrontBootstrapApiAccountContext(
     reportsCustomerLimit: account.reports_customer_limit,
     enabledCategories
   });
+}
+
+export function normalizeStorefrontBootstrapApiEndpoints(
+  endpoints: StorefrontBootstrapApiEndpoints | null | undefined
+): StorefrontBootstrapApiEndpoints | null {
+  if (!endpoints) {
+    return null;
+  }
+
+  return {
+    bootstrap: endpoints.bootstrap,
+    account_context: endpoints.account_context,
+    account_context_select: endpoints.account_context_select,
+    catalog: endpoints.catalog,
+    product_detail: endpoints.product_detail,
+    search_sizes: endpoints.search_sizes,
+    search_vehicles: endpoints.search_vehicles
+  };
 }
 
 export function resolveStorefrontBootstrapMode(

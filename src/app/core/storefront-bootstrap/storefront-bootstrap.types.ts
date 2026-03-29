@@ -53,6 +53,7 @@ export interface StorefrontBootstrapApiAccount {
 export interface StorefrontBootstrapApiData {
   version: number;
   storefront_mode: StorefrontModeInput;
+  endpoints?: StorefrontBootstrapApiEndpoints | null;
   capabilities?: {
     cart_enabled: boolean;
     checkout_enabled: boolean;
@@ -81,6 +82,16 @@ export interface StorefrontBootstrapApiData {
   } | null;
 }
 
+export interface StorefrontBootstrapApiEndpoints {
+  bootstrap: string;
+  account_context: string;
+  account_context_select: string;
+  catalog: string;
+  product_detail: string;
+  search_sizes: string;
+  search_vehicles: string;
+}
+
 export interface StorefrontBootstrapApiResponse {
   status: boolean;
   message?: string | null;
@@ -107,5 +118,6 @@ export interface StorefrontBootstrapResolvedState {
 export interface StorefrontBootstrapState {
   route: StorefrontBootstrapRouteState;
   account: StorefrontBootstrapAccountContext | null;
+  endpoints: StorefrontBootstrapApiEndpoints | null;
   resolved: StorefrontBootstrapResolvedState;
 }

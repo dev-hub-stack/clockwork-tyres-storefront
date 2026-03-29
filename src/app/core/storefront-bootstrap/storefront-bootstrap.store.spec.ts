@@ -20,6 +20,26 @@ describe('StorefrontBootstrapStore', () => {
     expect(store.fitmentMode()).toBe('search-by-vehicle');
     expect(store.source()).toBe('route');
 
+    store.setEndpoints({
+      bootstrap: '/api/storefront/bootstrap',
+      account_context: '/api/account-context',
+      account_context_select: '/api/account-context/select',
+      catalog: '/api/products',
+      product_detail: '/api/product/{slug}/{sku}',
+      search_sizes: '/api/search-sizes',
+      search_vehicles: '/api/search-vehicles'
+    });
+
+    expect(store.endpoints()).toEqual({
+      bootstrap: '/api/storefront/bootstrap',
+      account_context: '/api/account-context',
+      account_context_select: '/api/account-context/select',
+      catalog: '/api/products',
+      product_detail: '/api/product/{slug}/{sku}',
+      search_sizes: '/api/search-sizes',
+      search_vehicles: '/api/search-vehicles'
+    });
+
     store.setAccountContext({
       accountId: 44,
       accountName: 'Alpha Tyres',

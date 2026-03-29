@@ -4,6 +4,7 @@ import {
   StorefrontBootstrapAccountContext,
   StorefrontBootstrapResolvedState,
   StorefrontBootstrapRouteState,
+  StorefrontBootstrapApiEndpoints,
 } from './storefront-bootstrap.types';
 import { StorefrontBootstrapStore } from './storefront-bootstrap.store';
 
@@ -16,6 +17,7 @@ export class StorefrontBootstrapService {
   readonly session = this.store.session;
   readonly route = this.store.route;
   readonly account = this.store.account;
+  readonly endpoints = this.store.endpoints;
   readonly resolved = this.store.resolved;
   readonly isReady = this.store.isReady;
   readonly mode = this.store.mode;
@@ -36,6 +38,10 @@ export class StorefrontBootstrapService {
 
   setAccountContext(account: StorefrontBootstrapAccountContext | null): void {
     this.store.setAccountContext(account);
+  }
+
+  setEndpoints(endpoints: StorefrontBootstrapApiEndpoints | null): void {
+    this.store.setEndpoints(endpoints);
   }
 
   updateResolvedContext(resolved: Partial<StorefrontBootstrapResolvedState>): void {

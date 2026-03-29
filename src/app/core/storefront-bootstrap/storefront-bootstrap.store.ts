@@ -2,6 +2,7 @@ import { Injectable, computed, signal } from '@angular/core';
 import { ActivatedRouteSnapshot } from '@angular/router';
 import {
   createStorefrontBootstrapState,
+  normalizeStorefrontBootstrapApiEndpoints,
   normalizeStorefrontBootstrapAccountContext,
   resolveStorefrontBootstrapRouteState,
   resolveStorefrontBootstrapState
@@ -21,6 +22,7 @@ export class StorefrontBootstrapStore {
 
   readonly route = computed(() => this.state().route);
   readonly account = computed(() => this.state().account);
+  readonly endpoints = computed(() => this.state().endpoints);
   readonly resolved = computed(() => this.state().resolved);
   readonly session = computed(() => this.state());
 
@@ -58,6 +60,13 @@ export class StorefrontBootstrapStore {
       ...current,
       account: normalizedAccount,
       resolved: resolveStorefrontBootstrapState(current.route, normalizedAccount)
+    }));
+  }
+
+  setEndpoints(endpoints: Parameters<typeof normalizeStorefrontBootstrapApiEndpoints>[0]): void {
+    this.state.update((current) => ({
+      ...current,
+      endpoints: normalizeStorefrontBootstrapApiEndpoints(endpoints)
     }));
   }
 
