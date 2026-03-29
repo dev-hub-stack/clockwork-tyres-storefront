@@ -1,6 +1,8 @@
 import { Component, inject } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { STOREFRONT_PATHS } from '../../core/storefront-routes';
 
 @Component({
   selector: 'app-login-page',
@@ -11,6 +13,8 @@ import { RouterLink } from '@angular/router';
 })
 export class LoginPageComponent {
   private readonly formBuilder = inject(FormBuilder);
+  private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   protected readonly benefits = [
     '24/7 online ordering access',
@@ -29,6 +33,19 @@ export class LoginPageComponent {
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]]
   });
+
+  constructor() {
+    const shouldOpenRegister =
+      this.activatedRoute.snapshot.queryParamMap.get('signup') === '1' ||
+      this.activatedRoute.snapshot.queryParamMap.has('plan');
+
+    if (shouldOpenRegister) {
+      void this.router.navigate([`/${STOREFRONT_PATHS.register}`], {
+        queryParams: this.activatedRoute.snapshot.queryParams,
+        replaceUrl: true
+      });
+    }
+  }
 
   protected submit(): void {
     this.form.markAllAsTouched();

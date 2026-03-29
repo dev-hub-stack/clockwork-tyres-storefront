@@ -18,6 +18,7 @@ export const STOREFRONT_PATHS = {
   checkout: 'cart/checkout',
   cartAccount: 'cart/account',
   login: 'login',
+  register: 'register',
   account: 'account',
   accountProfile: 'profile',
   accountAddresses: 'addresses',

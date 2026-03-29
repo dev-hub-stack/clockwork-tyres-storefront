@@ -174,6 +174,13 @@ export const routes: Routes = [
       )
   },
   {
+    path: STOREFRONT_PATHS.register,
+    loadComponent: () =>
+      import('./features/auth/register-page.component').then(
+        (m) => m.RegisterPageComponent
+      )
+  },
+  {
     path: '**',
     redirectTo: ''
   }

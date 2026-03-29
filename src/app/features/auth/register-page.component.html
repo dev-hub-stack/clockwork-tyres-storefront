@@ -1,0 +1,197 @@
+<section class="auth-shell register-shell">
+  <div class="auth-hero">
+    <div class="auth-brand">
+      <a routerLink="/catalog" aria-label="Clockwork Tyres home">
+        <img src="/assets/img/new-logo.png" alt="Clockwork Tyres" />
+      </a>
+    </div>
+
+    <div class="auth-copy">
+      <span class="auth-eyebrow">Business onboarding</span>
+      <h1>Register one Clockwork business account for retail, wholesale, or both.</h1>
+      <p>
+        This keeps the legacy Clockwork onboarding entry point intact while aligning it to the
+        new tyres platform model George described: one account, shared stock pool, and role-based
+        access across storefront and admin.
+      </p>
+    </div>
+
+    <ul class="auth-benefit-list">
+      @for (benefit of benefits; track benefit) {
+        <li>
+          <span class="benefit-dot"></span>
+          <span>{{ benefit }}</span>
+        </li>
+      }
+    </ul>
+
+    <div class="auth-mode-strip">
+      @for (role of roleOptions; track role.value) {
+        <article>
+          <strong>{{ role.label }}</strong>
+          <span>{{ role.note }}</span>
+        </article>
+      }
+    </div>
+  </div>
+
+  <div class="auth-panel">
+    <div class="auth-card">
+      <div class="auth-card-header">
+        <span class="auth-subtitle">Register</span>
+        <h2>Register your business</h2>
+        <p>
+          Submit the correct account type and plan preference now. Subscription checkout can be
+          connected later without changing this registration surface.
+        </p>
+      </div>
+
+      @if (submitSuccess()) {
+        <div class="submit-banner submit-banner-success">
+          {{ submitSuccess() }}
+        </div>
+      }
+
+      @if (submitError()) {
+        <div class="submit-banner submit-banner-error">
+          {{ submitError() }}
+        </div>
+      }
+
+      <form class="signup-form" [formGroup]="form" (ngSubmit)="submit()">
+        <div class="form-grid">
+          <div>
+            <label class="label" for="businessName">Business Name</label>
+            <input
+              id="businessName"
+              type="text"
+              formControlName="businessName"
+              class="form-control s-form-field"
+              placeholder="Business name"
+            />
+            @if (form.controls.businessName.invalid && form.controls.businessName.touched) {
+              <span class="error">Business name is required</span>
+            }
+          </div>
+
+          <div>
+            <label class="label" for="country">Country</label>
+            <select id="country" formControlName="country" class="form-control custom-input s-form-field">
+              <option value="" disabled>Select country</option>
+              @for (country of countries(); track country.id) {
+                <option [value]="country.countryName">{{ country.countryName }}</option>
+              }
+            </select>
+            @if (form.controls.country.invalid && form.controls.country.touched) {
+              <span class="error">Country is required</span>
+            }
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div>
+            <label class="label" for="email">Email</label>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              class="form-control s-form-field"
+              placeholder="Business email"
+            />
+            @if (form.controls.email.invalid && form.controls.email.touched) {
+              <span class="error">A valid email is required</span>
+            }
+          </div>
+
+          <div>
+            <label class="label" for="password">Password</label>
+            <input
+              id="password"
+              type="password"
+              formControlName="password"
+              class="form-control s-form-field"
+              placeholder="Minimum 8 characters"
+            />
+            @if (form.controls.password.invalid && form.controls.password.touched) {
+              <span class="error">Password must be at least 8 characters</span>
+            }
+          </div>
+        </div>
+
+        <label class="label">Register as</label>
+        <div class="choice-grid">
+          @for (role of roleOptions; track role.value) {
+            <label class="choice-card" [class.choice-card-active]="form.controls.accountMode.value === role.value">
+              <input type="radio" formControlName="accountMode" [value]="role.value" />
+              <span class="choice-copy">
+                <strong>{{ role.label }}</strong>
+                <small>{{ role.note }}</small>
+              </span>
+            </label>
+          }
+        </div>
+
+        <label class="label">Plan preference</label>
+        <div class="choice-grid">
+          @for (plan of planOptions; track plan.value) {
+            <label class="choice-card" [class.choice-card-active]="form.controls.planPreference.value === plan.value">
+              <input type="radio" formControlName="planPreference" [value]="plan.value" />
+              <span class="choice-copy">
+                <strong>{{ plan.label }}</strong>
+                <small>{{ plan.note }}</small>
+              </span>
+            </label>
+          }
+        </div>
+
+        <label class="label" for="supportingDocument">{{ uploadLabel }}</label>
+        <label class="upload-shell" for="supportingDocument">
+          <input
+            id="supportingDocument"
+            type="file"
+            accept=".pdf,.jpg,.jpeg,.png,.webp"
+            (change)="onDocumentSelected($event)"
+          />
+          <span class="upload-copy">
+            <strong>{{ selectedDocumentName() || 'Choose a file' }}</strong>
+            <small>Accepted: PDF, JPG, PNG, WEBP</small>
+          </span>
+        </label>
+        @if (form.controls.supportingDocument.invalid && form.controls.supportingDocument.touched) {
+          <span class="error">A supporting business document is required</span>
+        }
+
+        <label class="consent-row">
+          <input type="checkbox" formControlName="acceptsTerms" />
+          <span>I agree to the onboarding terms and supplier-retailer platform rules.</span>
+        </label>
+        @if (form.controls.acceptsTerms.invalid && form.controls.acceptsTerms.touched) {
+          <span class="error">Terms acceptance is required</span>
+        }
+
+        <label class="consent-row">
+          <input type="checkbox" formControlName="acceptsPrivacy" />
+          <span>I agree to the privacy policy and onboarding document review process.</span>
+        </label>
+        @if (form.controls.acceptsPrivacy.invalid && form.controls.acceptsPrivacy.touched) {
+          <span class="error">Privacy acceptance is required</span>
+        }
+
+        <div class="auth-actions">
+          <p class="small-text f-light">
+            Already registered?
+            <a routerLink="/login" class="cursor-pointer">Log in</a>
+          </p>
+          <p class="small-text f-light">
+            Need to review the catalogue first?
+            <a routerLink="/catalog" class="cursor-pointer">Browse Clockwork Tyres</a>
+          </p>
+        </div>
+
+        <button type="submit" class="btn btn-01 mt-4 new-btn bg-black" [disabled]="isSubmitting()">
+          <span>{{ isSubmitting() ? 'Submitting…' : 'Register Business' }}</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
