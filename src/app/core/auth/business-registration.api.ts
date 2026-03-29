@@ -60,7 +60,7 @@ export class BusinessRegistrationApiService {
     );
 
     return this.http.post<BusinessRegistrationSuccess>(
-      this.resolveEndpoint(payload.accountMode),
+      '/api/auth/business-register',
       formData
     ).pipe(
       catchError((error: HttpErrorResponse) =>
@@ -75,7 +75,4 @@ export class BusinessRegistrationApiService {
     );
   }
 
-  private resolveEndpoint(accountMode: BusinessRegistrationPayload['accountMode']): string {
-    return accountMode === 'supplier' ? '/api/vendor' : '/api/dealer';
-  }
 }
