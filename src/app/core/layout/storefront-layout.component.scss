@@ -1,3 +1,18 @@
+.mode-banner {
+  background: #f5f1e6;
+  border-bottom: 1px solid #d8cfbb;
+  color: #2e2e2f;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 10px 0;
+
+  .container-fluid {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+}
+
 .page-shell {
   min-height: calc(100vh - 140px);
 }

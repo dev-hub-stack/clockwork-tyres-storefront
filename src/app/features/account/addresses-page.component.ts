@@ -1,16 +1,6 @@
-import { Component, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-
-type AddressCard = {
-  id: number;
-  nickname: string;
-  address: string;
-  phone: string;
-  city: string;
-  state: string;
-  country: string;
-  zip: string;
-};
+import { StorefrontAddress, StorefrontDataService } from '../../core/storefront-data';
 
 @Component({
   selector: 'app-addresses-page',
@@ -20,32 +10,15 @@ type AddressCard = {
   styleUrl: './addresses-page.component.scss'
 })
 export class AddressesPageComponent {
-  private readonly fb = new FormBuilder();
+  private readonly fb = inject(FormBuilder);
+  private readonly storefrontData = inject(StorefrontDataService);
 
   protected readonly showForm = signal(false);
   protected readonly editingAddressId = signal<number | null>(null);
-  protected readonly addresses = signal<AddressCard[]>([
-    {
-      id: 1,
-      nickname: 'Warehouse Office',
-      address: 'Al Quoz Industrial Area 3',
-      phone: '+971 50 123 4567',
-      city: 'Dubai',
-      state: 'Dubai',
-      country: 'UAE',
-      zip: '11111'
-    },
-    {
-      id: 2,
-      nickname: 'Retail Showroom',
-      address: 'Mussafah M12',
-      phone: '+971 50 765 4321',
-      city: 'Abu Dhabi',
-      state: 'Abu Dhabi',
-      country: 'UAE',
-      zip: '22222'
-    }
-  ]);
+  protected readonly addresses = this.storefrontData.addresses;
+  protected readonly businessName = computed(
+    () => this.storefrontData.profile().businessName
+  );
 
   protected readonly addressForm = this.fb.nonNullable.group({
     nickname: ['', Validators.required],
@@ -71,16 +44,22 @@ export class AddressesPageComponent {
     this.showForm.set(true);
   }
 
-  protected editAddress(address: AddressCard): void {
+  protected editAddress(address: StorefrontAddress): void {
     this.editingAddressId.set(address.id);
-    this.addressForm.reset(address);
+    this.addressForm.reset({
+      nickname: address.nickname,
+      address: address.address,
+      phone: address.phone,
+      city: address.city,
+      state: address.state,
+      country: address.country,
+      zip: address.zip
+    });
     this.showForm.set(true);
   }
 
   protected deleteAddress(addressId: number): void {
-    this.addresses.update((addresses) =>
-      addresses.filter((address) => address.id !== addressId)
-    );
+    this.storefrontData.deleteAddress(addressId);
   }
 
   protected cancelForm(): void {
@@ -97,18 +76,16 @@ export class AddressesPageComponent {
 
     const addressData = this.addressForm.getRawValue();
     const editingId = this.editingAddressId();
+    const nextAddress: StorefrontAddress = {
+      id: editingId ?? Date.now(),
+      businessName: this.businessName(),
+      ...addressData
+    };
 
     if (editingId) {
-      this.addresses.update((addresses) =>
-        addresses.map((address) =>
-          address.id === editingId ? { id: editingId, ...addressData } : address
-        )
-      );
+      this.storefrontData.updateAddress(editingId, nextAddress);
     } else {
-      this.addresses.update((addresses) => [
-        ...addresses,
-        { id: Date.now(), ...addressData }
-      ]);
+      this.storefrontData.addAddress(nextAddress);
     }
 
     this.cancelForm();

@@ -76,9 +76,15 @@ export interface StorefrontCartLine {
 
 export interface StorefrontProfile {
   businessName: string;
+  address: string;
   email: string;
   phone: string;
   country: string;
+  licenseNumber: string;
+  expiry: string;
+  website: string;
+  instagram: string;
+  contactName: string;
   accountType: 'retailer' | 'supplier' | 'both';
   wholesaleEnabled: boolean;
   retailEnabled: boolean;

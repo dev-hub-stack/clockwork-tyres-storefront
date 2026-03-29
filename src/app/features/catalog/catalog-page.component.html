@@ -79,27 +79,29 @@
       <div class="col-lg-9">
         <div class="results-header">
           <span class="size-badge">325/30R21</span>
-          <span class="showing-text">Showing {{ products.length }} products</span>
+          <span class="showing-text">Showing {{ products().length }} products</span>
         </div>
 
         <div class="catalog-grid">
-          @for (product of products; track product.sku) {
+          @for (product of products(); track product.sku) {
             <article class="catalog-card">
               <a
                 class="catalog-card-media product-link"
                 [routerLink]="['/product', product.slug]"
-                [attr.aria-label]="'View ' + product.subtitle"
+                [attr.aria-label]="'View ' + product.brand + ' ' + product.model"
               >
-                <img [src]="product.image" [alt]="product.subtitle" />
+                <img [src]="product.image" [alt]="product.model" />
               </a>
 
               <div class="catalog-card-body">
                 <div class="brand-mark">clockwork tyres</div>
                 <h3>
                   <a class="product-link" [routerLink]="['/product', product.slug]">
-                    {{ product.subtitle }}
+                    {{ product.brand }} {{ product.model }}
                   </a>
                 </h3>
+
+                <p class="catalog-subtitle">{{ product.subtitle }}</p>
 
                 <dl class="product-specs">
                   <div>
@@ -111,12 +113,12 @@
                     <dd>{{ product.sku }}</dd>
                   </div>
                   <div>
-                    <dt>Origin:</dt>
-                    <dd>Japan</dd>
+                    <dt>Stock:</dt>
+                    <dd>{{ product.availabilityBadge }}</dd>
                   </div>
                   <div>
-                    <dt>Year:</dt>
-                    <dd>2025</dd>
+                    <dt>Supply:</dt>
+                    <dd>{{ product.priorityRank === 0 ? 'Own stock' : 'Approved suppliers' }}</dd>
                   </div>
                 </dl>
 
@@ -126,8 +128,17 @@
                 </div>
 
                 <div class="card-actions">
-                  <span class="stock-text">{{ product.stock }} in stock</span>
-                  <button type="button" class="btn add-cart-btn">ADD TO CART</button>
+                  <span class="stock-text">
+                    {{ product.availabilityBadge }}
+                    @if (product.availability.showQuantity) {
+                      ({{ product.availability.quantity }})
+                    }
+                  </span>
+                  @if (cartEnabled()) {
+                    <button type="button" class="btn add-cart-btn">ADD TO CART</button>
+                  } @else {
+                    <span class="preview-text">Preview only</span>
+                  }
                 </div>
 
                 <a class="details-link" [routerLink]="['/product', product.slug]">

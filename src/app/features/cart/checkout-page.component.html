@@ -2,6 +2,12 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-lg-6">
+        @if (!submitCheckoutCta().visible) {
+          <div class="preview-notice">
+            {{ modeViewModel().description }}
+          </div>
+        }
+
         <ul class="list-inline progress-steps">
           <li class="list-inline-item active">
             <span>1</span>
@@ -25,7 +31,7 @@
               (change)="applySavedAddress($any($event.target).value)"
             >
               <option value="">Select Address</option>
-              @for (address of savedAddresses; track address.id) {
+              @for (address of savedAddresses(); track address.id) {
                 <option [value]="address.id">{{ address.nickname }}</option>
               }
             </select>
@@ -239,7 +245,11 @@
           </div>
 
           <div class="submit-row">
-            <button type="submit" class="btn confirm-btn">Confirm Order</button>
+            @if (submitCheckoutCta().visible) {
+              <button type="submit" class="btn confirm-btn">Confirm Order</button>
+            } @else {
+              <span class="preview-disabled-label">Checkout disabled in supplier preview</span>
+            }
           </div>
 
           <div class="list-ul">
@@ -252,23 +262,24 @@
       <div class="col-lg-6 right-shipping">
         <h2 class="review-title">Order Review</h2>
 
-        @for (item of checkoutItems; track item.id) {
+        @for (item of checkoutItems(); track item.id) {
           <div class="review-item">
             <div class="review-item-media">
-              <img [src]="item.image" [alt]="item.model" class="img-fluid" />
+              <img [src]="item.image" [alt]="item.title" class="img-fluid" />
               <span class="item-count">{{ item.quantity }}</span>
             </div>
 
             <div class="review-item-copy">
-              <h3>{{ item.brand }} <br />{{ item.model }}</h3>
+              <h3>{{ item.title }}</h3>
               <p>
                 <span>Part Number:</span> {{ item.sku }}<br />
-                <span>Size:</span> {{ item.size }}
+                <span>Size:</span> {{ item.size }}<br />
+                <span>Availability:</span> {{ item.availabilityLabel }}
               </p>
             </div>
 
             <div class="review-item-price">
-              <h4>{{ item.total | currency: 'AED' : 'symbol-narrow' : '1.0-0' }}</h4>
+              <h4>{{ item.lineTotal | currency: 'AED' : 'symbol-narrow' : '1.0-0' }}</h4>
             </div>
           </div>
         }

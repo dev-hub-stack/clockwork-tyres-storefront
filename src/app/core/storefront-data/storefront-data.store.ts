@@ -60,12 +60,67 @@ export class StorefrontDataStore {
     return this.state().profile;
   }
 
+  updateProfile(profile: StorefrontProfile): void {
+    this.state.update((state) => ({
+      ...state,
+      profile
+    }));
+  }
+
   getAddresses(): StorefrontAddress[] {
     return this.state().addresses;
   }
 
+  addAddress(address: StorefrontAddress): void {
+    this.state.update((state) => ({
+      ...state,
+      addresses: [...state.addresses, address]
+    }));
+  }
+
+  updateAddress(addressId: number, nextAddress: StorefrontAddress): void {
+    this.state.update((state) => ({
+      ...state,
+      addresses: state.addresses.map((address) =>
+        address.id === addressId ? nextAddress : address
+      )
+    }));
+  }
+
+  deleteAddress(addressId: number): void {
+    this.state.update((state) => ({
+      ...state,
+      addresses: state.addresses.filter((address) => address.id !== addressId)
+    }));
+  }
+
   getOrders(): StorefrontOrder[] {
     return this.state().orders;
+  }
+
+  updateCartLineQuantity(lineId: number, quantity: number): void {
+    this.state.update((state) => ({
+      ...state,
+      cart: state.cart.map((line) =>
+        line.id === lineId
+          ? { ...line, quantity: Math.max(1, quantity) }
+          : line
+      )
+    }));
+  }
+
+  removeCartLine(lineId: number): void {
+    this.state.update((state) => ({
+      ...state,
+      cart: state.cart.filter((line) => line.id !== lineId)
+    }));
+  }
+
+  clearCart(): void {
+    this.state.update((state) => ({
+      ...state,
+      cart: []
+    }));
   }
 
   getModeCapabilities(mode: StorefrontMode = this.mode()): { cartEnabled: boolean; checkoutEnabled: boolean } {

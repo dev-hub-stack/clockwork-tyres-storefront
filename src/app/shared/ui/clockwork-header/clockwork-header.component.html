@@ -28,10 +28,14 @@
             <span class="account-text">My Account</span>
           </a>
 
-          <a routerLink="/cart" class="cart-icon" aria-label="Cart">
-            <i class="fa fa-shopping-cart icon"></i>
-            <small class="cart-count">0</small>
-          </a>
+          @if (cartEnabled()) {
+            <a routerLink="/cart" class="cart-icon" aria-label="Cart">
+              <i class="fa fa-shopping-cart icon"></i>
+              <small class="cart-count">{{ cartCount() }}</small>
+            </a>
+          } @else {
+            <span class="preview-pill">{{ modeViewModel().label }}</span>
+          }
         </div>
       </div>
     </div>

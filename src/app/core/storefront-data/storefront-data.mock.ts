@@ -236,9 +236,15 @@ const pdp: Record<string, StorefrontPdpItem> = {
 
 const profile: StorefrontProfile = {
   businessName: 'Al Noor Tyres Trading',
+  address: 'Al Quoz Industrial Area 3, Dubai',
   email: 'orders@alnoortyres.ae',
   phone: '+971 50 123 4567',
   country: 'UAE',
+  licenseNumber: 'TL-987654321',
+  expiry: '2027-12-31',
+  website: 'https://www.alnoortyres.ae',
+  instagram: '@alnoortyres',
+  contactName: 'Mohammed Khalid',
   accountType: 'both',
   wholesaleEnabled: true,
   retailEnabled: true,

@@ -1,11 +1,16 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import {
+  StorefrontDataService,
+  StorefrontOrder,
+  StorefrontOrderLine
+} from '../../core/storefront-data';
 
-type OrderStatus = 'Processing' | 'Shipped' | 'Completed' | 'Cancelled';
+type OrderStatusValue = StorefrontOrder['status'];
 
-type OrderItem = {
-  id: number;
+type OrderItemView = {
+  id: string;
   name: string;
   sku: string;
   size: string;
@@ -14,7 +19,7 @@ type OrderItem = {
   image: string;
 };
 
-type OrderAddress = {
+type OrderAddressView = {
   name: string;
   address: string;
   city: string;
@@ -22,19 +27,20 @@ type OrderAddress = {
   phone: string;
 };
 
-type CustomerOrder = {
-  id: number;
+type CustomerOrderView = {
+  id: string;
   createdAt: string;
   supplier: string;
-  status: OrderStatus;
+  status: string;
+  statusValue: OrderStatusValue;
   trackingNumber: string;
   subtotal: number;
   shipping: number;
   vat: number;
   total: number;
-  items: OrderItem[];
-  billing: OrderAddress;
-  shippingAddress: OrderAddress;
+  items: OrderItemView[];
+  billing: OrderAddressView;
+  shippingAddress: OrderAddressView;
 };
 
 @Component({
@@ -45,121 +51,16 @@ type CustomerOrder = {
   styleUrl: './orders-page.component.scss'
 })
 export class OrdersPageComponent {
-  private readonly fb = new FormBuilder();
+  private readonly fb = inject(FormBuilder);
+  private readonly storefrontData = inject(StorefrontDataService);
 
-  private readonly orders: CustomerOrder[] = [
-    {
-      id: 10342,
-      createdAt: '2026-03-20',
-      supplier: 'Michelin Gulf',
-      status: 'Processing',
-      trackingNumber: 'CW10342AE',
-      subtotal: 750,
-      shipping: 25,
-      vat: 38,
-      total: 813,
-      items: [
-        {
-          id: 1,
-          name: 'Pilot Sport 4S',
-          sku: 'CW-TYR-001',
-          size: '325/30R21',
-          quantity: 2,
-          price: 750,
-          image: '/assets/img/tire-go.jpg'
-        }
-      ],
-      billing: {
-        name: 'Al Noor Tyres Trading',
-        address: 'Al Quoz Industrial Area 3',
-        city: 'Dubai',
-        country: 'UAE',
-        phone: '+971 50 123 4567'
-      },
-      shippingAddress: {
-        name: 'Al Noor Tyres Trading',
-        address: 'Al Quoz Industrial Area 3',
-        city: 'Dubai',
-        country: 'UAE',
-        phone: '+971 50 123 4567'
-      }
-    },
-    {
-      id: 10301,
-      createdAt: '2026-03-14',
-      supplier: 'Pirelli Middle East',
-      status: 'Shipped',
-      trackingNumber: 'CW10301AE',
-      subtotal: 390,
-      shipping: 25,
-      vat: 20,
-      total: 435,
-      items: [
-        {
-          id: 2,
-          name: 'P Zero',
-          sku: 'CW-TYR-002',
-          size: '285/45R21',
-          quantity: 1,
-          price: 390,
-          image: '/assets/img/ty2.png'
-        }
-      ],
-      billing: {
-        name: 'Al Noor Tyres Trading',
-        address: 'Mussafah M12',
-        city: 'Abu Dhabi',
-        country: 'UAE',
-        phone: '+971 50 765 4321'
-      },
-      shippingAddress: {
-        name: 'Al Noor Tyres Trading',
-        address: 'Mussafah M12',
-        city: 'Abu Dhabi',
-        country: 'UAE',
-        phone: '+971 50 765 4321'
-      }
-    },
-    {
-      id: 10255,
-      createdAt: '2026-02-26',
-      supplier: 'Continental UAE',
-      status: 'Completed',
-      trackingNumber: 'CW10255AE',
-      subtotal: 724,
-      shipping: 25,
-      vat: 37,
-      total: 786,
-      items: [
-        {
-          id: 3,
-          name: 'SportContact 7',
-          sku: 'CW-TYR-003',
-          size: '255/35R19',
-          quantity: 2,
-          price: 724,
-          image: '/assets/img/ty3.png'
-        }
-      ],
-      billing: {
-        name: 'Al Noor Tyres Trading',
-        address: 'Al Quoz Industrial Area 3',
-        city: 'Dubai',
-        country: 'UAE',
-        phone: '+971 50 123 4567'
-      },
-      shippingAddress: {
-        name: 'Al Noor Tyres Trading',
-        address: 'Al Quoz Industrial Area 3',
-        city: 'Dubai',
-        country: 'UAE',
-        phone: '+971 50 123 4567'
-      }
-    }
-  ];
-
-  protected readonly selectedOrder = signal<CustomerOrder | null>(null);
-  protected readonly searchCriteria = signal({
+  protected readonly selectedOrder = signal<CustomerOrderView | null>(null);
+  protected readonly searchCriteria = signal<{
+    orderNumber: string;
+    dateFrom: string;
+    dateTo: string;
+    orderStatus: '' | OrderStatusValue;
+  }>({
     orderNumber: '',
     dateFrom: '',
     dateTo: '',
@@ -170,17 +71,22 @@ export class OrdersPageComponent {
     orderNumber: [''],
     dateFrom: [''],
     dateTo: [''],
-    orderStatus: ['']
+    orderStatus: ['' as '' | OrderStatusValue]
   });
+
+  protected readonly orders = computed(() =>
+    this.storefrontData.orders().map((order) => this.mapOrder(order))
+  );
 
   protected readonly filteredOrders = computed(() => {
     const criteria = this.searchCriteria();
 
-    return this.orders.filter((order) => {
+    return this.orders().filter((order) => {
       const matchesOrderNumber =
-        !criteria.orderNumber || order.id.toString().includes(criteria.orderNumber.trim());
+        !criteria.orderNumber ||
+        order.id.toLowerCase().includes(criteria.orderNumber.trim().toLowerCase());
       const matchesStatus =
-        !criteria.orderStatus || order.status === criteria.orderStatus;
+        !criteria.orderStatus || order.statusValue === criteria.orderStatus;
       const matchesFrom = !criteria.dateFrom || order.createdAt >= criteria.dateFrom;
       const matchesTo = !criteria.dateTo || order.createdAt <= criteria.dateTo;
 
@@ -192,7 +98,7 @@ export class OrdersPageComponent {
     this.searchCriteria.set(this.searchForm.getRawValue());
   }
 
-  protected viewOrder(order: CustomerOrder): void {
+  protected viewOrder(order: CustomerOrderView): void {
     this.selectedOrder.set(order);
   }
 
@@ -200,7 +106,55 @@ export class OrdersPageComponent {
     this.selectedOrder.set(null);
   }
 
-  protected statusClass(status: OrderStatus): string {
+  protected statusClass(status: string): string {
     return status.toLowerCase().replace(/\s+/g, '-');
+  }
+
+  private mapOrder(order: StorefrontOrder): CustomerOrderView {
+    return {
+      id: order.id,
+      createdAt: order.createdAt,
+      supplier: order.supplierName,
+      status: this.formatStatus(order.status),
+      statusValue: order.status,
+      trackingNumber: order.trackingNumber,
+      subtotal: order.subtotal,
+      shipping: order.shippingAmount,
+      vat: order.vat,
+      total: order.total,
+      items: order.lines.map((line, index) => this.mapOrderLine(line, index)),
+      billing: {
+        name: order.billing.businessName,
+        address: order.billing.address,
+        city: order.billing.city,
+        country: order.billing.country,
+        phone: order.billing.phone
+      },
+      shippingAddress: {
+        name: order.shipping.businessName,
+        address: order.shipping.address,
+        city: order.shipping.city,
+        country: order.shipping.country,
+        phone: order.shipping.phone
+      }
+    };
+  }
+
+  private mapOrderLine(line: StorefrontOrderLine, index: number): OrderItemView {
+    return {
+      id: `${line.sku}-${index}`,
+      name: line.title,
+      sku: line.sku,
+      size: line.size,
+      quantity: line.quantity,
+      price: line.unitPrice,
+      image:
+        this.storefrontData.getProductBySku(line.sku, 'retail-store')?.image ??
+        '/assets/img/tire-go.jpg'
+    };
+  }
+
+  private formatStatus(status: OrderStatusValue): string {
+    return status.charAt(0).toUpperCase() + status.slice(1);
   }
 }

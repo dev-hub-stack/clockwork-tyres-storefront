@@ -97,6 +97,19 @@
   margin-left: 14px;
 }
 
+.preview-pill {
+  background: #f3efe3;
+  border: 1px solid #d7cbb0;
+  border-radius: 999px;
+  color: #2e2e2f;
+  font-family: $primaryfont;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-left: 14px;
+  padding: 7px 12px;
+  text-transform: uppercase;
+}
+
 .account-text {
   font-family: $primaryfont;
   font-weight: 600;
@@ -174,5 +187,11 @@ small.cart-count {
 
   .create-gap {
     gap: 12px;
+  }
+
+  .preview-pill {
+    font-size: 0.7rem;
+    margin-left: 8px;
+    padding: 6px 10px;
   }
 }

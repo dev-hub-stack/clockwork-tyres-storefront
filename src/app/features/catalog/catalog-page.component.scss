@@ -147,7 +147,14 @@ h3 {
   font-family: $primaryfont;
   font-size: 2rem;
   font-weight: 700;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+}
+
+.catalog-subtitle {
+  color: #666;
+  font-family: $primaryfont;
+  font-size: 0.95rem;
+  margin-bottom: 18px;
 }
 
 .product-specs {
@@ -194,6 +201,13 @@ h3 {
 .stock-text {
   text-decoration: underline;
   font-weight: 600;
+}
+
+.preview-text {
+  color: #8a6f2f;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
 .add-cart-btn {

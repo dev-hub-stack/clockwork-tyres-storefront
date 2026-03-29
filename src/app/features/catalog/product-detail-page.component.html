@@ -19,7 +19,7 @@
           </div>
 
           <div class="detail-gallery-thumbs">
-            @for (image of product().images; track image; let index = $index) {
+            @for (image of product().gallery; track image; let index = $index) {
               <button
                 type="button"
                 class="thumb-button"
@@ -40,28 +40,24 @@
               <h2 class="d-none d-md-block">{{ product().brand }}</h2>
               <div class="subtitle d-none d-md-flex flex-column">
                 <span>{{ product().model }}</span>
-                <small>{{ product().subline }}</small>
+                <small>{{ product().subtitle }}</small>
               </div>
               <span class="sku-label">SKU : {{ product().sku }}</span>
             </div>
 
             <div class="price-stack">
-              <div class="price-line">
-                <span>MSRP:</span>
-                <strong>{{ product().msrp | currency: 'AED' : 'symbol-narrow' : '1.0-0' }}</strong>
-              </div>
-              <div class="price-line emphasis">
-                <span>Your Price:</span>
-                <strong>{{ product().yourPrice | currency: 'AED' : 'symbol-narrow' : '1.0-0' }}</strong>
-              </div>
-              @if (product().salePrice) {
-                <div class="price-line emphasis sale">
-                  <span>Sale Price:</span>
+              @if (product().compareAtPrice) {
+                <div class="price-line">
+                  <span>MSRP:</span>
                   <strong>
-                    {{ (product().salePrice ?? 0) | currency: 'AED' : 'symbol-narrow' : '1.0-0' }}
+                    {{ (product().compareAtPrice ?? 0) | currency: 'AED' : 'symbol-narrow' : '1.0-0' }}
                   </strong>
                 </div>
               }
+              <div class="price-line">
+                <span>Your Price:</span>
+                <strong>{{ product().price | currency: 'AED' : 'symbol-narrow' : '1.0-0' }}</strong>
+              </div>
             </div>
           </div>
 
@@ -76,28 +72,33 @@
                 <label>Quantity</label>
               </div>
 
-              <p class="stock-note">{{ product().stockText }}</p>
+              <p class="stock-note">
+                {{ product().availabilityBadge }}
+                @if (product().availability.showQuantity) {
+                  ({{ product().availability.quantity }})
+                }
+              </p>
             </div>
 
-            <a routerLink="/cart" class="btn cart-btn text-uppercase">Add To Cart</a>
+            @if (addToCartCta().visible) {
+              <a routerLink="/cart" class="btn cart-btn text-uppercase">Add To Cart</a>
+            } @else {
+              <span class="preview-chip">{{ modeViewModel().label }}</span>
+            }
           </div>
 
           <div class="spec-card">
             <div class="spec-card-header">Specifications</div>
 
             <div class="spec-card-body">
-              @for (row of product().specifications; track row.leftLabel) {
+              @for (row of specificationRows(); track $index) {
                 <div class="spec-row">
-                  <div class="spec-cell">
-                    <span class="spec-label">{{ row.leftLabel }}:</span>
-                    <span>{{ row.leftValue }}</span>
-                  </div>
-                  <div class="spec-cell">
-                    @if (row.rightLabel && row.rightValue) {
-                      <span class="spec-label">{{ row.rightLabel }}:</span>
-                      <span>{{ row.rightValue }}</span>
-                    }
-                  </div>
+                  @for (item of row; track item.label) {
+                    <div class="spec-cell">
+                      <span class="spec-label">{{ item.label }}:</span>
+                      <span>{{ item.value }}</span>
+                    </div>
+                  }
                 </div>
               }
             </div>
@@ -124,7 +125,7 @@
 
       <div class="col-12">
         <ul class="size-tabs">
-          @for (tab of product().sizeTabs; track tab) {
+          @for (tab of sizeTabs(); track tab) {
             <li>
               <button
                 type="button"
@@ -159,14 +160,17 @@
               @for (option of filteredOptions(); track option.sku) {
                 <tr>
                   <td>{{ option.sku }}</td>
-                  <td>{{ option.pattern }}</td>
+                  <td>{{ product().brand }} {{ product().model }}</td>
                   <td>{{ option.size }}</td>
                   <td>{{ option.loadIndex }}</td>
                   <td>{{ option.speedRating }}</td>
                   <td>{{ option.season }}</td>
                   <td>
-                    <span [class]="option.status === 'in-stock' ? 'in-stock' : 'out-stock'">
-                      {{ option.stock }}
+                    <span [class]="option.availability.origin === 'own' ? 'in-stock' : 'out-stock'">
+                      {{ option.availability.label }}
+                      @if (option.availability.showQuantity) {
+                        ({{ option.availability.quantity }})
+                      }
                     </span>
                   </td>
                   <td>

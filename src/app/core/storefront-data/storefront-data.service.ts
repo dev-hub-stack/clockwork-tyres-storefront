@@ -54,11 +54,39 @@ export class StorefrontDataService {
     return this.store.getProfile();
   }
 
+  updateProfile(profile: StorefrontProfile): void {
+    this.store.updateProfile(profile);
+  }
+
   getAddresses(): StorefrontAddress[] {
     return this.store.getAddresses();
   }
 
+  addAddress(address: StorefrontAddress): void {
+    this.store.addAddress(address);
+  }
+
+  updateAddress(addressId: number, address: StorefrontAddress): void {
+    this.store.updateAddress(addressId, address);
+  }
+
+  deleteAddress(addressId: number): void {
+    this.store.deleteAddress(addressId);
+  }
+
   getOrders(): StorefrontOrder[] {
     return this.store.getOrders();
+  }
+
+  updateCartLineQuantity(lineId: number, quantity: number): void {
+    this.store.updateCartLineQuantity(lineId, quantity);
+  }
+
+  removeCartLine(lineId: number): void {
+    this.store.removeCartLine(lineId);
+  }
+
+  clearCart(): void {
+    this.store.clearCart();
   }
 }

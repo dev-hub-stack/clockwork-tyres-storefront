@@ -1,5 +1,14 @@
 <app-clockwork-header></app-clockwork-header>
 
+@if (modeViewModel().isSupplierPreview) {
+  <section class="mode-banner">
+    <div class="container-fluid">
+      <strong>{{ modeViewModel().label }}</strong>
+      <span>{{ modeViewModel().description }}</span>
+    </div>
+  </section>
+}
+
 <main class="page-shell">
   <router-outlet></router-outlet>
 </main>
