@@ -8,6 +8,7 @@ import {
   BusinessSessionService
 } from '../../core/auth';
 import { STOREFRONT_PATHS } from '../../core/storefront-routes';
+import { StorefrontBootstrapApiService } from '../../core/storefront-bootstrap';
 
 @Component({
   selector: 'app-login-page',
@@ -23,6 +24,7 @@ export class LoginPageComponent {
   private readonly router = inject(Router);
   private readonly businessLoginApi = inject(BusinessLoginApiService);
   private readonly businessSession = inject(BusinessSessionService);
+  private readonly storefrontBootstrapApi = inject(StorefrontBootstrapApiService);
 
   protected readonly benefits = [
     '24/7 online ordering access',
@@ -89,14 +91,15 @@ export class LoginPageComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
-          this.isSubmitting.set(false);
           this.businessSession.save(response.data);
-          void this.router.navigate(['/catalog'], {
-            queryParams: {
-              ownerLogin: '1'
-            },
-            replaceUrl: true
-          });
+          void this.storefrontBootstrapApi
+            .hydrateAuthenticatedAccountContext(response.data.account_context)
+            .finally(() => {
+              this.isSubmitting.set(false);
+              void this.router.navigate(['/catalog'], {
+                replaceUrl: true
+              });
+            });
         },
         error: (error: { error?: { message?: string } }) => {
           this.isSubmitting.set(false);

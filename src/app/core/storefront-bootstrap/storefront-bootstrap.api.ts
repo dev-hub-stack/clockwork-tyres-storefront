@@ -1,7 +1,12 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
+import {
+  BusinessAccountContext,
+  BusinessSessionService,
+  STOREFRONT_AUTH_API_ENDPOINTS
+} from '../auth';
 import {
   mapStorefrontBootstrapApiAccountContext,
   normalizeStorefrontBootstrapApiCategories,
@@ -22,6 +27,8 @@ export class StorefrontBootstrapApiService {
   private readonly http = inject(HttpClient);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly bootstrap = inject(StorefrontBootstrapService);
+  private readonly businessSession = inject(BusinessSessionService);
+  private readonly authEndpoints = inject(STOREFRONT_AUTH_API_ENDPOINTS);
 
   constructor(
     @Inject(STOREFRONT_BOOTSTRAP_API_URL) private readonly bootstrapUrl: string
@@ -61,5 +68,65 @@ export class StorefrontBootstrapApiService {
     } catch {
       // Graceful fallback: the route-driven bootstrap stays active if the API is unavailable.
     }
+
+    await this.hydrateAuthenticatedAccountContext(this.businessSession.session()?.account_context ?? null);
+  }
+
+  async hydrateAuthenticatedAccountContext(
+    seedContext: BusinessAccountContext | null = null
+  ): Promise<void> {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    if (!this.businessSession.accessToken()) {
+      return;
+    }
+
+    if (seedContext) {
+      this.bootstrap.setAccountContext(this.mapBusinessAccountContext(seedContext));
+    }
+
+    try {
+      const response = await firstValueFrom(
+        this.http.get<BusinessAccountContext>(this.authEndpoints.accountContext)
+      );
+
+      this.businessSession.updateAccountContext(response);
+      this.bootstrap.setAccountContext(this.mapBusinessAccountContext(response));
+    } catch (error) {
+      if (error instanceof HttpErrorResponse && [401, 403].includes(error.status)) {
+        this.businessSession.clear();
+        this.bootstrap.setAccountContext(null);
+      }
+    }
+  }
+
+  private mapBusinessAccountContext(
+    context: BusinessAccountContext | null
+  ) {
+    const currentAccount = context?.current_account;
+
+    if (!currentAccount) {
+      return null;
+    }
+
+    return normalizeStorefrontBootstrapAccountContext(
+      mapStorefrontBootstrapApiAccountContext(
+        {
+          id: currentAccount.id,
+          slug: currentAccount.slug,
+          name: currentAccount.name,
+          account_type: currentAccount.account_type,
+          retail_enabled: currentAccount.retail_enabled,
+          wholesale_enabled: currentAccount.wholesale_enabled,
+          base_subscription_plan: null,
+          reports_subscription_enabled: false,
+          reports_customer_limit: null
+        },
+        this.bootstrap.categories() ?? [],
+        this.bootstrap.categoryDefaults()
+      )
+    );
   }
 }

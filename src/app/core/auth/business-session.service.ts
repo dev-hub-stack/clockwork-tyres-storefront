@@ -1,6 +1,6 @@
 import { isPlatformBrowser } from '@angular/common';
 import { inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
-import { BusinessLoginSuccessData } from './business-login.types';
+import { BusinessAccountContext, BusinessLoginSuccessData } from './business-login.types';
 
 const BUSINESS_SESSION_STORAGE_KEY = 'clockwork-business-session';
 
@@ -21,6 +21,19 @@ export class BusinessSessionService {
     }
 
     window.localStorage.setItem(BUSINESS_SESSION_STORAGE_KEY, JSON.stringify(session));
+  }
+
+  updateAccountContext(accountContext: BusinessAccountContext): void {
+    const currentSession = this.session();
+
+    if (!currentSession) {
+      return;
+    }
+
+    this.save({
+      ...currentSession,
+      account_context: accountContext
+    });
   }
 
   clear(): void {
