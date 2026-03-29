@@ -19,6 +19,50 @@ export const routes: Routes = [
           )
       },
       {
+        path: 'tyres',
+        loadComponent: () =>
+          import('./features/catalog/catalog-page.component').then(
+            (m) => m.CatalogPageComponent
+          ),
+        data: {
+          category: 'tyres'
+        }
+      },
+      {
+        path: 'wheels',
+        loadComponent: () =>
+          import('./features/catalog/catalog-page.component').then(
+            (m) => m.CatalogPageComponent
+          ),
+        data: {
+          category: 'wheels'
+        }
+      },
+      {
+        path: 'search-by-size',
+        loadComponent: () =>
+          import('./features/catalog/catalog-page.component').then(
+            (m) => m.CatalogPageComponent
+          ),
+        data: {
+          fitmentMode: 'search-by-size'
+        }
+      },
+      {
+        path: 'search-by-vehicle',
+        loadComponent: () =>
+          import('./features/catalog/catalog-page.component').then(
+            (m) => m.CatalogPageComponent
+          ),
+        data: {
+          fitmentMode: 'search-by-vehicle'
+        }
+      },
+      {
+        path: 'serchvehicle',
+        redirectTo: 'search-by-vehicle'
+      },
+      {
         path: 'product/:sku',
         loadComponent: () =>
           import('./features/catalog/product-detail-page.component').then(

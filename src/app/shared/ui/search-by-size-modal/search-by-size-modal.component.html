@@ -2,78 +2,64 @@
   <div class="modal-dialog" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
     <div class="modal-content size-modal-content">
       <div class="modal-header border-0">
-        <h5 class="modal-title">Search by Size</h5>
+        <h5 class="modal-title">Search {{ activeCategory().label }} by Size</h5>
         <button type="button" class="close" aria-label="Close" (click)="closed.emit()">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
 
       <div class="modal-body border-0">
-        <h6>Front Wheel</h6>
+        <h6>{{ activeCategory().label }} Fitment</h6>
         <div class="grid-row-box">
-          <div class="form-group">
-            <select class="form-control search-inputs">
-              <option value="">1 | Diameters</option>
-              @for (item of diameters; track item) {
-                <option [value]="item">{{ item }}</option>
+          @for (field of searchFields(); track field.key) {
+            <div class="form-group">
+              @if (field.type === 'select') {
+                <select
+                  class="form-control search-inputs"
+                  [ngModel]="getFieldValue(field.key)"
+                  (ngModelChange)="updateField(field.key, $event)"
+                  [ngModelOptions]="{ standalone: true }"
+                >
+                  <option value="">{{ field.label }}</option>
+                  @for (item of getOptions(field.key); track item) {
+                    <option [value]="item">{{ item }}</option>
+                  }
+                </select>
+              } @else if (field.type === 'toggle') {
+                <label class="toggle-field">
+                  <input
+                    type="checkbox"
+                    [ngModel]="getToggleValue(field.key)"
+                    (ngModelChange)="updateField(field.key, $event)"
+                    [ngModelOptions]="{ standalone: true }"
+                  />
+                  <span>{{ field.label }}</span>
+                </label>
+              } @else {
+                <input
+                  class="form-control search-inputs"
+                  [type]="field.type === 'number' ? 'number' : 'text'"
+                  [placeholder]="field.label"
+                  [ngModel]="getFieldValue(field.key)"
+                  (ngModelChange)="updateField(field.key, $event)"
+                  [ngModelOptions]="{ standalone: true }"
+                />
               }
-            </select>
-          </div>
-          <div class="form-group">
-            <select class="form-control search-inputs">
-              <option value="">2 | Width</option>
-              @for (item of widths; track item) {
-                <option [value]="item">{{ item }}</option>
-              }
-            </select>
-          </div>
-          <div class="form-group">
-            <select class="form-control search-inputs">
-              <option value="">3 | Bolt Pattern</option>
-              @for (item of boltPatterns; track item) {
-                <option [value]="item">{{ item }}</option>
-              }
-            </select>
-          </div>
-          <div class="form-group">
-            <input class="form-control search-inputs" placeholder="4 | Min Offset" type="text" />
-          </div>
-          <div class="form-group">
-            <input class="form-control search-inputs" placeholder="5 | Max Offset" type="text" />
-          </div>
+            </div>
+          }
         </div>
 
-        <div class="rear-section">
-          <h6>Rear Wheel</h6>
-          <div class="grid-row-box">
-            <div class="form-group">
-              <select class="form-control search-inputs">
-                <option value="">1 | Diameters</option>
-                @for (item of diameters; track item) {
-                  <option [value]="item">{{ item }}</option>
-                }
-              </select>
-            </div>
-            <div class="form-group">
-              <select class="form-control search-inputs">
-                <option value="">2 | Width</option>
-                @for (item of widths; track item) {
-                  <option [value]="item">{{ item }}</option>
-                }
-              </select>
-            </div>
-            <div class="form-group">
-              <input class="form-control search-inputs" placeholder="3 | Min Offset" type="text" />
-            </div>
-            <div class="form-group">
-              <input class="form-control search-inputs" placeholder="4 | Max Offset" type="text" />
-            </div>
-          </div>
+        <div class="modal-footnote">
+          The visual shell stays close to legacy Clockwork, while the field set adapts to the active product category.
         </div>
       </div>
 
       <div class="modal-footer border-0">
-        <button type="button" class="btn btn-02 f-large addcart new-btn bg-black w-auto go-btn-pad">
+        <button
+          type="button"
+          class="btn btn-02 f-large addcart new-btn bg-black w-auto go-btn-pad"
+          (click)="submit()"
+        >
           Go
         </button>
       </div>

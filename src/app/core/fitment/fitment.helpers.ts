@@ -1,5 +1,6 @@
 import { CatalogCategoryId } from '../catalog-categories/catalog-category.types';
 import {
+  FITMENT_PROVIDER_CATEGORY_MAP,
   FITMENT_PROVIDER_CONFIGS
 } from './fitment.config';
 import {
@@ -8,11 +9,16 @@ import {
   FitmentProviderInput,
   FitmentProviderViewModel,
   FitmentSearchFieldDefinition,
+  FitmentSearchQuery,
   FitmentSearchMode
 } from './fitment.types';
 
 export function resolveFitmentProviderId(input: FitmentProviderInput): FitmentProviderId {
-  return input === 'wheels' ? 'wheels' : 'tyres';
+  if (input === 'wheels' || input === 'tyres') {
+    return input;
+  }
+
+  return 'tyres';
 }
 
 export function getFitmentProviderConfig(input: FitmentProviderInput = 'tyres'): FitmentProviderConfig {
@@ -25,7 +31,7 @@ export function getFitmentProviderConfig(input: FitmentProviderInput = 'tyres'):
 }
 
 export function getFitmentProviderForCategory(categoryId: CatalogCategoryId): FitmentProviderConfig {
-  return getFitmentProviderConfig(categoryId);
+  return getFitmentProviderConfig(FITMENT_PROVIDER_CATEGORY_MAP[categoryId]);
 }
 
 export function buildFitmentProviderViewModel(
@@ -56,4 +62,39 @@ export function hasFitmentMode(provider: FitmentProviderConfig, mode: FitmentSea
 
 export function getEnabledFitmentProviders(): FitmentProviderConfig[] {
   return FITMENT_PROVIDER_CONFIGS.filter((provider) => provider.enabled || provider.launchCategory);
+}
+
+export function resolveFitmentSearchMode(
+  mode: FitmentSearchMode | string | null | undefined
+): FitmentSearchMode {
+  return mode === 'search-by-vehicle' ? 'search-by-vehicle' : 'search-by-size';
+}
+
+export function normalizeFitmentSearchQuery(query: FitmentSearchQuery): FitmentSearchQuery {
+  return Object.entries(query).reduce<FitmentSearchQuery>((normalized, [key, value]) => {
+    if (value === undefined || value === null || value === '' || value === false) {
+      return normalized;
+    }
+
+    normalized[key] = value;
+    return normalized;
+  }, {});
+}
+
+export function buildFitmentSearchSummary(
+  provider: FitmentProviderConfig,
+  mode: FitmentSearchMode,
+  query: FitmentSearchQuery
+): string[] {
+  const normalizedQuery = normalizeFitmentSearchQuery(query);
+
+  return getFitmentSearchFields(provider, mode).flatMap((field) => {
+    const value = normalizedQuery[field.key];
+
+    if (value === undefined || value === null || value === '' || value === false) {
+      return [];
+    }
+
+    return [`${field.label}: ${value === true ? 'Yes' : value}`];
+  });
 }

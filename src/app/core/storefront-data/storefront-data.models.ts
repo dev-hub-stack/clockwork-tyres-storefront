@@ -1,10 +1,10 @@
+import { CatalogCategoryId } from '../catalog-categories';
+
 export type StorefrontMode = 'retail-store' | 'supplier-preview';
 
 export type StockOrigin = 'own' | 'supplier';
 
 export type OrderStatus = 'processing' | 'shipped' | 'completed' | 'cancelled';
-
-export type CatalogCategory = 'tyres';
 
 export interface StorefrontAvailability {
   origin: StockOrigin;
@@ -25,7 +25,7 @@ export interface StorefrontCatalogItem {
   brand: string;
   model: string;
   subtitle: string;
-  category: CatalogCategory;
+  category: CatalogCategoryId;
   size: string;
   price: number;
   compareAtPrice?: number;
@@ -137,6 +137,7 @@ export interface StorefrontOrder {
 
 export interface StorefrontDataState {
   mode: StorefrontMode;
+  activeCategory: CatalogCategoryId;
   catalog: StorefrontCatalogItem[];
   pdp: Record<string, StorefrontPdpItem>;
   cart: StorefrontCartLine[];

@@ -2,7 +2,7 @@
   <div class="container-fluid mt-3">
     <div class="row">
       <div class="col-md-5">
-        <div class="catalog-chip">Tyres</div>
+        <div class="catalog-chip">{{ activeCategory().label }}</div>
       </div>
       <div class="col-md-7">
         <div class="d-flex justify-content-md-end sort-by-responsive toolbar-right">
@@ -78,76 +78,91 @@
 
       <div class="col-lg-9">
         <div class="results-header">
-          <span class="size-badge">325/30R21</span>
+          <div class="result-chip-list">
+            @for (chip of searchSummaryChips(); track chip) {
+              <span class="size-badge">{{ chip }}</span>
+            }
+          </div>
           <span class="showing-text">Showing {{ products().length }} products</span>
         </div>
 
-        <div class="catalog-grid">
-          @for (product of products(); track product.sku) {
-            <article class="catalog-card">
-              <a
-                class="catalog-card-media product-link"
-                [routerLink]="['/product', product.slug]"
-                [attr.aria-label]="'View ' + product.brand + ' ' + product.model"
-              >
-                <img [src]="product.image" [alt]="product.model" />
-              </a>
-
-              <div class="catalog-card-body">
-                <div class="brand-mark">clockwork tyres</div>
-                <h3>
-                  <a class="product-link" [routerLink]="['/product', product.slug]">
-                    {{ product.brand }} {{ product.model }}
-                  </a>
-                </h3>
-
-                <p class="catalog-subtitle">{{ product.subtitle }}</p>
-
-                <dl class="product-specs">
-                  <div>
-                    <dt>Size:</dt>
-                    <dd>{{ product.size }}</dd>
-                  </div>
-                  <div>
-                    <dt>SKU:</dt>
-                    <dd>{{ product.sku }}</dd>
-                  </div>
-                  <div>
-                    <dt>Stock:</dt>
-                    <dd>{{ product.availabilityBadge }}</dd>
-                  </div>
-                  <div>
-                    <dt>Supply:</dt>
-                    <dd>{{ product.priorityRank === 0 ? 'Own stock' : 'Approved suppliers' }}</dd>
-                  </div>
-                </dl>
-
-                <div class="price-row">
-                  <span class="price-label">Price:</span>
-                  <strong>{{ product.price | currency: 'AED ' }}</strong>
-                </div>
-
-                <div class="card-actions">
-                  <span class="stock-text">
-                    {{ product.availabilityBadge }}
-                    @if (product.availability.showQuantity) {
-                      ({{ product.availability.quantity }})
-                    }
-                  </span>
-                  @if (cartEnabled()) {
-                    <button type="button" class="btn add-cart-btn">ADD TO CART</button>
-                  } @else {
-                    <span class="preview-text">Preview only</span>
-                  }
-                </div>
-
-                <a class="details-link" [routerLink]="['/product', product.slug]">
-                  View Details
+        @if (categoryDisabled()) {
+          <div class="category-empty-state">
+            <h3>{{ activeCategory().label }} are structurally supported, but not live at launch.</h3>
+            <p>
+              The new storefront keeps the legacy Clockwork seams ready for this category, while the live customer journey is currently tyre-first.
+            </p>
+            <a routerLink="/catalog" class="details-link">Return to the live tyre catalog</a>
+          </div>
+        } @else {
+          <div class="catalog-grid">
+            @for (product of products(); track product.sku) {
+              <article class="catalog-card">
+                <a
+                  class="catalog-card-media product-link"
+                  [routerLink]="['/product', product.slug]"
+                  [queryParams]="productQueryParams()"
+                  [attr.aria-label]="'View ' + product.brand + ' ' + product.model"
+                >
+                  <img [src]="product.image" [alt]="product.model" />
                 </a>
-              </div>
-            </article>
-          }
-        </div>
+
+                <div class="catalog-card-body">
+                  <div class="brand-mark">clockwork tyres</div>
+                  <h3>
+                    <a class="product-link" [routerLink]="['/product', product.slug]" [queryParams]="productQueryParams()">
+                      {{ product.brand }} {{ product.model }}
+                    </a>
+                  </h3>
+
+                  <p class="catalog-subtitle">{{ product.subtitle }}</p>
+
+                  <dl class="product-specs">
+                    <div>
+                      <dt>Size:</dt>
+                      <dd>{{ product.size }}</dd>
+                    </div>
+                    <div>
+                      <dt>SKU:</dt>
+                      <dd>{{ product.sku }}</dd>
+                    </div>
+                    <div>
+                      <dt>Stock:</dt>
+                      <dd>{{ product.availabilityBadge }}</dd>
+                    </div>
+                    <div>
+                      <dt>Supply:</dt>
+                      <dd>{{ product.priorityRank === 0 ? 'Own stock' : 'Approved suppliers' }}</dd>
+                    </div>
+                  </dl>
+
+                  <div class="price-row">
+                    <span class="price-label">Price:</span>
+                    <strong>{{ product.price | currency: 'AED ' }}</strong>
+                  </div>
+
+                  <div class="card-actions">
+                    <span class="stock-text">
+                      {{ product.availabilityBadge }}
+                      @if (product.availability.showQuantity) {
+                        ({{ product.availability.quantity }})
+                      }
+                    </span>
+                    @if (cartEnabled()) {
+                      <button type="button" class="btn add-cart-btn">ADD TO CART</button>
+                    } @else {
+                      <span class="preview-text">Preview only</span>
+                    }
+                  </div>
+
+                  <a class="details-link" [routerLink]="['/product', product.slug]" [queryParams]="productQueryParams()">
+                    View Details
+                  </a>
+                </div>
+              </article>
+            }
+          </div>
+        }
       </div>
     </div>
   </div>

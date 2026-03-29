@@ -3,7 +3,7 @@
     <div class="container-fluid">
       <div class="row new-mobile-setting">
         <div class="col-5 col-md-4 col-xl-3 logo-res">
-          <a routerLink="/catalog" class="logoimag">
+          <a routerLink="/catalog" [queryParams]="catalogQueryParams()" class="logoimag">
             <img src="/assets/img/new-logo.png" class="img-fluid header-logo" alt="Clockwork" />
           </a>
         </div>
@@ -13,10 +13,13 @@
             <div class="navbar-nav">
               <ul class="list-inline text-center d-flex mb-0 create-gap">
                 <li class="list-inline-item dropdown">
-                  <a class="cp" routerLink="/catalog">Products</a>
+                  <a class="cp" routerLink="/catalog" [queryParams]="catalogQueryParams()">Products</a>
                 </li>
                 <li class="list-inline-item">
                   <span class="cp nav-label">Suppliers</span>
+                </li>
+                <li class="list-inline-item">
+                  <span class="category-pill">{{ activeCategory().label }}</span>
                 </li>
               </ul>
             </div>
@@ -46,12 +49,12 @@
       <div class="row">
         <div class="col-sm-6 col-md-6 col-lg-3">
           <button class="w-100 h-100 br-25 bg-white text-black" type="button" (click)="showVehicleModal.set(true)">
-            Search by Vehicle
+            Search {{ activeCategory().label }} by Vehicle
           </button>
         </div>
         <div class="col-sm-6 col-md-6 col-lg-3">
           <button class="w-100 h-100 br-25 bg-white text-black" type="button" (click)="showSizeModal.set(true)">
-            Search by Size
+            Search {{ activeCategory().label }} by Size
           </button>
         </div>
         <div class="col-sm-12 col-md-12 col-lg-6">

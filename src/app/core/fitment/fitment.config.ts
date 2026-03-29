@@ -1,7 +1,7 @@
-import { CATALOG_CATEGORY_CONFIG } from '../catalog-categories';
-import { FitmentProviderConfig } from './fitment.types';
+import { CatalogCategoryId, CATALOG_CATEGORY_CONFIG } from '../catalog-categories';
+import { FitmentProviderConfig, FitmentProviderId } from './fitment.types';
 
-export const FITMENT_PROVIDER_CONFIG: Record<string, FitmentProviderConfig> = {
+export const FITMENT_PROVIDER_CONFIG: Record<FitmentProviderId, FitmentProviderConfig> = {
   tyres: {
     id: 'tyres',
     categoryId: 'tyres',
@@ -30,4 +30,11 @@ export const FITMENT_PROVIDER_CONFIG: Record<string, FitmentProviderConfig> = {
     searchByVehicleFields: CATALOG_CATEGORY_CONFIG.wheels.searchByVehicleFields,
     specFields: CATALOG_CATEGORY_CONFIG.wheels.specFields
   }
+};
+
+export const FITMENT_PROVIDER_CONFIGS = Object.values(FITMENT_PROVIDER_CONFIG);
+
+export const FITMENT_PROVIDER_CATEGORY_MAP: Record<CatalogCategoryId, FitmentProviderId> = {
+  tyres: 'tyres',
+  wheels: 'wheels'
 };

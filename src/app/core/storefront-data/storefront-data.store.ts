@@ -1,4 +1,5 @@
 import { computed, Injectable, signal } from '@angular/core';
+import { CatalogCategoryId } from '../catalog-categories';
 import {
   StorefrontCartLine,
   StorefrontCartViewLine,
@@ -21,10 +22,13 @@ export class StorefrontDataStore {
   private readonly state = signal<StorefrontDataState>(storefrontMockState);
 
   readonly mode = computed(() => this.state().mode);
+  readonly activeCategory = computed(() => this.state().activeCategory);
   readonly profile = computed(() => this.state().profile);
   readonly addresses = computed(() => this.state().addresses);
   readonly orders = computed(() => this.state().orders);
-  readonly catalog = computed(() => this.buildCatalogView(this.state().catalog, this.mode()));
+  readonly catalog = computed(() =>
+    this.buildCatalogView(this.state().catalog, this.mode(), this.activeCategory())
+  );
   readonly cart = computed(() => this.buildCartView(this.state().cart, this.mode()));
 
   setMode(mode: StorefrontMode): void {
@@ -34,22 +38,47 @@ export class StorefrontDataStore {
     }));
   }
 
-  getCatalogItems(mode: StorefrontMode = this.mode()): StorefrontCatalogViewItem[] {
-    return this.buildCatalogView(this.state().catalog, mode);
+  setCategory(category: CatalogCategoryId): void {
+    this.state.update((state) => ({
+      ...state,
+      activeCategory: category
+    }));
   }
 
-  getFeaturedCatalogItems(mode: StorefrontMode = this.mode()): StorefrontCatalogViewItem[] {
-    return this.getCatalogItems(mode).filter((item) => item.featured);
+  getCatalogItems(
+    mode: StorefrontMode = this.mode(),
+    category: CatalogCategoryId = this.activeCategory()
+  ): StorefrontCatalogViewItem[] {
+    return this.buildCatalogView(this.state().catalog, mode, category);
   }
 
-  getProductBySku(sku: string, mode: StorefrontMode = this.mode()): StorefrontCatalogViewItem | undefined {
-    return this.getCatalogItems(mode).find((item) => item.sku === sku);
+  getFeaturedCatalogItems(
+    mode: StorefrontMode = this.mode(),
+    category: CatalogCategoryId = this.activeCategory()
+  ): StorefrontCatalogViewItem[] {
+    return this.getCatalogItems(mode, category).filter((item) => item.featured);
   }
 
-  getProductBySlug(slug: string, mode: StorefrontMode = this.mode()): StorefrontPdpViewItem | undefined {
+  getProductBySku(
+    sku: string,
+    mode: StorefrontMode = this.mode(),
+    category: CatalogCategoryId = this.activeCategory()
+  ): StorefrontCatalogViewItem | undefined {
+    return this.getCatalogItems(mode, category).find((item) => item.sku === sku);
+  }
+
+  getProductBySlug(
+    slug: string,
+    mode: StorefrontMode = this.mode(),
+    category: CatalogCategoryId = this.activeCategory()
+  ): StorefrontPdpViewItem | undefined {
     const item = this.state().pdp[slug];
 
-    return item ? this.buildPdpView(item, mode) : undefined;
+    if (!item || item.category !== category) {
+      return undefined;
+    }
+
+    return this.buildPdpView(item, mode);
   }
 
   getCartItems(mode: StorefrontMode = this.mode()): StorefrontCartViewLine[] {
@@ -138,9 +167,11 @@ export class StorefrontDataStore {
 
   private buildCatalogView(
     items: StorefrontCatalogItem[],
-    mode: StorefrontMode
+    mode: StorefrontMode,
+    category: CatalogCategoryId
   ): StorefrontCatalogViewItem[] {
     return [...items]
+      .filter((item) => item.category === category)
       .filter((item) => this.isPurchasable(mode, item))
       .sort((left, right) => {
         const leftRank = left.availability.origin === 'own' ? 0 : 1;

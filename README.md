@@ -81,10 +81,23 @@ Feature components should talk to facades and repositories, not directly to `Htt
 
 - [Architecture](docs/architecture.md)
 - [Delivery Plan](docs/delivery-plan.md)
+- [Setup Prerequisites](docs/setup-prerequisites.md)
+- [Legacy UI Reuse Audit](docs/legacy-clockwork-ui-reuse-audit.md)
+- [Storefront Contract Foundation](docs/STOREFRONT_CONTRACT_FOUNDATION.md)
+- [UX Parity Gaps](docs/UX_PARITY_GAPS.md)
 
 ## Current Status
 
-This repository starts as a docs-first repo. The Angular application scaffold, CI, and implementation work will be added after the initial architecture and delivery approach are agreed.
+This repository now has a live Angular 21 storefront scaffold, the migrated Clockwork visual shell, category and fitment foundations, and legacy-compatible search/listing route support.
+
+Current progress includes:
+
+- Angular 21 SSR storefront scaffold
+- migrated header, login, listing, PDP, cart, checkout, and account shells
+- supplier preview mode gating
+- category-capable storefront foundation with `tyres` active and `wheels` structurally supported
+- fitment-aware search state for `search by size` and `search by vehicle`
+- legacy-compatible entry routes such as `/search-by-size`, `/search-by-vehicle`, `/serchvehicle`, and `/wheels`
 
 ## Initial Build Priorities
 
@@ -93,4 +106,3 @@ This repository starts as a docs-first repo. The Angular application scaffold, C
 3. Implement fitment search and catalog browsing
 4. Implement product detail, cart, and checkout
 5. Integrate with CRM-backed storefront APIs
-

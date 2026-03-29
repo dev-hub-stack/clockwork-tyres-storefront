@@ -1,5 +1,16 @@
 <app-clockwork-header></app-clockwork-header>
 
+@if (!activeCategory().enabled) {
+  <section class="category-banner">
+    <div class="container-fluid">
+      <strong>{{ activeCategory().label }} foundation is ready</strong>
+      <span>
+        This category is kept in the architecture for future launch, but the live storefront is currently tyre-first.
+      </span>
+    </div>
+  </section>
+}
+
 @if (modeViewModel().isSupplierPreview) {
   <section class="mode-banner">
     <div class="container-fluid">

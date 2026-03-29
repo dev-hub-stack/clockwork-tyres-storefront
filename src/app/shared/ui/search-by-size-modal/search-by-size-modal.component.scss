@@ -47,8 +47,23 @@ h6 {
   font-weight: 600;
 }
 
-.rear-section {
-  margin-top: 28px;
+.toggle-field {
+  align-items: center;
+  border: 2px solid #000;
+  border-radius: 14px;
+  display: flex;
+  gap: 12px;
+  height: 56px;
+  margin: 0;
+  padding: 0 18px;
+  font-family: $primaryfont;
+  font-weight: 600;
+}
+
+.modal-footnote {
+  margin-top: 22px;
+  color: #444;
+  font-family: $primaryfont;
 }
 
 .go-btn-pad {

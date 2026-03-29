@@ -1,4 +1,5 @@
 import { computed, inject, Injectable } from '@angular/core';
+import { CatalogCategoryId } from '../catalog-categories';
 import {
   StorefrontAddress,
   StorefrontCartViewLine,
@@ -17,6 +18,7 @@ export class StorefrontDataService {
   private readonly store = inject(StorefrontDataStore);
 
   readonly mode = this.store.mode;
+  readonly activeCategory = this.store.activeCategory;
   readonly profile = this.store.profile;
   readonly addresses = this.store.addresses;
   readonly orders = this.store.orders;
@@ -30,20 +32,38 @@ export class StorefrontDataService {
     this.store.setMode(mode);
   }
 
-  getCatalogItems(mode: StorefrontMode = this.mode()): StorefrontCatalogViewItem[] {
-    return this.store.getCatalogItems(mode);
+  setCategory(category: CatalogCategoryId): void {
+    this.store.setCategory(category);
   }
 
-  getFeaturedCatalogItems(mode: StorefrontMode = this.mode()): StorefrontCatalogViewItem[] {
-    return this.store.getFeaturedCatalogItems(mode);
+  getCatalogItems(
+    mode: StorefrontMode = this.mode(),
+    category: CatalogCategoryId = this.activeCategory()
+  ): StorefrontCatalogViewItem[] {
+    return this.store.getCatalogItems(mode, category);
   }
 
-  getProductBySku(sku: string, mode: StorefrontMode = this.mode()): StorefrontCatalogViewItem | undefined {
-    return this.store.getProductBySku(sku, mode);
+  getFeaturedCatalogItems(
+    mode: StorefrontMode = this.mode(),
+    category: CatalogCategoryId = this.activeCategory()
+  ): StorefrontCatalogViewItem[] {
+    return this.store.getFeaturedCatalogItems(mode, category);
   }
 
-  getProductBySlug(sku: string, mode: StorefrontMode = this.mode()): StorefrontPdpViewItem | undefined {
-    return this.store.getProductBySlug(sku, mode);
+  getProductBySku(
+    sku: string,
+    mode: StorefrontMode = this.mode(),
+    category: CatalogCategoryId = this.activeCategory()
+  ): StorefrontCatalogViewItem | undefined {
+    return this.store.getProductBySku(sku, mode, category);
+  }
+
+  getProductBySlug(
+    sku: string,
+    mode: StorefrontMode = this.mode(),
+    category: CatalogCategoryId = this.activeCategory()
+  ): StorefrontPdpViewItem | undefined {
+    return this.store.getProductBySlug(sku, mode, category);
   }
 
   getCartItems(mode: StorefrontMode = this.mode()): StorefrontCartViewLine[] {

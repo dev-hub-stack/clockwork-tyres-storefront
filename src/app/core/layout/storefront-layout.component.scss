@@ -1,3 +1,4 @@
+.category-banner,
 .mode-banner {
   background: #f5f1e6;
   border-bottom: 1px solid #d8cfbb;
@@ -11,6 +12,11 @@
     align-items: center;
     gap: 12px;
   }
+}
+
+.category-banner {
+  background: #f0f4f8;
+  border-bottom-color: #c7d3df;
 }
 
 .page-shell {

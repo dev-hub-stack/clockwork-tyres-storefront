@@ -2,7 +2,7 @@
   <div class="modal-dialog" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
     <div class="modal-content vehicle-modal-content">
       <div class="modal-header border-0">
-        <h5 class="modal-title">Search by Vehicle</h5>
+        <h5 class="modal-title">Search {{ activeCategory().label }} by Vehicle</h5>
         <button type="button" class="close" aria-label="Close" (click)="closed.emit()">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -10,51 +10,57 @@
 
       <div class="modal-body border-0">
         <div class="grid-row-box grid-row-box2">
-          <div class="form-group">
-            <select class="form-control search-inputs" [(ngModel)]="make">
-              @for (item of makes; track item) {
-                <option [value]="item">{{ item }}</option>
+          @for (field of searchFields(); track field.key) {
+            <div class="form-group">
+              @if (field.type === 'toggle') {
+                <label class="toggle-field">
+                  <input
+                    type="checkbox"
+                    [ngModel]="getToggleValue(field.key)"
+                    (ngModelChange)="updateField(field.key, $event)"
+                    [ngModelOptions]="{ standalone: true }"
+                  />
+                  <span>{{ field.label }}</span>
+                </label>
+              } @else if (field.type === 'select') {
+                <select
+                  class="form-control search-inputs"
+                  [ngModel]="getFieldValue(field.key)"
+                  (ngModelChange)="updateField(field.key, $event)"
+                  [ngModelOptions]="{ standalone: true }"
+                >
+                  <option value="">{{ field.label }}</option>
+                  @for (item of getOptions(field.key); track item) {
+                    <option [value]="item">{{ item }}</option>
+                  }
+                </select>
+                <i class="fa fa-sort-desc"></i>
+              } @else {
+                <input
+                  class="form-control search-inputs"
+                  [type]="field.type === 'number' ? 'number' : 'text'"
+                  [placeholder]="field.label"
+                  [ngModel]="getFieldValue(field.key)"
+                  (ngModelChange)="updateField(field.key, $event)"
+                  [ngModelOptions]="{ standalone: true }"
+                />
               }
-            </select>
-            <i class="fa fa-sort-desc"></i>
-          </div>
+            </div>
+          }
 
           <div class="form-group">
-            <select class="form-control search-inputs" [(ngModel)]="model">
-              @for (item of models; track item) {
-                <option [value]="item">{{ item }}</option>
-              }
-            </select>
-            <i class="fa fa-sort-desc"></i>
-          </div>
-
-          <div class="form-group">
-            <select class="form-control search-inputs" [(ngModel)]="year">
-              @for (item of years; track item) {
-                <option [value]="item">{{ item }}</option>
-              }
-            </select>
-            <i class="fa fa-sort-desc"></i>
-          </div>
-
-          <div class="form-group">
-            <select class="form-control search-inputs" [(ngModel)]="subModel">
-              @for (item of subModels; track item) {
-                <option [value]="item">{{ item }}</option>
-              }
-            </select>
-            <i class="fa fa-sort-desc"></i>
-          </div>
-
-          <div class="form-group">
-            <button type="button" class="btn btn-02 f-large addcart new-btn bg-black w-auto go-btn-pad">
+            <button
+              type="button"
+              class="btn btn-02 f-large addcart new-btn bg-black w-auto go-btn-pad"
+              (click)="submit()"
+            >
               Go
             </button>
           </div>
         </div>
 
         <div class="modal-footnote">
-          Please note: this is the first migrated visual shell for the legacy Clockwork vehicle search.
+          The vehicle-search flow keeps the legacy Clockwork interaction pattern while adapting fields per category.
         </div>
       </div>
     </div>

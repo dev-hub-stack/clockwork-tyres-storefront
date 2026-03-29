@@ -380,6 +380,7 @@ const orders: StorefrontOrder[] = [
 
 export const storefrontMockState: StorefrontDataState = {
   mode: 'retail-store',
+  activeCategory: 'tyres',
   catalog: catalogItems,
   pdp,
   cart,
