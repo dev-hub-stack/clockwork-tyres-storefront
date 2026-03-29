@@ -9,6 +9,9 @@ import {
 } from '../storefront-mode';
 import { resolveStorefrontRouteContext } from '../storefront-routes';
 import {
+  StorefrontBootstrapApiAccount,
+  StorefrontBootstrapApiCategory,
+  StorefrontBootstrapApiCategoryDefaults,
   StorefrontBootstrapAccountContext,
   StorefrontBootstrapResolvedState,
   StorefrontBootstrapRouteState,
@@ -43,6 +46,31 @@ export function normalizeStorefrontBootstrapAccountContext(
     ...context,
     enabledCategories: Array.from(new Set(context.enabledCategories))
   };
+}
+
+export function mapStorefrontBootstrapApiAccountContext(
+  account: StorefrontBootstrapApiAccount | null | undefined,
+  categories: StorefrontBootstrapApiCategory[] = [],
+  categoryDefaults: StorefrontBootstrapApiCategoryDefaults | null = null
+): StorefrontBootstrapAccountContext | null {
+  if (!account) {
+    return null;
+  }
+
+  const supportedModes = normalizeSupportedModes(account.supported_modes);
+  const enabledCategories = resolveEnabledCategories(categories, categoryDefaults);
+
+  return normalizeStorefrontBootstrapAccountContext({
+    accountId: account.id,
+    accountName: account.name,
+    accountType: resolveStorefrontAccountType(account.account_type),
+    retailEnabled: supportedModes ? supportedModes.includes('retail-store') : account.retail_enabled,
+    wholesaleEnabled: supportedModes ? supportedModes.includes('supplier-preview') : account.wholesale_enabled,
+    subscriptionLabel: formatSubscriptionLabel(account.base_subscription_plan),
+    reportsEnabled: account.reports_subscription_enabled,
+    reportsCustomerLimit: account.reports_customer_limit,
+    enabledCategories
+  });
 }
 
 export function resolveStorefrontBootstrapMode(
@@ -93,6 +121,56 @@ export function resolveStorefrontBootstrapFitmentMode(
   routeFitmentMode: FitmentSearchMode | null
 ): FitmentSearchMode {
   return resolveFitmentSearchMode(routeFitmentMode);
+}
+
+function resolveStorefrontAccountType(value: string | null | undefined): 'retailer' | 'supplier' | 'both' | null {
+  if (value === 'retailer' || value === 'supplier' || value === 'both') {
+    return value;
+  }
+
+  return null;
+}
+
+function formatSubscriptionLabel(value: string | null | undefined): string | null {
+  if (!value) {
+    return null;
+  }
+
+  return value
+    .split(/[_-]/g)
+    .filter(Boolean)
+    .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
+    .join(' ');
+}
+
+function normalizeSupportedModes(
+  supportedModes: StorefrontModeInput[] | null | undefined
+): StorefrontMode[] | null {
+  if (!supportedModes?.length) {
+    return null;
+  }
+
+  const normalizedModes = supportedModes
+    .map((mode) => resolveStorefrontModeId(mode))
+    .filter((mode): mode is StorefrontMode => mode !== null);
+
+  return normalizedModes.length ? Array.from(new Set(normalizedModes)) : null;
+}
+
+function resolveEnabledCategories(
+  categories: StorefrontBootstrapApiCategory[],
+  categoryDefaults: StorefrontBootstrapApiCategoryDefaults | null
+): CatalogCategoryId[] {
+  const configuredEnabledCategories = categoryDefaults?.enabled
+    ?.map((categoryId) => resolveCatalogCategoryId(categoryId)) ?? [];
+
+  if (configuredEnabledCategories.length) {
+    return Array.from(new Set(configuredEnabledCategories));
+  }
+
+  return categories
+    .filter((category) => category.enabled)
+    .map((category) => resolveCatalogCategoryId(category.id));
 }
 
 export function buildStorefrontModeContext(

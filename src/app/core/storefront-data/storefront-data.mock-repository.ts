@@ -1,12 +1,20 @@
 import { Injectable, signal } from '@angular/core';
 import { CatalogCategoryId } from '../catalog-categories';
 import {
+  StorefrontCatalogItem,
   StorefrontAddress,
   StorefrontDataState,
   StorefrontMode,
   StorefrontOrder,
+  StorefrontPdpItem,
   StorefrontProfile
 } from './storefront-data.models';
+import {
+  resolveCatalogItemBySku,
+  resolveCatalogItems,
+  resolveFeaturedCatalogItems,
+  resolvePdpItemBySlug
+} from './storefront-catalog.helpers';
 import { storefrontMockState } from './storefront-data.mock';
 import { StorefrontDataRepository } from './storefront-data.repository';
 
@@ -19,6 +27,30 @@ export class InMemoryStorefrontDataRepository implements StorefrontDataRepositor
   private readonly stateSignal = signal<StorefrontDataState>(cloneState());
 
   readonly state = this.stateSignal.asReadonly();
+
+  getCatalogItems(mode: StorefrontMode, category: CatalogCategoryId): StorefrontCatalogItem[] {
+    return resolveCatalogItems(this.stateSignal().catalog, mode, category);
+  }
+
+  getFeaturedCatalogItems(mode: StorefrontMode, category: CatalogCategoryId): StorefrontCatalogItem[] {
+    return resolveFeaturedCatalogItems(this.stateSignal().catalog, mode, category);
+  }
+
+  getProductBySku(
+    sku: string,
+    mode: StorefrontMode,
+    category: CatalogCategoryId
+  ): StorefrontCatalogItem | undefined {
+    return resolveCatalogItemBySku(this.stateSignal().catalog, sku, mode, category);
+  }
+
+  getProductBySlug(
+    slug: string,
+    _mode: StorefrontMode,
+    category: CatalogCategoryId
+  ): StorefrontPdpItem | undefined {
+    return resolvePdpItemBySlug(this.stateSignal().pdp, slug, category);
+  }
 
   setMode(mode: StorefrontMode): void {
     this.stateSignal.update((state) => ({

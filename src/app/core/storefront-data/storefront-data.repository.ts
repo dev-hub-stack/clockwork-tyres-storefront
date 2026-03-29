@@ -7,8 +7,9 @@ import {
   StorefrontOrder,
   StorefrontProfile
 } from './storefront-data.models';
+import { StorefrontCatalogRepository } from './storefront-catalog.repository';
 
-export interface StorefrontDataRepository {
+export interface StorefrontDataRepository extends StorefrontCatalogRepository {
   readonly state: Signal<StorefrontDataState>;
 
   setMode(mode: StorefrontMode): void;

@@ -22,6 +22,71 @@ export interface StorefrontBootstrapAccountContext {
   enabledCategories: CatalogCategoryId[];
 }
 
+export interface StorefrontBootstrapApiCategory {
+  id: string;
+  label: string;
+  enabled: boolean;
+  launch_status?: string | null;
+}
+
+export interface StorefrontBootstrapApiCategoryDefaults {
+  active: string | null;
+  enabled: string[];
+}
+
+export interface StorefrontBootstrapApiAccount {
+  id: string | number | null;
+  slug: string | null;
+  name: string | null;
+  account_type: StorefrontAccountType | string | null;
+  retail_enabled: boolean;
+  wholesale_enabled: boolean;
+  base_subscription_plan: string | null;
+  reports_subscription_enabled: boolean;
+  reports_customer_limit: number | null;
+  supported_modes?: StorefrontModeInput[];
+  supports_retail_storefront?: boolean;
+  supports_wholesale_portal?: boolean;
+  has_reports_subscription?: boolean;
+}
+
+export interface StorefrontBootstrapApiData {
+  version: number;
+  storefront_mode: StorefrontModeInput;
+  capabilities?: {
+    cart_enabled: boolean;
+    checkout_enabled: boolean;
+    supplier_identity_hidden: boolean;
+    manual_supplier_selection: boolean;
+    search: {
+      by_vehicle: boolean;
+      by_size: boolean;
+    };
+  } | null;
+  account: StorefrontBootstrapApiAccount | null;
+  storefront: {
+    cart_enabled: boolean;
+    checkout_enabled: boolean;
+    supplier_identity_hidden: boolean;
+    manual_supplier_selection: boolean;
+    search: {
+      by_vehicle: boolean;
+      by_size: boolean;
+    };
+  };
+  categories: StorefrontBootstrapApiCategory[];
+  category_defaults?: StorefrontBootstrapApiCategoryDefaults | null;
+  pricing?: {
+    levels: string[];
+  } | null;
+}
+
+export interface StorefrontBootstrapApiResponse {
+  status: boolean;
+  message?: string | null;
+  data: StorefrontBootstrapApiData | null;
+}
+
 export interface StorefrontBootstrapRouteState {
   category: string | null;
   fitmentMode: FitmentSearchMode | null;

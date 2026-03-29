@@ -16,6 +16,10 @@ import {
   STOREFRONT_DATA_REPOSITORY,
   StorefrontDataRepository
 } from './storefront-data.repository';
+import {
+  resolveCatalogItemBySku,
+  resolveCatalogItems,
+} from './storefront-catalog.helpers';
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +33,11 @@ export class StorefrontDataStore {
   readonly addresses = computed(() => this.repository.state().addresses);
   readonly orders = computed(() => this.repository.state().orders);
   readonly catalog = computed(() =>
-    this.buildCatalogView(this.repository.state().catalog, this.mode(), this.activeCategory())
+    this.buildCatalogView(
+      this.repository.getCatalogItems(this.mode(), this.activeCategory()),
+      this.mode(),
+      this.activeCategory()
+    )
   );
   readonly cart = computed(() => this.buildCartView(this.repository.state().cart, this.mode()));
 
@@ -45,7 +53,7 @@ export class StorefrontDataStore {
     mode: StorefrontMode = this.mode(),
     category: CatalogCategoryId = this.activeCategory()
   ): StorefrontCatalogViewItem[] {
-    return this.buildCatalogView(this.repository.state().catalog, mode, category);
+    return this.buildCatalogView(this.repository.getCatalogItems(mode, category), mode, category);
   }
 
   getFeaturedCatalogItems(
@@ -60,7 +68,14 @@ export class StorefrontDataStore {
     mode: StorefrontMode = this.mode(),
     category: CatalogCategoryId = this.activeCategory()
   ): StorefrontCatalogViewItem | undefined {
-    return this.getCatalogItems(mode, category).find((item) => item.sku === sku);
+    const item = resolveCatalogItemBySku(
+      this.repository.getCatalogItems(mode, category),
+      sku,
+      mode,
+      category
+    );
+
+    return item ? this.buildCatalogView([item], mode, category)[0] : undefined;
   }
 
   getProductBySlug(
@@ -68,9 +83,8 @@ export class StorefrontDataStore {
     mode: StorefrontMode = this.mode(),
     category: CatalogCategoryId = this.activeCategory()
   ): StorefrontPdpViewItem | undefined {
-    const item = this.repository.state().pdp[slug];
-
-    if (!item || item.category !== category) {
+    const item = this.repository.getProductBySlug(slug, mode, category);
+    if (!item) {
       return undefined;
     }
 
@@ -139,23 +153,7 @@ export class StorefrontDataStore {
     mode: StorefrontMode,
     category: CatalogCategoryId
   ): StorefrontCatalogViewItem[] {
-    return [...items]
-      .filter((item) => item.category === category)
-      .filter((item) => this.isPurchasable(mode, item))
-      .sort((left, right) => {
-        const leftRank = left.availability.origin === 'own' ? 0 : 1;
-        const rightRank = right.availability.origin === 'own' ? 0 : 1;
-
-        if (leftRank !== rightRank) {
-          return leftRank - rightRank;
-        }
-
-        if (left.featured !== right.featured) {
-          return left.featured ? -1 : 1;
-        }
-
-        return left.brand.localeCompare(right.brand);
-      })
+    return resolveCatalogItems(items, mode, category)
       .map((item) => ({
         ...item,
         priorityRank: item.availability.origin === 'own' ? 0 : 1,
