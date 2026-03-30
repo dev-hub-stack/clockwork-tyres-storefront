@@ -48,6 +48,26 @@ These areas are good enough to keep building while the parity work continues:
 - supplier-preview mode gating
 - overall storefront shell and navigation flow
 
+## March 31 Mockup Check
+
+I re-checked the live tyre storefront mockups here:
+
+- [clockwork dealer V3 - Tyres retail_00005.jpg](C:/Users/Dell/Documents/Gerorge/clockwork%20dealer%20V3%20-%20Tyres%20retail_00001/clockwork%20dealer%20V3%20-%20Tyres%20retail_00005.jpg)
+- [clockwork dealer V3 - Tyres retail_00008.jpg](C:/Users/Dell/Documents/Gerorge/clockwork%20dealer%20V3%20-%20Tyres%20retail_00001/clockwork%20dealer%20V3%20-%20Tyres%20retail_00008.jpg)
+
+The latest backend availability work is aligned with the mockup intent:
+
+- own stock should read as `in stock`
+- supplier stock should read as `available`
+- quantity should only be shown when low
+- supplier-preview should remain the same storefront shell with ordering disabled
+
+The main gaps are still visual rather than structural:
+
+- the listing toolbar and left filter rail need a tighter match to the mockup spacing
+- the product-card density and price/stock/button rhythm still need a final pixel pass
+- the exact badge wording and placement should be checked once real warehouse-backed quantities are flowing from live imports instead of staged/demo data
+
 ## Notable Legacy Routes And Behaviors Still To Keep In Mind
 
 The legacy app contains more routes and behaviors than the new storefront exposes today. Some should be preserved as compatibility redirects; others should remain in the CRM/admin side instead of the public storefront.
