@@ -67,12 +67,19 @@ describe('ApiStorefrontDataRepository', () => {
       enabledCategories: ['tyres']
     });
 
-    const hydration = repository.hydrateCatalog('retail-store', 'tyres', 17);
+    const hydration = repository.hydrateCatalog('retail-store', 'tyres', 17, {
+      width: '245',
+      aspectRatio: '35',
+      rimSize: '20'
+    });
 
     const request = http.expectOne((candidate) => (
       candidate.url === '/api/storefront/catalog/tyres'
       && candidate.params.get('mode') === 'retail-store'
       && candidate.params.get('category') === 'tyres'
+      && candidate.params.get('width') === '245'
+      && candidate.params.get('aspectRatio') === '35'
+      && candidate.params.get('rimSize') === '20'
     ));
 
     request.flush({

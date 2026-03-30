@@ -1,5 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { CatalogCategoryId } from '../catalog-categories';
+import { FitmentSearchQuery } from '../fitment';
 import {
   StorefrontCatalogItem,
   StorefrontAddress,
@@ -61,20 +62,21 @@ export class ApiStorefrontDataRepository implements StorefrontDataRepository {
   async hydrateCatalog(
     mode: StorefrontMode,
     category: CatalogCategoryId,
-    accountKey: string | number | null
+    accountKey: string | number | null,
+    searchQuery: FitmentSearchQuery = {}
   ): Promise<void> {
     if (!this.catalogApi.hasAuthenticatedSession() || accountKey === null) {
       this.restoreCatalogFallback();
       return;
     }
 
-    const requestKey = `${accountKey}:${mode}:${category}`;
+    const requestKey = `${accountKey}:${mode}:${category}:${this.serializeSearchQuery(searchQuery)}`;
 
     if (this.lastCatalogKey === requestKey) {
       return;
     }
 
-    const response = await this.catalogApi.fetchCatalog(mode, category);
+    const response = await this.catalogApi.fetchCatalog(mode, category, searchQuery);
 
     if (!response) {
       return;
@@ -210,5 +212,13 @@ export class ApiStorefrontDataRepository implements StorefrontDataRepository {
 
   getOrders(): StorefrontOrder[] {
     return this.stateSignal().orders;
+  }
+
+  private serializeSearchQuery(searchQuery: FitmentSearchQuery): string {
+    return JSON.stringify(
+      Object.entries(searchQuery)
+        .filter(([, value]) => value !== undefined && value !== null && value !== '')
+        .sort(([leftKey], [rightKey]) => leftKey.localeCompare(rightKey))
+    );
   }
 }

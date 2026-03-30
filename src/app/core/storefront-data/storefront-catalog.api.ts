@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { BusinessSessionService } from '../auth';
 import { CatalogCategoryId } from '../catalog-categories';
+import { FitmentSearchQuery } from '../fitment';
 import { StorefrontMode } from './storefront-data.models';
 import {
   StorefrontCatalogApiListResponse,
@@ -24,7 +25,8 @@ export class StorefrontCatalogApiService {
 
   async fetchCatalog(
     mode: StorefrontMode,
-    category: CatalogCategoryId
+    category: CatalogCategoryId,
+    searchQuery: FitmentSearchQuery = {}
   ): Promise<StorefrontCatalogApiListResponse['data'] | null> {
     const endpoint = this.bootstrap.endpoints()?.catalog;
 
@@ -36,7 +38,8 @@ export class StorefrontCatalogApiService {
       this.http.get<StorefrontCatalogApiListResponse>(endpoint, {
         params: {
           mode,
-          category
+          category,
+          ...searchQuery
         }
       })
     );
