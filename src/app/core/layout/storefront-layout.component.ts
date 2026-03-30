@@ -8,6 +8,7 @@ import { CatalogCategoryService } from '../catalog-categories';
 import { FitmentService } from '../fitment';
 import { StorefrontDataService } from '../storefront-data';
 import { StorefrontModeStore } from '../storefront-mode';
+import { StorefrontCatalogSyncService } from '../storefront-data/storefront-catalog-sync.service';
 
 @Component({
   selector: 'app-storefront-layout',
@@ -24,6 +25,7 @@ export class StorefrontLayoutComponent {
   private readonly storefrontBootstrap = inject(StorefrontBootstrapService);
   private readonly storefrontData = inject(StorefrontDataService);
   private readonly storefrontMode = inject(StorefrontModeStore);
+  private readonly catalogSync = inject(StorefrontCatalogSyncService);
 
   private readonly routeSnapshot = toSignal(
     this.router.events.pipe(
@@ -59,6 +61,8 @@ export class StorefrontLayoutComponent {
         mode: session.resolved.fitmentMode,
         query: session.route.query
       });
+
+      void this.catalogSync.syncCatalog(session.resolved.mode, session.resolved.category);
     });
   }
 }

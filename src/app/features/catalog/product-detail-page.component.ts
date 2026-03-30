@@ -9,6 +9,7 @@ import {
   StorefrontSpecificationRow
 } from '../../core/storefront-data';
 import { StorefrontModeStore } from '../../core/storefront-mode';
+import { StorefrontCatalogSyncService } from '../../core/storefront-data/storefront-catalog-sync.service';
 
 @Component({
   selector: 'app-product-detail-page',
@@ -21,6 +22,7 @@ export class ProductDetailPageComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly storefrontData = inject(StorefrontDataService);
   private readonly storefrontMode = inject(StorefrontModeStore);
+  private readonly catalogSync = inject(StorefrontCatalogSyncService);
 
   private readonly currentSlug = toSignal(
     this.route.paramMap.pipe(
@@ -114,6 +116,14 @@ export class ProductDetailPageComponent {
   protected readonly isTyreLaunch = computed(() => this.product().category === 'tyres');
 
   constructor() {
+    effect(() => {
+      void this.catalogSync.syncProduct(
+        this.currentSlug(),
+        this.storefrontData.mode(),
+        this.storefrontData.activeCategory()
+      );
+    });
+
     effect(() => {
       const tabs = this.sizeTabs();
 

@@ -51,8 +51,8 @@ describe('StorefrontBootstrapApiService', () => {
           bootstrap: '/api/storefront/bootstrap',
           account_context: '/api/account-context',
           account_context_select: '/api/account-context/select',
-          catalog: '/api/products',
-          product_detail: '/api/product/{slug}/{sku}',
+          catalog: '/api/storefront/catalog/tyres',
+          product_detail: '/api/storefront/catalog/tyres/{slug}',
           search_sizes: '/api/search-sizes',
           search_vehicles: '/api/search-vehicles'
         },
@@ -121,8 +121,8 @@ describe('StorefrontBootstrapApiService', () => {
       bootstrap: '/api/storefront/bootstrap',
       account_context: '/api/account-context',
       account_context_select: '/api/account-context/select',
-      catalog: '/api/products',
-      product_detail: '/api/product/{slug}/{sku}',
+      catalog: '/api/storefront/catalog/tyres',
+      product_detail: '/api/storefront/catalog/tyres/{slug}',
       search_sizes: '/api/search-sizes',
       search_vehicles: '/api/search-vehicles'
     });
@@ -177,8 +177,8 @@ describe('StorefrontBootstrapApiService', () => {
           bootstrap: '/api/storefront/bootstrap',
           account_context: '/api/account-context',
           account_context_select: '/api/account-context/select',
-          catalog: '/api/products',
-          product_detail: '/api/product/{slug}/{sku}',
+          catalog: '/api/storefront/catalog/tyres',
+          product_detail: '/api/storefront/catalog/tyres/{slug}',
           search_sizes: '/api/search-sizes',
           search_vehicles: '/api/search-vehicles'
         },

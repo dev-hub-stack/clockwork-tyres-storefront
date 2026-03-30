@@ -18,7 +18,7 @@ import {
   StorefrontBootstrapApiService
 } from './core/storefront-bootstrap';
 import {
-  InMemoryStorefrontDataRepository,
+  ApiStorefrontDataRepository,
   STOREFRONT_DATA_REPOSITORY
 } from './core/storefront-data';
 
@@ -40,7 +40,7 @@ export const appConfig: ApplicationConfig = {
       }
     },
     provideAppInitializer(() => inject(StorefrontBootstrapApiService).hydrate()),
-    InMemoryStorefrontDataRepository,
-    { provide: STOREFRONT_DATA_REPOSITORY, useExisting: InMemoryStorefrontDataRepository }
+    ApiStorefrontDataRepository,
+    { provide: STOREFRONT_DATA_REPOSITORY, useExisting: ApiStorefrontDataRepository }
   ]
 };
