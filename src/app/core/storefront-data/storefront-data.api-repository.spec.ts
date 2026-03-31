@@ -2,7 +2,10 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { BusinessSessionService } from '../auth';
+import {
+  BusinessSessionService,
+  STOREFRONT_AUTH_API_ENDPOINTS
+} from '../auth';
 import { StorefrontBootstrapService } from '../storefront-bootstrap';
 import { ApiStorefrontDataRepository } from './storefront-data.api-repository';
 
@@ -12,7 +15,20 @@ describe('ApiStorefrontDataRepository', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
-        { provide: PLATFORM_ID, useValue: 'browser' }
+        { provide: PLATFORM_ID, useValue: 'browser' },
+        {
+          provide: STOREFRONT_AUTH_API_ENDPOINTS,
+          useValue: {
+            countries: '/api/countries',
+            register: '/api/auth/business-register',
+            login: '/api/auth/business-login',
+            forgot: '/api/auth/forgot',
+            accountContext: '/api/account-context',
+            accountContextSelect: '/api/account-context/select',
+            workspace: '/api/storefront/workspace',
+            orders: '/api/storefront/orders'
+          }
+        }
       ]
     });
   });

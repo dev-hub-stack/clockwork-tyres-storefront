@@ -3,7 +3,7 @@ import { CurrencyPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CatalogCategoryService } from '../../core/catalog-categories';
 import { FitmentService } from '../../core/fitment';
-import { StorefrontDataService } from '../../core/storefront-data';
+import { StorefrontCatalogViewItem, StorefrontDataService } from '../../core/storefront-data';
 import { buildCatalogQueryParams } from '../../core/storefront-routes';
 
 @Component({
@@ -41,4 +41,23 @@ export class CatalogPageComponent {
   protected readonly productQueryParams = computed(() => {
     return buildCatalogQueryParams(this.activeCategory().id, this.fitment.searchMode());
   });
+
+  protected addToCart(product: StorefrontCatalogViewItem): void {
+    if (!this.cartEnabled()) {
+      return;
+    }
+
+    this.storefrontData.addCartLine({
+      sku: product.sku,
+      slug: product.slug,
+      title: `${product.brand} ${product.model}`.trim(),
+      size: product.size,
+      quantity: 1,
+      unitPrice: product.price,
+      image: product.image,
+      origin: product.availability.origin,
+      availabilityLabel: product.availability.label,
+      modeAvailability: product.modeAvailability
+    });
+  }
 }

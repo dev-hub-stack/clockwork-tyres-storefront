@@ -173,4 +173,25 @@ export class ProductDetailPageComponent {
 
     return 'Approved supplier stock';
   }
+
+  protected addCurrentProductToCart(): void {
+    if (!this.addToCartCta().enabled) {
+      return;
+    }
+
+    const product = this.product();
+
+    this.storefrontData.addCartLine({
+      sku: product.sku,
+      slug: product.slug,
+      title: `${product.brand} ${product.model}`.trim(),
+      size: product.size,
+      quantity: this.quantity(),
+      unitPrice: product.price,
+      image: product.image,
+      origin: product.availability.origin,
+      availabilityLabel: product.availability.label,
+      modeAvailability: product.modeAvailability
+    });
+  }
 }

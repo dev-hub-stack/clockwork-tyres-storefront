@@ -2,8 +2,9 @@ import { CurrencyPipe } from '@angular/common';
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
-import { StorefrontDataService } from '../../core/storefront-data';
+import { Router, RouterLink } from '@angular/router';
+import { StorefrontCheckoutPayload, StorefrontDataService } from '../../core/storefront-data';
+import { StorefrontBootstrapService } from '../../core/storefront-bootstrap';
 import { StorefrontModeStore } from '../../core/storefront-mode';
 
 @Component({
@@ -16,7 +17,9 @@ import { StorefrontModeStore } from '../../core/storefront-mode';
 export class CheckoutPageComponent {
   private readonly fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly router = inject(Router);
   private readonly storefrontData = inject(StorefrontDataService);
+  private readonly storefrontBootstrap = inject(StorefrontBootstrapService);
   private readonly storefrontMode = inject(StorefrontModeStore);
   private readonly profile = this.storefrontData.getProfile();
 
@@ -25,6 +28,8 @@ export class CheckoutPageComponent {
   protected readonly modeViewModel = this.storefrontMode.viewModel;
   protected readonly submitCheckoutCta = this.storefrontMode.ctaState('submit-checkout');
   protected readonly shippingSameAsBilling = signal(true);
+  protected readonly isSubmitting = signal(false);
+  protected readonly submitError = signal<string | null>(null);
 
   protected readonly checkoutForm = this.fb.nonNullable.group({
     savedAddress: [''],
@@ -98,11 +103,75 @@ export class CheckoutPageComponent {
     }
   }
 
-  protected submitOrder(): void {
-    if (!this.submitCheckoutCta().enabled) {
+  protected async submitOrder(): Promise<void> {
+    if (!this.submitCheckoutCta().enabled || this.isSubmitting()) {
       return;
     }
 
     this.checkoutForm.markAllAsTouched();
+
+    if (!this.checkoutItems().length) {
+      this.submitError.set('Your cart is empty. Add at least one tyre before checkout.');
+      return;
+    }
+
+    if (this.checkoutForm.invalid) {
+      this.submitError.set('Please complete the billing and shipping details before placing the order.');
+      return;
+    }
+
+    const accountKey = this.storefrontBootstrap.account()?.accountId ?? null;
+
+    if (accountKey === null) {
+      this.submitError.set('No active business account is selected for this checkout.');
+      return;
+    }
+
+    const billing = this.checkoutForm.controls.billing.getRawValue();
+    const shipping = this.shippingSameAsBilling()
+      ? { ...billing }
+      : this.checkoutForm.controls.shipping.getRawValue();
+
+    const payload: StorefrontCheckoutPayload = {
+      billing,
+      shipping,
+      purchaseOrderNo: this.normalizeOptionalValue(this.checkoutForm.controls.purchaseOrderNo.value),
+      orderNotes: this.normalizeOptionalValue(this.checkoutForm.controls.orderNotes.value),
+      deliveryOption: this.checkoutForm.controls.deliveryOption.getRawValue() as 'Pick up from warehouse' | 'Delivery',
+      items: this.checkoutItems().map((item) => ({
+        sku: item.sku,
+        slug: item.slug,
+        title: item.title,
+        size: item.size,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+        origin: item.origin,
+        availabilityLabel: item.availabilityLabel
+      }))
+    };
+
+    this.submitError.set(null);
+    this.isSubmitting.set(true);
+
+    try {
+      const result = await this.storefrontData.submitOrder(payload, accountKey);
+
+      if (!result) {
+        this.submitError.set('We could not place the order right now. Please try again.');
+        return;
+      }
+
+      await this.router.navigate(['/account/orders']);
+    } catch {
+      this.submitError.set('We could not place the order right now. Please try again.');
+    } finally {
+      this.isSubmitting.set(false);
+    }
+  }
+
+  private normalizeOptionalValue(value: string | null | undefined): string | null {
+    const normalized = value?.trim() ?? '';
+
+    return normalized.length ? normalized : null;
   }
 }

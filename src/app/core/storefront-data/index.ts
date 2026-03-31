@@ -11,5 +11,7 @@ export * from './storefront-data.mock-repository';
 export * from './storefront-data.repository';
 export * from './storefront-data.store';
 export * from './storefront-data.service';
+export * from './storefront-order.api';
+export * from './storefront-order.api.types';
 export * from './storefront-workspace.api';
 export * from './storefront-workspace.api.types';

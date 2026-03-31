@@ -92,7 +92,7 @@
 
             @if (addToCartCta().visible) {
               <div class="cta-stack">
-                <a routerLink="/cart" class="cta-button cta-button--primary">Add To Cart</a>
+                <button type="button" class="cta-button cta-button--primary" (click)="addCurrentProductToCart()">Add To Cart</button>
                 <a routerLink="/cart/checkout" class="cta-button cta-button--secondary">Go To Checkout</a>
               </div>
             } @else {

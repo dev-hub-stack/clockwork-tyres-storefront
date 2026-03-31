@@ -209,7 +209,7 @@
                       <a class="details-btn" [routerLink]="['/product', product.slug]" [queryParams]="productQueryParams()">VIEW DETAILS</a>
 
                       @if (cartEnabled()) {
-                        <button type="button" class="btn add-cart-btn">ADD TO CART</button>
+                        <button type="button" class="btn add-cart-btn" (click)="addToCart(product)">ADD TO CART</button>
                       } @else {
                         <span class="preview-text">Preview only</span>
                       }

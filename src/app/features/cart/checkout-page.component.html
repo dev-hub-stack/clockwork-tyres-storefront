@@ -25,6 +25,9 @@
           <p class="checkout-subtitle">
             Review your details before placing the order. Payment will be completed in store.
           </p>
+          @if (submitError()) {
+            <p class="checkout-error">{{ submitError() }}</p>
+          }
         </div>
 
         <form [formGroup]="checkoutForm" (ngSubmit)="submitOrder()" class="checkout-form">
@@ -160,7 +163,9 @@
 
             <div class="submit-row">
               @if (submitCheckoutCta().visible) {
-                <button type="submit" class="btn confirm-btn">Confirm Order</button>
+                <button type="submit" class="btn confirm-btn" [disabled]="isSubmitting()">
+                  {{ isSubmitting() ? 'Submitting...' : 'Confirm Order' }}
+                </button>
               } @else {
                 <span class="preview-disabled-label">Checkout disabled in supplier preview</span>
               }

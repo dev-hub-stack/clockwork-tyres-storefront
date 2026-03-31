@@ -2,6 +2,9 @@ import { inject, Injectable, signal } from '@angular/core';
 import { CatalogCategoryId } from '../catalog-categories';
 import { FitmentSearchQuery } from '../fitment';
 import {
+  StorefrontCartLineInput,
+  StorefrontCheckoutPayload,
+  StorefrontCheckoutResult,
   StorefrontCatalogItem,
   StorefrontAddress,
   StorefrontDataState,
@@ -20,6 +23,7 @@ import { storefrontMockState } from './storefront-data.mock';
 import { StorefrontDataRepository } from './storefront-data.repository';
 import { StorefrontCatalogApiService } from './storefront-catalog.api';
 import { mapCatalogApiItem, mapCatalogApiProduct } from './storefront-catalog.api.mapper';
+import { StorefrontOrderApiService } from './storefront-order.api';
 import { StorefrontWorkspaceApiService } from './storefront-workspace.api';
 
 const cloneState = (): StorefrontDataState => structuredClone(storefrontMockState);
@@ -30,6 +34,7 @@ const cloneState = (): StorefrontDataState => structuredClone(storefrontMockStat
 export class ApiStorefrontDataRepository implements StorefrontDataRepository {
   private readonly stateSignal = signal<StorefrontDataState>(cloneState());
   private readonly catalogApi = inject(StorefrontCatalogApiService);
+  private readonly orderApi = inject(StorefrontOrderApiService);
   private readonly workspaceApi = inject(StorefrontWorkspaceApiService);
 
   private lastCatalogKey: string | null = null;
@@ -62,7 +67,7 @@ export class ApiStorefrontDataRepository implements StorefrontDataRepository {
     return resolvePdpItemBySlug(this.stateSignal().pdp, slug, category);
   }
 
-  async hydrateWorkspace(accountKey: string | number | null): Promise<void> {
+  async hydrateWorkspace(accountKey: string | number | null, force = false): Promise<void> {
     if (!this.workspaceApi.hasAuthenticatedSession() || accountKey === null) {
       this.restoreWorkspaceFallback();
       return;
@@ -70,7 +75,7 @@ export class ApiStorefrontDataRepository implements StorefrontDataRepository {
 
     const requestKey = String(accountKey);
 
-    if (this.lastWorkspaceKey === requestKey) {
+    if (!force && this.lastWorkspaceKey === requestKey) {
       return;
     }
 
@@ -226,6 +231,30 @@ export class ApiStorefrontDataRepository implements StorefrontDataRepository {
     }));
   }
 
+  addCartLine(line: StorefrontCartLineInput): void {
+    this.stateSignal.update((state) => {
+      const existingLine = state.cart.find((cartLine) => cartLine.sku === line.sku);
+
+      if (existingLine) {
+        return {
+          ...state,
+          cart: state.cart.map((cartLine) =>
+            cartLine.sku === line.sku
+              ? { ...cartLine, quantity: cartLine.quantity + Math.max(1, line.quantity) }
+              : cartLine
+          )
+        };
+      }
+
+      const nextId = state.cart.reduce((maxId, cartLine) => Math.max(maxId, cartLine.id), 0) + 1;
+
+      return {
+        ...state,
+        cart: [...state.cart, { ...line, id: nextId }]
+      };
+    });
+  }
+
   updateCartLineQuantity(lineId: number, quantity: number): void {
     this.stateSignal.update((state) => ({
       ...state,
@@ -247,6 +276,22 @@ export class ApiStorefrontDataRepository implements StorefrontDataRepository {
       ...state,
       cart: []
     }));
+  }
+
+  async submitOrder(
+    payload: StorefrontCheckoutPayload,
+    accountKey: string | number | null
+  ): Promise<StorefrontCheckoutResult | null> {
+    const result = await this.orderApi.createOrder(payload);
+
+    if (!result) {
+      return null;
+    }
+
+    this.clearCart();
+    await this.hydrateWorkspace(accountKey, true);
+
+    return result;
   }
 
   reset(): void {

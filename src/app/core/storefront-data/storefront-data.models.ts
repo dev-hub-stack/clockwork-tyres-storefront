@@ -4,7 +4,7 @@ export type StorefrontMode = 'retail-store' | 'supplier-preview';
 
 export type StockOrigin = 'own' | 'supplier';
 
-export type OrderStatus = 'processing' | 'shipped' | 'completed' | 'cancelled';
+export type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'completed' | 'cancelled';
 
 export interface StorefrontAvailability {
   origin: StockOrigin;
@@ -74,6 +74,8 @@ export interface StorefrontCartLine {
   modeAvailability: StorefrontModeAvailability;
 }
 
+export type StorefrontCartLineInput = Omit<StorefrontCartLine, 'id'>;
+
 export interface StorefrontProfile {
   businessName: string;
   address: string;
@@ -132,6 +134,41 @@ export interface StorefrontOrder {
   subtotal: number;
   shippingAmount: number;
   vat: number;
+  total: number;
+}
+
+export interface StorefrontCheckoutAddress {
+  businessName: string;
+  country: string;
+  state: string;
+  city: string;
+  zip: string;
+  address: string;
+  phone: string;
+}
+
+export interface StorefrontCheckoutPayload {
+  billing: StorefrontCheckoutAddress;
+  shipping: StorefrontCheckoutAddress;
+  purchaseOrderNo: string | null;
+  orderNotes: string | null;
+  deliveryOption: 'Pick up from warehouse' | 'Delivery';
+  items: Array<{
+    sku: string;
+    slug: string;
+    title: string;
+    size: string;
+    quantity: number;
+    unitPrice: number;
+    origin: StockOrigin;
+    availabilityLabel: string;
+  }>;
+}
+
+export interface StorefrontCheckoutResult {
+  id: number;
+  orderNumber: string;
+  status: OrderStatus;
   total: number;
 }
 

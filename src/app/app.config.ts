@@ -38,7 +38,8 @@ export const appConfig: ApplicationConfig = {
         forgot: '/api/auth/forgot',
         accountContext: '/api/account-context',
         accountContextSelect: '/api/account-context/select',
-        workspace: '/api/storefront/workspace'
+        workspace: '/api/storefront/workspace',
+        orders: '/api/storefront/orders'
       }
     },
     provideAppInitializer(() => inject(StorefrontBootstrapApiService).hydrate()),

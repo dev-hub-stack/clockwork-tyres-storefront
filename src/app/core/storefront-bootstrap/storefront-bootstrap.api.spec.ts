@@ -2,6 +2,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { provideHttpClient } from '@angular/common/http';
 import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { STOREFRONT_DATA_REPOSITORY } from '../storefront-data';
 import {
   BusinessSessionService,
   STOREFRONT_AUTH_API_ENDPOINTS
@@ -13,6 +14,11 @@ import {
 } from './index';
 
 describe('StorefrontBootstrapApiService', () => {
+  const storefrontDataRepository = {
+    hydrateWorkspace: async () => undefined,
+    restoreWorkspaceFallback: () => undefined,
+  };
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
@@ -26,10 +32,14 @@ describe('StorefrontBootstrapApiService', () => {
             countries: '/api/countries',
             register: '/api/auth/business-register',
             login: '/api/auth/business-login',
+            forgot: '/api/auth/forgot',
             accountContext: '/api/account-context',
-            accountContextSelect: '/api/account-context/select'
+            accountContextSelect: '/api/account-context/select',
+            workspace: '/api/storefront/workspace',
+            orders: '/api/storefront/orders'
           }
-        }
+        },
+        { provide: STOREFRONT_DATA_REPOSITORY, useValue: storefrontDataRepository }
       ]
     });
   });

@@ -2,6 +2,9 @@ import { computed, inject, Injectable } from '@angular/core';
 import { CatalogCategoryId } from '../catalog-categories';
 import {
   StorefrontAddress,
+  StorefrontCartLineInput,
+  StorefrontCheckoutPayload,
+  StorefrontCheckoutResult,
   StorefrontCartViewLine,
   StorefrontCatalogViewItem,
   StorefrontMode,
@@ -94,6 +97,10 @@ export class StorefrontDataService {
     this.store.deleteAddress(addressId);
   }
 
+  addCartLine(line: StorefrontCartLineInput): void {
+    this.store.addCartLine(line);
+  }
+
   getOrders(): StorefrontOrder[] {
     return this.store.getOrders();
   }
@@ -108,6 +115,13 @@ export class StorefrontDataService {
 
   clearCart(): void {
     this.store.clearCart();
+  }
+
+  submitOrder(
+    payload: StorefrontCheckoutPayload,
+    accountKey: string | number | null
+  ): Promise<StorefrontCheckoutResult | null> {
+    return this.store.submitOrder(payload, accountKey);
   }
 
   reset(): void {
