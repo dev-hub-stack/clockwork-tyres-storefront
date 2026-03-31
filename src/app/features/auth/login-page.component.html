@@ -1,105 +1,105 @@
-<section class="auth-shell">
-  <div class="auth-hero">
-    <div class="auth-brand">
-      <a routerLink="/catalog" aria-label="Clockwork Tyres home">
-        <img src="/assets/img/new-logo.png" alt="Clockwork Tyres" />
-      </a>
-    </div>
-
-    <div class="auth-copy">
-      <span class="auth-eyebrow">Clockwork access</span>
-      <h1>One business account for retail and wholesale ordering.</h1>
-      <p>
-        The legacy Clockwork flow stays familiar: fast catalog access, order history, live account
-        controls, and the same business workspace whether you trade as a retailer, supplier, or both.
-      </p>
-    </div>
-
-    <ul class="auth-benefit-list">
-      @for (benefit of benefits; track benefit) {
-        <li>
-          <span class="benefit-dot"></span>
-          <span>{{ benefit }}</span>
-        </li>
-      }
-    </ul>
-
-    <div class="auth-mode-strip">
-      @for (mode of accountModes; track mode.label) {
-        <article>
-          <strong>{{ mode.label }}</strong>
-          <span>{{ mode.note }}</span>
-        </article>
-      }
-    </div>
-  </div>
-
-  <div class="auth-panel">
-    <div class="auth-card">
-      <div class="auth-card-header">
-        <span class="auth-subtitle">Secure access</span>
-        <h2>Log in to your account</h2>
-        <p>Use your business email and password to continue into the storefront workspace.</p>
+<section class="login-page">
+  <header class="login-header">
+    <div class="container-fluid login-header-inner">
+      <div class="login-audience-links">
+        <a routerLink="/">For Retailers</a>
+        <a routerLink="/">For Suppliers</a>
       </div>
 
-      @if (registrationNotice()) {
-        <div class="submit-banner submit-banner-success">
-          {{ registrationNotice() }}
+      <nav class="login-nav" aria-label="Clockwork login navigation">
+        <a routerLink="/">Features</a>
+        <a routerLink="/">Pricing</a>
+        <a routerLink="/login" class="login-nav-cta">Retailer Login</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="login-stage">
+    <div class="container-fluid login-stage-inner">
+      <section class="login-left" aria-label="Clockwork benefits">
+        <div class="login-left-surface">
+          <div class="login-left-content">
+            <div class="login-logo">
+              <a routerLink="/" aria-label="Clockwork home">
+                <img src="/assets/img/new-logo.png" alt="Clockwork" />
+              </a>
+            </div>
+
+            <ul class="login-benefits">
+              @for (benefit of benefits; track benefit.label) {
+                <li>
+                  <span class="benefit-icon">
+                    <img [src]="benefit.icon" [alt]="benefit.label" />
+                  </span>
+                  <span>{{ benefit.label }}</span>
+                </li>
+              }
+            </ul>
+          </div>
         </div>
-      }
+      </section>
 
-      @if (submitError()) {
-        <div class="submit-banner submit-banner-error">
-          {{ submitError() }}
+      <section class="login-right">
+        <div class="login-card">
+          <h1>Log into your account</h1>
+
+          @if (registrationNotice()) {
+            <div class="submit-banner submit-banner-success">
+              {{ registrationNotice() }}
+            </div>
+          }
+
+          @if (submitError()) {
+            <div class="submit-banner submit-banner-error">
+              {{ submitError() }}
+            </div>
+          }
+
+          <form class="login-form" [formGroup]="form" (ngSubmit)="submit()">
+            <label class="label" for="email">Email</label>
+            <input
+              id="email"
+              formControlName="email"
+              type="email"
+              class="form-control s-form-field"
+              placeholder="Enter your email address"
+            />
+
+            @if (form.controls.email.invalid && form.controls.email.touched) {
+              <span class="error">A valid email is required</span>
+            }
+
+            <label class="label" for="password">Password</label>
+            <input
+              id="password"
+              type="password"
+              formControlName="password"
+              class="form-control s-form-field"
+              placeholder="Enter your password"
+            />
+
+            @if (form.controls.password.invalid && form.controls.password.touched) {
+              <span class="error">Password is required</span>
+            }
+
+            <div class="login-links">
+              <p>Don't have an Account? <a routerLink="/register">Sign up</a></p>
+              <p class="login-links-secondary"><a routerLink="/catalog">Browse the catalog</a></p>
+              <p class="login-links-secondary"><a href="mailto:ops@clockworktyres.ae">Contact onboarding</a></p>
+            </div>
+
+            <button type="submit" class="btn btn-01 login-submit" [disabled]="isSubmitting()">
+              <span>{{ isSubmitting() ? 'Logging in...' : 'Log In' }}</span>
+            </button>
+          </form>
         </div>
-      }
-
-      <form class="signup-form" [formGroup]="form" (ngSubmit)="submit()">
-        <label class="label" for="email">Email</label>
-        <input
-          id="email"
-          formControlName="email"
-          type="email"
-          class="form-control s-form-field"
-          placeholder="Enter your email address"
-        />
-
-        @if (form.controls.email.invalid && form.controls.email.touched) {
-          <span class="error">A valid email is required</span>
-        }
-
-        <label class="label" for="password">Password</label>
-        <input
-          id="password"
-          type="password"
-          formControlName="password"
-          class="form-control s-form-field"
-          placeholder="Enter your password"
-        />
-
-        @if (form.controls.password.invalid && form.controls.password.touched) {
-          <span class="error">Password is required</span>
-        }
-
-        <div class="auth-actions">
-          <p class="small-text f-light">
-            New here?
-            <a routerLink="/catalog" class="cursor-pointer">Browse the catalog</a>
-          </p>
-          <p class="small-text f-light">
-            Need an account?
-            <a routerLink="/register" class="cursor-pointer">Register your business</a>
-          </p>
-          <p class="small-text f-light">
-            Need onboarding help?
-            <a href="mailto:ops@clockworktyres.ae">Contact onboarding</a>
-          </p>
-        </div>
-
-        <button type="submit" class="btn btn-01 mt-4 new-btn bg-black" [disabled]="isSubmitting()">
-          <span>{{ isSubmitting() ? 'Logging in...' : 'Log In' }}</span>
-        </button>
-      </form>
+      </section>
     </div>
   </div>
+
+  <footer class="login-footer">
+    <div class="container-fluid">
+      <span>&copy; 2026 Clockwork | All Rights Reserved.</span>
+    </div>
+  </footer>
 </section>

@@ -27,16 +27,22 @@ export class LoginPageComponent {
   private readonly storefrontBootstrapApi = inject(StorefrontBootstrapApiService);
 
   protected readonly benefits = [
-    '24/7 online ordering access',
-    'Own stock first, then approved supplier stock',
-    'Order history, invoices, and account controls',
-    'Retail and wholesale access from one business account'
-  ];
-
-  protected readonly accountModes = [
-    { label: 'Retailer', note: 'Storefront ordering' },
-    { label: 'Supplier', note: 'Wholesale preview' },
-    { label: 'Both', note: 'Shared account access' }
+    {
+      icon: '/assets/img/icon-24.png',
+      label: '24/7 online ordering access'
+    },
+    {
+      icon: '/assets/img/box-icon.png',
+      label: 'Manage orders from multiple suppliers'
+    },
+    {
+      icon: '/assets/img/order-icon.png',
+      label: 'Order history, tracking and invoices'
+    },
+    {
+      icon: '/assets/img/folder-icon.png',
+      label: 'Live inventory and pricing'
+    }
   ];
 
   protected readonly form = this.formBuilder.nonNullable.group({
