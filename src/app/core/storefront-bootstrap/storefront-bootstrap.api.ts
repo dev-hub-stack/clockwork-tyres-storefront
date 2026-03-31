@@ -19,6 +19,10 @@ import {
 } from './storefront-bootstrap.tokens';
 import { StorefrontBootstrapApiResponse } from './storefront-bootstrap.types';
 import { StorefrontBootstrapService } from './storefront-bootstrap.service';
+import {
+  STOREFRONT_DATA_REPOSITORY,
+  StorefrontDataRepository
+} from '../storefront-data';
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +33,7 @@ export class StorefrontBootstrapApiService {
   private readonly bootstrap = inject(StorefrontBootstrapService);
   private readonly businessSession = inject(BusinessSessionService);
   private readonly authEndpoints = inject(STOREFRONT_AUTH_API_ENDPOINTS);
+  private readonly storefrontDataRepository: StorefrontDataRepository = inject(STOREFRONT_DATA_REPOSITORY);
 
   constructor(
     @Inject(STOREFRONT_BOOTSTRAP_API_URL) private readonly bootstrapUrl: string
@@ -80,6 +85,7 @@ export class StorefrontBootstrapApiService {
     }
 
     if (!this.businessSession.accessToken()) {
+      this.storefrontDataRepository.restoreWorkspaceFallback();
       return;
     }
 
@@ -94,10 +100,12 @@ export class StorefrontBootstrapApiService {
 
       this.businessSession.updateAccountContext(response);
       this.bootstrap.setAccountContext(this.mapBusinessAccountContext(response));
+      await this.storefrontDataRepository.hydrateWorkspace(response.current_account?.id ?? null);
     } catch (error) {
       if (error instanceof HttpErrorResponse && [401, 403].includes(error.status)) {
         this.businessSession.clear();
         this.bootstrap.setAccountContext(null);
+        this.storefrontDataRepository.restoreWorkspaceFallback();
       }
     }
   }

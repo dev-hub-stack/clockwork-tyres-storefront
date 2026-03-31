@@ -20,6 +20,7 @@ import { storefrontMockState } from './storefront-data.mock';
 import { StorefrontDataRepository } from './storefront-data.repository';
 import { StorefrontCatalogApiService } from './storefront-catalog.api';
 import { mapCatalogApiItem, mapCatalogApiProduct } from './storefront-catalog.api.mapper';
+import { StorefrontWorkspaceApiService } from './storefront-workspace.api';
 
 const cloneState = (): StorefrontDataState => structuredClone(storefrontMockState);
 
@@ -29,8 +30,10 @@ const cloneState = (): StorefrontDataState => structuredClone(storefrontMockStat
 export class ApiStorefrontDataRepository implements StorefrontDataRepository {
   private readonly stateSignal = signal<StorefrontDataState>(cloneState());
   private readonly catalogApi = inject(StorefrontCatalogApiService);
+  private readonly workspaceApi = inject(StorefrontWorkspaceApiService);
 
   private lastCatalogKey: string | null = null;
+  private lastWorkspaceKey: string | null = null;
   private readonly hydratedProducts = new Set<string>();
 
   readonly state = this.stateSignal.asReadonly();
@@ -57,6 +60,48 @@ export class ApiStorefrontDataRepository implements StorefrontDataRepository {
     category: CatalogCategoryId
   ): StorefrontPdpItem | undefined {
     return resolvePdpItemBySlug(this.stateSignal().pdp, slug, category);
+  }
+
+  async hydrateWorkspace(accountKey: string | number | null): Promise<void> {
+    if (!this.workspaceApi.hasAuthenticatedSession() || accountKey === null) {
+      this.restoreWorkspaceFallback();
+      return;
+    }
+
+    const requestKey = String(accountKey);
+
+    if (this.lastWorkspaceKey === requestKey) {
+      return;
+    }
+
+    const response = await this.workspaceApi.fetchWorkspace();
+    const profile = response?.profile;
+
+    if (!profile) {
+      return;
+    }
+
+    this.lastWorkspaceKey = requestKey;
+
+    this.stateSignal.update((state) => ({
+      ...state,
+      profile,
+      addresses: response.addresses,
+      orders: response.orders
+    }));
+  }
+
+  restoreWorkspaceFallback(): void {
+    const fallback = cloneState();
+
+    this.lastWorkspaceKey = null;
+
+    this.stateSignal.update((state) => ({
+      ...state,
+      profile: fallback.profile,
+      addresses: fallback.addresses,
+      orders: fallback.orders
+    }));
   }
 
   async hydrateCatalog(
@@ -206,6 +251,7 @@ export class ApiStorefrontDataRepository implements StorefrontDataRepository {
 
   reset(): void {
     this.lastCatalogKey = null;
+    this.lastWorkspaceKey = null;
     this.hydratedProducts.clear();
     this.stateSignal.set(cloneState());
   }

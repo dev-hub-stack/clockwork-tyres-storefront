@@ -28,6 +28,21 @@ export class InMemoryStorefrontDataRepository implements StorefrontDataRepositor
 
   readonly state = this.stateSignal.asReadonly();
 
+  async hydrateWorkspace(_accountKey: string | number | null): Promise<void> {
+    return Promise.resolve();
+  }
+
+  restoreWorkspaceFallback(): void {
+    const fallback = cloneState();
+
+    this.stateSignal.update((state) => ({
+      ...state,
+      profile: fallback.profile,
+      addresses: fallback.addresses,
+      orders: fallback.orders
+    }));
+  }
+
   getCatalogItems(mode: StorefrontMode, category: CatalogCategoryId): StorefrontCatalogItem[] {
     return resolveCatalogItems(this.stateSignal().catalog, mode, category);
   }

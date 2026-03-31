@@ -12,6 +12,8 @@ import { StorefrontCatalogRepository } from './storefront-catalog.repository';
 export interface StorefrontDataRepository extends StorefrontCatalogRepository {
   readonly state: Signal<StorefrontDataState>;
 
+  hydrateWorkspace(accountKey: string | number | null): Promise<void>;
+  restoreWorkspaceFallback(): void;
   setMode(mode: StorefrontMode): void;
   setCategory(category: CatalogCategoryId): void;
   updateProfile(profile: StorefrontProfile): void;

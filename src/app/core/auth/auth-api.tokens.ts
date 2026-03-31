@@ -7,6 +7,7 @@ export interface StorefrontAuthApiEndpoints {
   forgot: string;
   accountContext: string;
   accountContextSelect: string;
+  workspace: string;
 }
 
 export const STOREFRONT_AUTH_API_ENDPOINTS = new InjectionToken<StorefrontAuthApiEndpoints>(
