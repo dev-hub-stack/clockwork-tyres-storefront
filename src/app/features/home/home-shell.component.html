@@ -1,118 +1,200 @@
-<div class="home-shell">
-  <header class="landing-header">
-    <div class="landing-header__top">
-      <div class="container landing-header__top-inner">
-        <div class="landing-header__switch">
-          <a routerLink="/" class="is-active">For Retailers</a>
-          <span>For Suppliers</span>
-        </div>
-
-        <a routerLink="/login" class="landing-header__login">Retailer Login</a>
-      </div>
-    </div>
-
-    <div class="landing-header__main">
-      <div class="container landing-header__main-inner">
-        <a routerLink="/" class="landing-header__brand" aria-label="Clockwork Tyres home">
-          <img src="/assets/img/new-logo.png" alt="Clockwork Tyres" />
-        </a>
-
-        <nav class="landing-header__nav" aria-label="Landing navigation">
-          <a href="#overview">Overview</a>
-          <a href="#search">Search</a>
-          <a href="#platform">Platform</a>
-        </nav>
-
-        <div class="landing-header__actions">
-          <a routerLink="/catalog" class="btn btn--header-ghost">Browse catalog</a>
-          <a routerLink="/login" class="btn btn--header-primary">Get Started</a>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <section class="hero">
-    <div class="hero__backdrop"></div>
-    <div class="container hero__grid">
-      <div class="hero__copy">
-        <span class="hero__eyebrow">Clockwork Tyres</span>
-        <h1>Tyre-first commerce with the same Clockwork energy.</h1>
-        <p class="hero__lede">
-          A familiar, inventory-led storefront for retailers and suppliers. Search by vehicle, search by size, and
-          move through a merged stock view that keeps your own stock first and approved supplier stock behind it.
-        </p>
-
-        <div class="hero__actions">
-          <a routerLink="/search-by-vehicle" class="btn btn--primary">Search by vehicle</a>
-          <a routerLink="/search-by-size" class="btn btn--secondary">Search by size</a>
-          <a routerLink="/catalog" class="btn btn--ghost">Browse catalog</a>
-        </div>
-
-        <div class="hero__chips">
-          <span>Own stock first</span>
-          <span>Supplier stock merged</span>
-          <span>Tyre-first launch</span>
-          <span>Wheels later</span>
-        </div>
-      </div>
-
-      <div class="hero__visual">
-        <div class="hero__frame">
-          <img src="/assets/img/banner1.png" alt="Clockwork Tyres landing visual" />
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="highlights">
-    <div class="container">
-      <div class="highlights__grid">
-        @for (item of highlights; track item.label) {
-          <article class="highlight-card">
-            <span class="highlight-card__label">{{ item.label }}</span>
-            <p class="highlight-card__value">{{ item.value }}</p>
-          </article>
-        }
-      </div>
-    </div>
-  </section>
-
-  @for (section of sections; track section.title) {
-    <section class="story" [id]="section.id" [class.story--reverse]="section.reverse">
+<div class="legacy-home">
+  <div class="landingheader">
+    <div class="upper-header">
       <div class="container">
-        <div class="story__grid">
-          <div class="story__copy">
-            <span class="story__eyebrow">{{ section.eyebrow }}</span>
-            <h2>{{ section.title }}</h2>
-            <p>{{ section.copy }}</p>
-            <ul>
-              @for (bullet of section.bullets; track bullet) {
-                <li>{{ bullet }}</li>
-              }
-            </ul>
-            <a [routerLink]="section.ctaLink" class="story__cta">{{ section.ctaLabel }}</a>
-          </div>
+        <div class="row">
+          <div class="col-md-12 justify-content-between">
+            <div class="legacy-home__audiences">
+              <a routerLink="/" class="active-link">For Retailers</a>
+              <a href="#supplier-portal">For Suppliers</a>
+            </div>
 
-          <div class="story__visual">
-            <div class="story__frame">
-              <img [src]="section.image" [alt]="section.imageAlt" />
+            <div class="legacy-home__login-links">
+              <a routerLink="/login" class="header-retailer-btn retailer-btn d-block d-md-none">Retailer Login</a>
             </div>
           </div>
         </div>
       </div>
-    </section>
-  }
+    </div>
 
-  <section class="footer-cta">
-    <div class="container">
-      <div class="footer-cta__card">
-        <div>
-          <span>Ready for launch</span>
-          <h2>Start with tyres, keep the Clockwork storefront feel, and leave the wheel seam ready for later.</h2>
+    <nav class="navbar navbar-expand-md navbar-light bg-light">
+      <div class="container">
+        <a class="navbar-brand" routerLink="/">
+          <img src="/assets/img/white-new-logo.png" alt="Clockwork" />
+        </a>
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#landingNavbar"
+          aria-controls="landingNavbar"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="landingNavbar">
+          <ul class="navbar-nav ml-auto mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" href="#search-flow">Search</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#inventory-control">Inventory</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#supplier-portal">Suppliers</a>
+            </li>
+          </ul>
         </div>
-        <div class="footer-cta__actions">
-          <a routerLink="/cart" class="btn btn--primary">View cart</a>
-          <a routerLink="/account/orders" class="btn btn--ghost">Orders</a>
+
+        <div class="landing-btns d-none d-md-block">
+          <a routerLink="/login" class="retailer-btn">Retailer Login</a>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+  <section class="banner">
+    <div class="banner-half"></div>
+
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <h1>TYRE-FIRST INVENTORY MANAGEMENT AND B2B PORTAL.</h1>
+          <p>
+            Keep the familiar Clockwork storefront flow, but launch it around tyres, live stock, approved suppliers,
+            and retail ordering.
+          </p>
+
+          <div class="legacy-home__cta-row">
+            <a routerLink="/search-by-vehicle" class="legacy-home__primary-link">Search by Vehicle</a>
+            <a routerLink="/search-by-size" class="legacy-home__secondary-link">Search by Size</a>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <img src="/assets/img/banner1.png" alt="Clockwork tyre storefront" class="w-100" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="about-clock">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2 class="home-title">What is Clockwork Tyres?</h2>
+          <p>
+            Clockwork Tyres is the new tyre-first evolution of the Clockwork B2B storefront. Retailers can search by
+            vehicle or by size, see their own stock first, and surface approved supplier stock inside the same catalog
+            journey with supplier identity hidden.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dashboard-text-wrap" id="search-flow">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 col-lg-4">
+          <span class="new-chip">Features</span>
+          <h3 class="dashboard-title">Search</h3>
+          <div class="info-ul">
+            <h4>Search by vehicle.</h4>
+            <ul>
+              <li>Start with make, model, year, and variant to move quickly into the correct tyre catalog.</li>
+            </ul>
+          </div>
+          <div class="info-ul">
+            <h4>Search by size.</h4>
+            <ul>
+              <li>Use width, aspect ratio, rim size, and service details to narrow down the exact tyre fit.</li>
+            </ul>
+          </div>
+          <div class="info-ul">
+            <h4>Search-led storefront.</h4>
+            <ul>
+              <li>The launch keeps the same search-first Clockwork rhythm instead of turning the storefront into a generic landing page.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-8">
+          <img src="/assets/img/portal-new.png" class="w-100" alt="Clockwork search and storefront" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dashboard-text-wrap" id="inventory-control">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 col-lg-8 order-2 order-md-1">
+          <img src="/assets/img/inventory-new.png" class="w-100" alt="Clockwork inventory control" />
+        </div>
+        <div class="col-md-6 col-lg-4 order-md-2">
+          <span class="new-chip">Features</span>
+          <h3 class="dashboard-title">Inventory</h3>
+          <div class="info-ul">
+            <h4>Own stock first.</h4>
+            <ul>
+              <li>Retailers see their own stock first in the storefront, with low quantities visible when stock is limited.</li>
+            </ul>
+          </div>
+          <div class="info-ul">
+            <h4>Merged supplier stock.</h4>
+            <ul>
+              <li>Approved supplier stock appears behind the same tyre entry, with supplier identity hidden from the retail storefront.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dashboard-text-wrap" id="supplier-portal">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 col-lg-4">
+          <span class="new-chip">Platform</span>
+          <h3 class="dashboard-title">Supplier Portal</h3>
+          <div class="info-ul">
+            <h4>Wholesale-ready.</h4>
+            <ul>
+              <li>Suppliers manage tyres, pricing levels, inventory, warehouses, and procurement approvals from the CRM side.</li>
+            </ul>
+          </div>
+          <div class="info-ul">
+            <h4>Retail preview mode.</h4>
+            <ul>
+              <li>Supplier preview reuses the same storefront shell, but keeps cart and checkout disabled.</li>
+            </ul>
+          </div>
+          <div class="info-ul">
+            <h4>Future category seam.</h4>
+            <ul>
+              <li>Tyres launch first, while the platform structure stays open for wheels and more categories later.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-8">
+          <img src="/assets/img/dashboard.png" class="w-100" alt="Clockwork supplier portal" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="getstarted-wrap">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <p>
+            Start with the Clockwork storefront feel users already know, then layer in the new tyre catalog, supplier
+            stock, and admin platform behind it.
+          </p>
+          <a routerLink="/login">Get Started</a>
         </div>
       </div>
     </div>

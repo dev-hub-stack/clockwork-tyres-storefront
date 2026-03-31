@@ -9,6 +9,7 @@ import { FitmentService } from '../fitment';
 import { StorefrontDataService } from '../storefront-data';
 import { StorefrontModeStore } from '../storefront-mode';
 import { StorefrontCatalogSyncService } from '../storefront-data/storefront-catalog-sync.service';
+import { resolveStorefrontRouteContext } from '../storefront-routes';
 
 @Component({
   selector: 'app-storefront-layout',
@@ -40,7 +41,7 @@ export class StorefrontLayoutComponent {
   protected readonly activeCategory = this.catalogCategories.activeCategory;
   protected readonly fitmentViewModel = this.fitment.viewModel;
   protected readonly showStorefrontHeader = computed(() => {
-    return this.routeSnapshot().data['useStorefrontHeader'] !== false;
+    return resolveStorefrontRouteContext(this.routeSnapshot()).showStorefrontHeader;
   });
 
   constructor() {

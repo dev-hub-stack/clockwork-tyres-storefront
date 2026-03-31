@@ -41,6 +41,8 @@ yarn-error.log
 testem.log
 /typings
 __screenshots__/
+/playwright-artifacts
+/test-results
 
 # System files
 .DS_Store
