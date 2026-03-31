@@ -44,8 +44,7 @@
               <p class="register-eyebrow">Register</p>
               <h3 class="small-30">Register your business</h3>
               <p class="register-intro">
-                Submit the correct account type and plan preference now. Subscription checkout can be
-                connected later without changing this registration surface.
+                Use the same Clockwork onboarding flow, adapted for the new tyre platform account model.
               </p>
 
               @if (submitSuccess()) {
@@ -79,7 +78,7 @@
                       type="text"
                       formControlName="businessName"
                       class="form-control s-form-field"
-                      placeholder="Business name"
+                      placeholder="Business Name"
                     />
                     @if (form.controls.businessName.invalid && form.controls.businessName.touched) {
                       <span class="error">Business name is required</span>
@@ -88,8 +87,8 @@
 
                   <div>
                     <p class="label">Country</p>
-                    <select id="country" formControlName="country" class="form-control s-form-field custom-input">
-                      <option value="" disabled>Select country</option>
+                    <select id="country" formControlName="country" class="form-control custom-input register-select">
+                      <option value="" disabled>Select Country</option>
                       @for (country of countries(); track country.id) {
                         <option [value]="country.countryName">{{ country.countryName }}</option>
                       }
@@ -131,11 +130,11 @@
                 </div>
 
                 <p class="label">Register as</p>
-                <div class="choice-grid">
+                <div class="register-radio-row">
                   @for (role of roleOptions; track role.value) {
-                    <label class="choice-card" [class.choice-card-active]="form.controls.accountMode.value === role.value">
+                    <label class="radio-style">
                       <input type="radio" formControlName="accountMode" [value]="role.value" />
-                      <span class="choice-copy">
+                      <span>
                         <strong>{{ role.label }}</strong>
                         <small>{{ role.note }}</small>
                       </span>
@@ -143,53 +142,51 @@
                   }
                 </div>
 
-                <p class="label">Plan preference</p>
-                <div class="choice-grid">
+                <p class="label">Plan</p>
+                <select formControlName="planPreference" class="form-control custom-input register-select">
                   @for (plan of planOptions; track plan.value) {
-                    <label class="choice-card" [class.choice-card-active]="form.controls.planPreference.value === plan.value">
-                      <input type="radio" formControlName="planPreference" [value]="plan.value" />
-                      <span class="choice-copy">
-                        <strong>{{ plan.label }}</strong>
-                        <small>{{ plan.note }}</small>
-                      </span>
-                    </label>
+                    <option [value]="plan.value">{{ plan.label }}</option>
                   }
-                </div>
+                </select>
 
                 <p class="label">{{ uploadLabel }}</p>
-                <label class="upload-shell" for="supportingDocument">
+                <div class="register-upload-row">
+                  <span class="upload-icon">
+                    <img src="/assets/img/upload-icon.png" alt="Upload" />
+                  </span>
+                  <label for="supportingDocument" class="register-file-label">
+                    <span>{{ selectedDocumentName() || 'Choose a file' }}</span>
+                    <small>Accepted: PDF, JPG, PNG, WEBP</small>
+                  </label>
                   <input
                     id="supportingDocument"
                     type="file"
                     accept=".pdf,.jpg,.jpeg,.png,.webp"
+                    class="file-field"
                     (change)="onDocumentSelected($event)"
                   />
-                  <span class="upload-copy">
-                    <strong>{{ selectedDocumentName() || 'Choose a file' }}</strong>
-                    <small>Accepted: PDF, JPG, PNG, WEBP</small>
-                  </span>
-                </label>
+                </div>
                 @if (form.controls.supportingDocument.invalid && form.controls.supportingDocument.touched) {
                   <span class="error">A supporting business document is required</span>
                 }
 
-                <label class="consent-row">
+                <div class="hide-border register-consent">
                   <input type="checkbox" formControlName="acceptsTerms" />
-                  <span>I agree to the onboarding terms and supplier-retailer platform rules.</span>
-                </label>
+                  <p>I agree to the onboarding terms and supplier-retailer platform rules.</p>
+                </div>
                 @if (form.controls.acceptsTerms.invalid && form.controls.acceptsTerms.touched) {
                   <span class="error">Terms acceptance is required</span>
                 }
 
-                <label class="consent-row">
+                <div class="hide-border register-consent">
                   <input type="checkbox" formControlName="acceptsPrivacy" />
-                  <span>I agree to the privacy policy and onboarding document review process.</span>
-                </label>
+                  <p>I agree to the privacy policy and onboarding document review process.</p>
+                </div>
                 @if (form.controls.acceptsPrivacy.invalid && form.controls.acceptsPrivacy.touched) {
                   <span class="error">Privacy acceptance is required</span>
                 }
 
-                <p class="small-text register-links">Already registered? <a routerLink="/login" class="cursor-pointer">Log in</a></p>
+                <p class="small-text register-links">Already registered? <a routerLink="/login" class="cursor-pointer">Log In</a></p>
                 <p class="small-text register-links">Need to review the catalogue first? <a routerLink="/catalog" class="cursor-pointer">Browse Clockwork Tyres</a></p>
 
                 @if (registrationSummary()) {
