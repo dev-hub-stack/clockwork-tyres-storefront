@@ -1,9 +1,7 @@
 @use '../../../../assets/css/styles/variables' as *;
 
 .desktop-navbar {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+  position: static;
   background: #fff;
   box-shadow: 0 1px 0 rgba(15, 33, 56, 0.08);
 }

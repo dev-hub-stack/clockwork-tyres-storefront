@@ -83,9 +83,25 @@ h6 {
 
 .select-field-shell {
   position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    width: 10px;
+    height: 6px;
+    border-left: 2px solid #666565;
+    border-bottom: 2px solid #666565;
+    pointer-events: none;
+    transform: translateY(-65%) rotate(-45deg);
+  }
 }
 
 .search-inputs {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
   border: 2px solid #000;
   border-radius: 14px;
   height: 58px;
@@ -103,10 +119,7 @@ h6 {
 }
 
 .select-field-shell .fa {
-  position: absolute;
-  right: 16px;
-  top: 16px;
-  pointer-events: none;
+  display: none;
 }
 
 .toggle-field {

@@ -65,6 +65,19 @@
 
 .select-field-shell {
   position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    width: 10px;
+    height: 6px;
+    border-left: 2px solid #666565;
+    border-bottom: 2px solid #666565;
+    pointer-events: none;
+    transform: translateY(-65%) rotate(-45deg);
+  }
 }
 
 .form-group {
@@ -73,6 +86,9 @@
 }
 
 .search-inputs {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
   border: 1px solid #9a9a9a;
   border-radius: 8px;
   height: 40px;
@@ -90,12 +106,7 @@
 }
 
 .select-field-shell .fa {
-  position: absolute;
-  right: 10px;
-  top: 6px;
-  pointer-events: none;
-  color: #666565;
-  font-size: 17px;
+  display: none;
 }
 
 .toggle-field {
