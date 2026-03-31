@@ -2,41 +2,52 @@
   <div class="container-fluid">
     <header class="catalog-toolbar">
       <div class="catalog-toolbar-left">
-        <div class="catalog-chip">{{ activeCategory().label }}</div>
-        <div class="catalog-toolbar-copy">
-          <h1>{{ activeCategory().label }} catalogue</h1>
-          <p>{{ catalogSummary() }}</p>
+        <div class="catalog-tabs">
+          <button type="button" class="catalog-tab catalog-tab-active">{{ activeCategory().label }}</button>
         </div>
       </div>
 
       <div class="catalog-toolbar-right">
-        <div class="toolbar-control">
-          <span>View</span>
-          <select class="form-control dr-list new-select-box" aria-label="Items per page">
-            <option>18 items per page</option>
-            <option>30 items per page</option>
-            <option>50 items per page</option>
-          </select>
-        </div>
-
-        <div class="toolbar-control">
-          <span>Sort By:</span>
-          <select class="form-control dr-list new-select-box" aria-label="Sort catalog">
-            <option>Price, low to high</option>
-            <option>Price, high to low</option>
-            <option>Brand</option>
-          </select>
-        </div>
-
-        <button type="button" class="icon-action" aria-label="Download listing">
-          <img src="/assets/img/download-icon.svg" alt="" width="24" />
-        </button>
+        <ul class="catalog-controls">
+          <li>View</li>
+          <li>
+            <select class="form-control dr-list new-select-box" aria-label="Items per page">
+              <option>30 items</option>
+              <option>50 items</option>
+              <option>100 items</option>
+            </select>
+          </li>
+          <li>Sort By:</li>
+          <li>
+            <select class="form-control dr-list new-select-box" aria-label="Sort catalog">
+              <option>Newest (default)</option>
+              <option>Price low to high</option>
+              <option>Price high to low</option>
+              <option>Brand</option>
+            </select>
+          </li>
+          <li>
+            <button type="button" class="icon-action" aria-label="Download listing">
+              <img src="/assets/img/download-icon.svg" alt="" width="24" />
+            </button>
+          </li>
+          <li>
+            <button type="button" class="icon-action list-icon-action" aria-label="List layout">
+              <span></span>
+            </button>
+          </li>
+        </ul>
       </div>
     </header>
 
+    <div class="catalog-results-head">
+      <div class="catalog-results-copy-spacer"></div>
+      <span class="showing-text">Showing {{ productCount() }} products</span>
+    </div>
+
     <div class="catalog-body">
       <aside class="catalog-filters">
-        <div class="filter-panel">
+        <div class="catalog-filters-inner">
           <div class="filter-header">
             <span>Filter By:</span>
             <button type="button">Clear All</button>
@@ -114,11 +125,6 @@
               <span>Load Index</span>
               <strong>+</strong>
             </summary>
-            <div class="filter-section-body">
-              <select class="form-control dr-list new-select-box">
-                <option>Minimum Load Rating</option>
-              </select>
-            </div>
           </details>
 
           <details class="filter-section">
@@ -126,32 +132,14 @@
               <span>Speed Rating</span>
               <strong>+</strong>
             </summary>
-            <div class="filter-section-body">
-              <select class="form-control dr-list new-select-box">
-                <option>Minimum Speed Rating</option>
-              </select>
-            </div>
           </details>
         </div>
       </aside>
 
       <div class="catalog-results">
-        <div class="results-header">
-          <div class="result-chip-list">
-            @for (chip of searchSummaryChips(); track chip) {
-              <span class="size-badge">{{ chip }}</span>
-            }
-          </div>
-
-          <div class="results-meta">
-            <span class="showing-text">Showing {{ productCount() }} products</span>
-            <span class="results-note">Own stock first, then approved supplier stock.</span>
-          </div>
-        </div>
-
         @if (categoryDisabled()) {
           <div class="category-empty-state">
-            <h3>{{ activeCategory().label }} is structured for launch, but not live yet.</h3>
+            <h3>{{ activeCategory().label }} is structured for launch, but not enabled yet.</h3>
             <p>
               The new storefront keeps the legacy Clockwork listing seams ready for this category, while the live customer journey remains tyre-first.
             </p>
@@ -170,65 +158,62 @@
                   <img [src]="product.image" [alt]="product.model" />
                 </a>
 
-                <div class="catalog-row-content">
+                <div class="catalog-row-main">
                   <div class="catalog-row-copy">
-                    <div class="catalog-row-title">
-                      <div>
-                        <div class="brand-mark">{{ product.brand }}</div>
-                        <h3>
-                          <a class="product-link" [routerLink]="['/product', product.slug]" [queryParams]="productQueryParams()">
-                            {{ product.model }}
-                          </a>
-                        </h3>
-                      </div>
+                    <h3>{{ product.brand }}</h3>
+                    <h4>
+                      <a class="product-link" [routerLink]="['/product', product.slug]" [queryParams]="productQueryParams()">
+                        {{ product.model }}
+                      </a>
+                    </h4>
 
-                      <span class="source-pill">{{ product.priorityRank === 0 ? 'Own stock' : 'Approved supplier' }}</span>
+                    <div class="catalog-specs">
+                      <p><span>Size:</span> {{ product.size }}</p>
+                      <p><span>Stock:</span> {{ product.availability.origin === 'own' ? 'Own stock' : 'Approved suppliers' }}</p>
+                      <p><span>MSRP:</span> {{ (product.compareAtPrice ?? product.price) | currency: 'AED' : 'symbol-narrow' : '1.0-0' }}</p>
                     </div>
 
-                    <p class="catalog-subtitle">{{ product.subtitle }}</p>
+                    <div class="catalog-stock-row">
+                      <div class="catalog-qty-box">
+                        <button type="button">-</button>
+                        <span>1</span>
+                        <button type="button">+</button>
+                      </div>
 
-                    <dl class="product-specs">
-                      <div>
-                        <dt>Size:</dt>
-                        <dd>{{ product.size }}</dd>
-                      </div>
-                      <div>
-                        <dt>SKU:</dt>
-                        <dd>{{ product.sku }}</dd>
-                      </div>
-                      <div>
-                        <dt>Stock:</dt>
-                        <dd>{{ product.availabilityBadge }}</dd>
-                      </div>
-                      <div>
-                        <dt>Supply:</dt>
-                        <dd>{{ product.priorityRank === 0 ? 'Own stock' : 'Approved suppliers' }}</dd>
-                      </div>
-                    </dl>
+                      <span class="stock-text">
+                        {{ product.availabilityBadge }}
+                        @if (product.availability.showQuantity) {
+                          ({{ product.availability.quantity }})
+                        }
+                      </span>
+                    </div>
                   </div>
 
                   <div class="catalog-row-side">
-                    <div class="price-row">
-                      <span class="price-label">Price:</span>
-                      <strong>{{ product.price | currency: 'AED' : 'symbol-narrow' : '1.0-0' }}</strong>
-                    </div>
+                    <span class="source-pill">{{ product.priorityRank === 0 ? 'Own stock' : 'Approved supplier' }}</span>
+                    <p class="catalog-sku">SKU : {{ product.sku }}</p>
 
-                    <span class="stock-text">
-                      {{ product.availabilityBadge }}
-                      @if (product.availability.showQuantity) {
-                        ({{ product.availability.quantity }})
-                      }
-                    </span>
-
-                    @if (cartEnabled()) {
-                      <button type="button" class="btn add-cart-btn">ADD TO CART</button>
-                    } @else {
-                      <span class="preview-text">Preview only</span>
+                    @if (product.compareAtPrice) {
+                      <p class="price-line">
+                        <span>MSRP:</span>
+                        <strong>{{ product.compareAtPrice | currency: 'AED' : 'symbol-narrow' : '1.0-0' }}</strong>
+                      </p>
                     }
 
-                    <a class="details-link" [routerLink]="['/product', product.slug]" [queryParams]="productQueryParams()">
-                      View Details
-                    </a>
+                    <p class="price-line price-line-accent">
+                      <span>Your Price:</span>
+                      <strong>{{ product.price | currency: 'AED' : 'symbol-narrow' : '1.0-0' }}</strong>
+                    </p>
+
+                    <div class="catalog-row-actions">
+                      <a class="details-btn" [routerLink]="['/product', product.slug]" [queryParams]="productQueryParams()">VIEW DETAILS</a>
+
+                      @if (cartEnabled()) {
+                        <button type="button" class="btn add-cart-btn">ADD TO CART</button>
+                      } @else {
+                        <span class="preview-text">Preview only</span>
+                      }
+                    </div>
                   </div>
                 </div>
               </article>

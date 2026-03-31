@@ -29,7 +29,7 @@ const tyreVehicleFields: CatalogCategorySearchField[] = [
   { key: 'make', label: 'Make', type: 'select', required: true },
   { key: 'model', label: 'Model', type: 'select', required: true },
   { key: 'year', label: 'Year', type: 'select', required: true },
-  { key: 'variant', label: 'Variant', type: 'select' }
+  { key: 'variant', label: 'Sub Model', type: 'select' }
 ];
 
 const wheelSizeFields: CatalogCategorySearchField[] = [
@@ -95,4 +95,3 @@ const categoryConfigs: Record<CatalogCategoryId, CatalogCategoryConfig> = {
 };
 
 export const CATALOG_CATEGORY_CONFIG = categoryConfigs;
-

@@ -2,7 +2,7 @@
   <div class="modal-dialog" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
     <div class="modal-content vehicle-modal-content">
       <div class="modal-header border-0">
-        <h5 class="modal-title">Search {{ activeCategory().label }} by Vehicle</h5>
+        <h5 class="modal-title">Search by Vehicle</h5>
         <button type="button" class="close" aria-label="Close" (click)="closed.emit()">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -58,9 +58,9 @@
             </div>
           </div>
 
-          <div class="modal-footnote">
-            The vehicle-search flow keeps the legacy Clockwork interaction pattern while adapting fields per category.
-          </div>
+          <p class="modal-footnote">
+            Please Note: Search by vehicle results are being optimized. Always verify offsets and brake clearance. For staggered fitments use the search by size function.
+          </p>
         </div>
 
         <div class="modal-footer border-0"></div>
