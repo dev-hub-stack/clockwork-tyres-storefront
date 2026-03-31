@@ -1,6 +1,6 @@
 <section class="login-page">
   <header class="login-header">
-    <div class="container-fluid login-header-inner">
+    <div class="login-shell login-header-inner">
       <div class="login-audience-links">
         <a routerLink="/">For Retailers</a>
         <a routerLink="/">For Suppliers</a>
@@ -15,99 +15,100 @@
   </header>
 
   <div class="login-stage">
-    <div class="container-fluid login-stage-inner">
-      <section class="login-left" aria-label="Clockwork benefits">
-        <div class="login-left-surface">
-          <div class="login-left-content">
-            <div class="login-logo">
-              <a routerLink="/" aria-label="Clockwork home">
-                <img src="/assets/img/new-logo.png" alt="Clockwork" />
-              </a>
-            </div>
+    <div class="login-shell login-stage-shell">
+      <div class="login-left login-left-surface" aria-label="Clockwork benefits">
+        <div class="login-left-inner">
+          <div class="login-logo">
+            <a routerLink="/" aria-label="Clockwork home">
+              <img src="/assets/img/new-logo.png" alt="Clockwork" />
+            </a>
+          </div>
 
-            <ul class="login-benefits">
-              @for (benefit of benefits; track benefit.label) {
-                <li>
-                  <span class="benefit-icon">
-                    <img [src]="benefit.icon" [alt]="benefit.label" />
-                  </span>
-                  <span>{{ benefit.label }}</span>
-                </li>
+          <ul class="login-benefits">
+            @for (benefit of benefits; track benefit.label) {
+              <li>
+                <span class="benefit-icon">
+                  <img [src]="benefit.icon" [alt]="benefit.label" />
+                </span>
+                <span>{{ benefit.label }}</span>
+              </li>
+            }
+          </ul>
+        </div>
+      </div>
+
+      <div class="login-right">
+        <div class="login-right-inner">
+          <div class="login-right-scroll overflow-auto">
+            <div class="login-box login-card">
+              <h3 class="small-30">{{ forgotMode() ? 'Forgot Password' : 'Log into your account' }}</h3>
+
+              @if (registrationNotice()) {
+                <div class="submit-banner submit-banner-success">
+                  {{ registrationNotice() }}
+                </div>
               }
-            </ul>
+
+              @if (submitError()) {
+                <div class="submit-banner submit-banner-error">
+                  {{ submitError() }}
+                </div>
+              }
+
+              <form class="signup-form" [formGroup]="form" (ngSubmit)="submit()">
+                <p class="label">Email</p>
+                <input
+                  id="email"
+                  formControlName="email"
+                  type="email"
+                  class="form-control s-form-field"
+                  placeholder="Enter Your Email Address"
+                />
+
+                @if (form.controls.email.invalid && form.controls.email.touched) {
+                  <span class="error">A valid email is required</span>
+                }
+
+                @if (!forgotMode()) {
+                  <p class="label">Password</p>
+                  <input
+                    id="password"
+                    type="password"
+                    formControlName="password"
+                    class="form-control s-form-field"
+                    placeholder="Enter Your Password"
+                  />
+
+                  @if (form.controls.password.invalid && form.controls.password.touched) {
+                    <span class="error">Password is required</span>
+                  }
+
+                  <p class="small-text">Don't have an Account? <a routerLink="/register" class="cursor-pointer">Sign up</a></p>
+                  <p class="small-text pull-right login-links-secondary">
+                    <button type="button" class="text-link-button cursor-pointer" (click)="showForgotPassword()">
+                      Forgot Password?
+                    </button>
+                  </p>
+                } @else {
+                  <p class="small-text">
+                    Remember Password?
+                    <button type="button" class="text-link-button cursor-pointer" (click)="showLoginForm()">Log In</button>
+                  </p>
+                }
+
+                <button type="submit" class="btn btn-01 mt-4 new-btn bg-black login-submit" [disabled]="isSubmitting()">
+                  <span>{{ isSubmitting() ? (forgotMode() ? 'Sending...' : 'Logging in...') : (forgotMode() ? 'Send Reset Link' : 'Log In') }}</span>
+                </button>
+              </form>
+            </div>
           </div>
         </div>
-      </section>
-
-      <section class="login-right">
-        <div class="login-card">
-          <h3 class="small-30">{{ forgotMode() ? 'Forgot Password' : 'Log into your account' }}</h3>
-
-          @if (registrationNotice()) {
-            <div class="submit-banner submit-banner-success">
-              {{ registrationNotice() }}
-            </div>
-          }
-
-          @if (submitError()) {
-            <div class="submit-banner submit-banner-error">
-              {{ submitError() }}
-            </div>
-          }
-
-          <form class="signup-form login-form" [formGroup]="form" (ngSubmit)="submit()">
-            <label class="label" for="email">Email</label>
-            <input
-              id="email"
-              formControlName="email"
-              type="email"
-              class="form-control s-form-field"
-              placeholder="Enter Your Email Address"
-            />
-
-            @if (form.controls.email.invalid && form.controls.email.touched) {
-              <span class="error">A valid email is required</span>
-            }
-
-            @if (!forgotMode()) {
-              <label class="label" for="password">Password</label>
-              <input
-                id="password"
-                type="password"
-                formControlName="password"
-                class="form-control s-form-field"
-                placeholder="Enter Your Password"
-              />
-
-              @if (form.controls.password.invalid && form.controls.password.touched) {
-                <span class="error">Password is required</span>
-              }
-            }
-
-            <div class="login-links">
-              @if (!forgotMode()) {
-                <p class="small-text">Don't have an Account? <a routerLink="/register">Sign up</a></p>
-                <p class="small-text login-links-secondary">
-                  <button type="button" class="text-link-button" (click)="showForgotPassword()">
-                    Forgot Password?
-                  </button>
-                </p>
-              } @else {
-                <p class="small-text">Remember Password? <button type="button" class="text-link-button" (click)="showLoginForm()">Log In</button></p>
-              }
-            </div>
-
-            <button type="submit" class="btn btn-01 new-btn bg-black login-submit" [disabled]="isSubmitting()">
-              <span>{{ isSubmitting() ? (forgotMode() ? 'Sending...' : 'Logging in...') : (forgotMode() ? 'Send Reset Link' : 'Log In') }}</span>
-            </button>
-          </form>
-        </div>
-      </section>
+      </div>
     </div>
   </div>
 
   <footer class="login-footer">
-    <div class="container-fluid">
+    <div class="login-shell">
       <span>&copy; 2026 Clockwork | All Rights Reserved.</span>
     </div>
   </footer>
