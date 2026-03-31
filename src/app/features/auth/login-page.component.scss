@@ -53,15 +53,16 @@
 .login-stage-inner {
   min-height: calc(100vh - 144px);
   display: grid;
-  grid-template-columns: minmax(0, 1.8fr) minmax(420px, 0.7fr);
-  align-items: stretch;
+  grid-template-columns: minmax(0, 1fr) 520px;
+  column-gap: 36px;
+  align-items: center;
 }
 
 .login-left {
-  position: relative;
   display: flex;
   align-items: center;
-  overflow: hidden;
+  min-height: 100%;
+  padding-left: 86px;
 }
 
 .login-left-surface {
@@ -79,14 +80,14 @@
 .login-left-content {
   position: relative;
   z-index: 1;
-  max-width: 460px;
+  max-width: 540px;
 }
 
 .login-logo {
-  margin-bottom: 56px;
+  margin-bottom: 66px;
 
   img {
-    width: 290px;
+    width: 410px;
     max-width: 100%;
   }
 }
@@ -103,8 +104,9 @@
     align-items: center;
     gap: 22px;
     color: #111;
-    font-size: 1rem;
+    font-size: 0.98rem;
     line-height: 1.35;
+    white-space: nowrap;
   }
 }
 
@@ -127,12 +129,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px 32px 40px 12px;
+  padding: 40px 0 40px 12px;
 }
 
 .login-card {
-  width: min(500px, 100%);
-  padding: 42px 48px 46px;
+  width: 438px;
+  max-width: 100%;
+  padding: 40px 38px 44px;
   border-radius: 30px;
   background: #fff;
   color: #111;
@@ -141,7 +144,7 @@
   h3 {
     margin: 0 0 24px;
     color: #111;
-    font-size: 30px;
+    font-size: 26px;
     font-weight: 400;
     line-height: 1.08;
   }
@@ -173,7 +176,7 @@
 
 .label {
   margin: 0 0 8px;
-  font-size: 0.98rem;
+  font-size: 1rem;
   font-weight: 400;
 }
 
@@ -207,7 +210,7 @@
   p {
     margin: 0;
     color: #111;
-    font-size: 0.98rem;
+    font-size: 0.96rem;
     line-height: 1.35;
   }
 }
@@ -255,7 +258,11 @@
 
 @media (max-width: 1199px) {
   .login-stage-inner {
-    grid-template-columns: 1.45fr 0.85fr;
+    grid-template-columns: minmax(0, 1fr) 470px;
+  }
+
+  .login-left {
+    padding-left: 48px;
   }
 
   .login-left-surface {
@@ -264,7 +271,7 @@
   }
 
   .login-logo {
-    margin-bottom: 40px;
+    margin-bottom: 44px;
   }
 
   .login-benefits {
@@ -288,12 +295,14 @@
 
   .login-left {
     padding-top: 24px;
+    padding-left: 0;
   }
 
   .login-left-surface {
     width: 100%;
     min-height: auto;
     padding: 40px 28px 48px;
+    background: #fff;
     border-top-right-radius: 140px;
     border-bottom-right-radius: 140px;
   }
@@ -320,11 +329,12 @@
 
   .login-left-surface {
     padding: 32px 20px 36px;
+    background: #fff;
     border-radius: 40px;
   }
 
   .login-logo img {
-    width: 220px;
+    width: 260px;
   }
 
   .login-benefits {
@@ -333,6 +343,7 @@
     li {
       gap: 16px;
       font-size: 0.95rem;
+      white-space: normal;
     }
   }
 
