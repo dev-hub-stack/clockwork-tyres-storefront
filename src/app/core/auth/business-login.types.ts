@@ -5,6 +5,10 @@ export type BusinessLoginPayload = {
   password: string;
 };
 
+export type BusinessForgotPasswordPayload = {
+  email: string;
+};
+
 export type BusinessAccountSummary = {
   id: number;
   name: string;
@@ -36,4 +40,10 @@ export type BusinessLoginSuccess = {
   status: boolean;
   message: string;
   data: BusinessLoginSuccessData;
+};
+
+export type BusinessForgotPasswordSuccess = {
+  status: boolean;
+  message: string;
+  data: null;
 };

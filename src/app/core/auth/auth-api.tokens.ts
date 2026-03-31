@@ -4,6 +4,7 @@ export interface StorefrontAuthApiEndpoints {
   countries: string;
   register: string;
   login: string;
+  forgot: string;
   accountContext: string;
   accountContextSelect: string;
 }

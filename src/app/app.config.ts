@@ -35,6 +35,7 @@ export const appConfig: ApplicationConfig = {
         countries: '/api/countries',
         register: '/api/auth/business-register',
         login: '/api/auth/business-login',
+        forgot: '/api/auth/forgot',
         accountContext: '/api/account-context',
         accountContextSelect: '/api/account-context/select'
       }

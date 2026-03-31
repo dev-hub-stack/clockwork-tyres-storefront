@@ -50,6 +50,7 @@ export class LoginPageComponent {
     password: ['', [Validators.required]]
   });
 
+  protected readonly forgotMode = signal(false);
   protected readonly submitError = signal<string | null>(null);
   protected readonly registrationNotice = signal<string | null>(null);
   protected readonly isSubmitting = signal(false);
@@ -82,12 +83,31 @@ export class LoginPageComponent {
   protected submit(): void {
     this.form.markAllAsTouched();
 
-    if (this.form.invalid) {
+    if (this.form.controls.email.invalid || (!this.forgotMode() && this.form.controls.password.invalid)) {
       return;
     }
 
     this.submitError.set(null);
     this.isSubmitting.set(true);
+
+    if (this.forgotMode()) {
+      this.businessLoginApi
+        .forgot(this.form.controls.email.getRawValue())
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (response) => {
+            this.isSubmitting.set(false);
+            this.registrationNotice.set(response.message);
+          },
+          error: (error: { error?: { message?: string } }) => {
+            this.isSubmitting.set(false);
+            this.submitError.set(
+              error.error?.message ?? 'We could not send the reset link right now.'
+            );
+          }
+        });
+      return;
+    }
 
     this.businessLoginApi
       .login({
@@ -114,5 +134,21 @@ export class LoginPageComponent {
           );
         }
       });
+  }
+
+  protected showForgotPassword(): void {
+    this.forgotMode.set(true);
+    this.submitError.set(null);
+    this.registrationNotice.set(null);
+    this.form.controls.password.clearValidators();
+    this.form.controls.password.updateValueAndValidity();
+  }
+
+  protected showLoginForm(): void {
+    this.forgotMode.set(false);
+    this.submitError.set(null);
+    this.registrationNotice.set(null);
+    this.form.controls.password.setValidators([Validators.required]);
+    this.form.controls.password.updateValueAndValidity();
   }
 }
