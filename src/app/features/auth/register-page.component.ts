@@ -40,10 +40,22 @@ export class RegisterPageComponent {
   private readonly registrationApi = inject(BusinessRegistrationApiService);
 
   protected readonly benefits = [
-    'One onboarding route for retailer, supplier, or combined business accounts',
-    'Tyre-first launch with supplier preview and retail storefront support',
-    'Subscription-ready intake aligned with Clockwork premium rules',
-    'Shared account model for businesses that sell retail and wholesale'
+    {
+      icon: '/assets/img/icon-24.png',
+      label: '24/7 online ordering access'
+    },
+    {
+      icon: '/assets/img/box-icon.png',
+      label: 'Manage orders from multiple suppliers'
+    },
+    {
+      icon: '/assets/img/order-icon.png',
+      label: 'Order history, tracking and invoices'
+    },
+    {
+      icon: '/assets/img/folder-icon.png',
+      label: 'Live inventory and pricing'
+    }
   ];
 
   protected readonly roleOptions: RegistrationRoleOption[] = [
