@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { afterNextRender, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -54,8 +54,13 @@ export class LoginPageComponent {
   protected readonly submitError = signal<string | null>(null);
   protected readonly registrationNotice = signal<string | null>(null);
   protected readonly isSubmitting = signal(false);
+  protected readonly isInteractive = signal(false);
 
   constructor() {
+    afterNextRender(() => {
+      this.isInteractive.set(true);
+    });
+
     if (this.businessSession.accessToken()) {
       const nextPath = this.resolveNextPath(this.activatedRoute.snapshot.queryParamMap.get('next'));
 
@@ -91,6 +96,10 @@ export class LoginPageComponent {
   }
 
   protected submit(): void {
+    if (!this.isInteractive()) {
+      return;
+    }
+
     this.form.markAllAsTouched();
 
     if (this.form.controls.email.invalid || (!this.forgotMode() && this.form.controls.password.invalid)) {
@@ -129,14 +138,13 @@ export class LoginPageComponent {
         next: (response) => {
           this.businessSession.save(response.data);
           const nextPath = this.resolveNextPath(this.activatedRoute.snapshot.queryParamMap.get('next'));
-          void this.storefrontBootstrapApi
-            .hydrateAuthenticatedAccountContext(response.data.account_context)
-            .finally(() => {
-              this.isSubmitting.set(false);
-              void this.router.navigateByUrl(nextPath, {
-                replaceUrl: true
-              });
-            });
+          this.isSubmitting.set(false);
+          void this.router.navigateByUrl(nextPath, {
+            replaceUrl: true
+          });
+          void this.storefrontBootstrapApi.hydrateAuthenticatedAccountContext(
+            response.data.account_context
+          );
         },
         error: (error: { error?: { message?: string } }) => {
           this.isSubmitting.set(false);

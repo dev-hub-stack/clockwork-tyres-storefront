@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { afterNextRender, Component, computed, inject, signal } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CatalogCategoryService } from '../../core/catalog-categories';
@@ -34,6 +34,7 @@ export class CatalogPageComponent {
     return Array.from(brands).slice(0, 6);
   });
   protected readonly categoryDisabled = computed(() => !this.activeCategory().enabled);
+  protected readonly isInteractive = signal(false);
   protected readonly searchSummaryChips = computed(() => {
     const summary = this.fitment.searchSummary();
     return summary.length ? summary : [this.activeCategory().label];
@@ -42,8 +43,14 @@ export class CatalogPageComponent {
     return buildCatalogQueryParams(this.activeCategory().id, this.fitment.searchMode());
   });
 
+  constructor() {
+    afterNextRender(() => {
+      this.isInteractive.set(true);
+    });
+  }
+
   protected addToCart(product: StorefrontCatalogViewItem): void {
-    if (!this.cartEnabled()) {
+    if (!this.cartEnabled() || !this.isInteractive()) {
       return;
     }
 

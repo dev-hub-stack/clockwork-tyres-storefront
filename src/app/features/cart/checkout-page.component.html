@@ -30,7 +30,7 @@
           }
         </div>
 
-        <form [formGroup]="checkoutForm" (ngSubmit)="submitOrder()" class="checkout-form">
+        <form [formGroup]="checkoutForm" (ngSubmit)="submitOrder()" class="checkout-form" data-testid="checkout-form">
           <div class="checkout-card">
             <div class="form-row-grid">
               <label for="savedAddress">My Addresses</label>
@@ -163,7 +163,7 @@
 
             <div class="submit-row">
               @if (submitCheckoutCta().visible) {
-                <button type="submit" class="btn confirm-btn" [disabled]="isSubmitting()">
+                <button type="submit" class="btn confirm-btn" [disabled]="isSubmitting()" data-testid="confirm-order">
                   {{ isSubmitting() ? 'Submitting...' : 'Confirm Order' }}
                 </button>
               } @else {

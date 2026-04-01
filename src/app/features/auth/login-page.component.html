@@ -55,7 +55,14 @@
                 </div>
               }
 
-              <form class="signup-form" [formGroup]="form" (ngSubmit)="submit()">
+              <form
+                class="signup-form"
+                [formGroup]="form"
+                (ngSubmit)="submit()"
+                data-testid="login-form"
+                [attr.data-interactive]="isInteractive() ? 'true' : 'false'"
+                onsubmit="return false;"
+              >
                 <p class="label">Email</p>
                 <input
                   id="email"
@@ -96,7 +103,7 @@
                   </p>
                 }
 
-                <button type="submit" class="btn btn-01 mt-4 new-btn bg-black login-submit" [disabled]="isSubmitting()">
+                <button type="submit" class="btn btn-01 mt-4 new-btn bg-black login-submit" [disabled]="isSubmitting() || !isInteractive()" data-testid="login-submit">
                   <span>{{ isSubmitting() ? (forgotMode() ? 'Sending...' : 'Logging in...') : (forgotMode() ? 'Send Reset Link' : 'Log In') }}</span>
                 </button>
               </form>

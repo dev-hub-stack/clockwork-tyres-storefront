@@ -1,7 +1,9 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { CatalogCategoryId } from '../catalog-categories';
 import { FitmentSearchQuery } from '../fitment';
 import {
+  StorefrontCartLine,
   StorefrontCartLineInput,
   StorefrontCheckoutPayload,
   StorefrontCheckoutResult,
@@ -25,23 +27,32 @@ import { StorefrontCatalogApiService } from './storefront-catalog.api';
 import { mapCatalogApiItem, mapCatalogApiProduct } from './storefront-catalog.api.mapper';
 import { StorefrontOrderApiService } from './storefront-order.api';
 import { StorefrontWorkspaceApiService } from './storefront-workspace.api';
+import { BusinessSessionService } from '../auth';
 
 const cloneState = (): StorefrontDataState => structuredClone(storefrontMockState);
+const CART_STORAGE_KEY_PREFIX = 'clockwork-storefront-cart';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiStorefrontDataRepository implements StorefrontDataRepository {
   private readonly stateSignal = signal<StorefrontDataState>(cloneState());
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly businessSession = inject(BusinessSessionService);
   private readonly catalogApi = inject(StorefrontCatalogApiService);
   private readonly orderApi = inject(StorefrontOrderApiService);
   private readonly workspaceApi = inject(StorefrontWorkspaceApiService);
+  private readonly browser = isPlatformBrowser(this.platformId);
 
   private lastCatalogKey: string | null = null;
   private lastWorkspaceKey: string | null = null;
   private readonly hydratedProducts = new Set<string>();
 
   readonly state = this.stateSignal.asReadonly();
+
+  constructor() {
+    this.restoreStoredCart();
+  }
 
   getCatalogItems(mode: StorefrontMode, category: CatalogCategoryId): StorefrontCatalogItem[] {
     return resolveCatalogItems(this.stateSignal().catalog, mode, category);
@@ -236,7 +247,7 @@ export class ApiStorefrontDataRepository implements StorefrontDataRepository {
       const existingLine = state.cart.find((cartLine) => cartLine.sku === line.sku);
 
       if (existingLine) {
-        return {
+        const nextState = {
           ...state,
           cart: state.cart.map((cartLine) =>
             cartLine.sku === line.sku
@@ -244,38 +255,64 @@ export class ApiStorefrontDataRepository implements StorefrontDataRepository {
               : cartLine
           )
         };
+
+        this.persistCart(nextState.cart);
+
+        return nextState;
       }
 
       const nextId = state.cart.reduce((maxId, cartLine) => Math.max(maxId, cartLine.id), 0) + 1;
 
-      return {
+      const nextState = {
         ...state,
         cart: [...state.cart, { ...line, id: nextId }]
       };
+
+      this.persistCart(nextState.cart);
+
+      return nextState;
     });
   }
 
   updateCartLineQuantity(lineId: number, quantity: number): void {
-    this.stateSignal.update((state) => ({
-      ...state,
-      cart: state.cart.map((line) =>
-        line.id === lineId ? { ...line, quantity: Math.max(1, quantity) } : line
-      )
-    }));
+    this.stateSignal.update((state) => {
+      const nextState = {
+        ...state,
+        cart: state.cart.map((line) =>
+          line.id === lineId ? { ...line, quantity: Math.max(1, quantity) } : line
+        )
+      };
+
+      this.persistCart(nextState.cart);
+
+      return nextState;
+    });
   }
 
   removeCartLine(lineId: number): void {
-    this.stateSignal.update((state) => ({
-      ...state,
-      cart: state.cart.filter((line) => line.id !== lineId)
-    }));
+    this.stateSignal.update((state) => {
+      const nextState = {
+        ...state,
+        cart: state.cart.filter((line) => line.id !== lineId)
+      };
+
+      this.persistCart(nextState.cart);
+
+      return nextState;
+    });
   }
 
   clearCart(): void {
-    this.stateSignal.update((state) => ({
-      ...state,
-      cart: []
-    }));
+    this.stateSignal.update((state) => {
+      const nextState = {
+        ...state,
+        cart: []
+      };
+
+      this.persistCart(nextState.cart);
+
+      return nextState;
+    });
   }
 
   async submitOrder(
@@ -289,7 +326,7 @@ export class ApiStorefrontDataRepository implements StorefrontDataRepository {
     }
 
     this.clearCart();
-    await this.hydrateWorkspace(accountKey, true);
+    void this.hydrateWorkspace(accountKey, true);
 
     return result;
   }
@@ -298,11 +335,65 @@ export class ApiStorefrontDataRepository implements StorefrontDataRepository {
     this.lastCatalogKey = null;
     this.lastWorkspaceKey = null;
     this.hydratedProducts.clear();
-    this.stateSignal.set(cloneState());
+    const fallback = cloneState();
+    this.stateSignal.set({
+      ...fallback,
+      cart: []
+    });
+    this.persistCart([]);
   }
 
   getOrders(): StorefrontOrder[] {
     return this.stateSignal().orders;
+  }
+
+  private restoreStoredCart(): void {
+    if (!this.browser) {
+      return;
+    }
+
+    const storedCart = this.readStoredCart();
+
+    if (!storedCart.length) {
+      return;
+    }
+
+    this.stateSignal.update((state) => ({
+      ...state,
+      cart: storedCart
+    }));
+  }
+
+  private persistCart(cart: StorefrontCartLine[]): void {
+    if (!this.browser) {
+      return;
+    }
+
+    window.localStorage.setItem(this.cartStorageKey(), JSON.stringify(cart));
+  }
+
+  private readStoredCart(): StorefrontCartLine[] {
+    if (!this.browser) {
+      return [];
+    }
+
+    const raw = window.localStorage.getItem(this.cartStorageKey());
+
+    if (!raw) {
+      return [];
+    }
+
+    try {
+      return JSON.parse(raw) as StorefrontCartLine[];
+    } catch {
+      window.localStorage.removeItem(this.cartStorageKey());
+      return [];
+    }
+  }
+
+  private cartStorageKey(): string {
+    const accountId = this.businessSession.session()?.account_context.current_account?.id ?? 'guest';
+    return `${CART_STORAGE_KEY_PREFIX}:${accountId}`;
   }
 
   private serializeSearchQuery(searchQuery: FitmentSearchQuery): string {

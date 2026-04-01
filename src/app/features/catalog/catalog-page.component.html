@@ -1,4 +1,8 @@
-<section class="catalog-shell">
+<section
+  class="catalog-shell"
+  data-testid="catalog-page"
+  [attr.data-interactive]="isInteractive() ? 'true' : 'false'"
+>
   <div class="container-fluid">
     <header class="catalog-toolbar">
       <div class="catalog-toolbar-left">
@@ -148,7 +152,7 @@
         } @else {
           <div class="catalog-grid">
             @for (product of products(); track product.sku) {
-              <article class="catalog-row">
+              <article class="catalog-row" data-testid="catalog-row">
                 <a
                   class="catalog-row-media product-link"
                   [routerLink]="['/product', product.slug]"
@@ -209,7 +213,7 @@
                       <a class="details-btn" [routerLink]="['/product', product.slug]" [queryParams]="productQueryParams()">VIEW DETAILS</a>
 
                       @if (cartEnabled()) {
-                        <button type="button" class="btn add-cart-btn" (click)="addToCart(product)">ADD TO CART</button>
+                        <button type="button" class="btn add-cart-btn" (click)="addToCart(product)" [disabled]="!isInteractive()" data-testid="catalog-add-to-cart">ADD TO CART</button>
                       } @else {
                         <span class="preview-text">Preview only</span>
                       }

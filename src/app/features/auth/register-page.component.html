@@ -69,7 +69,13 @@
                 </div>
               }
 
-              <form class="signup-form register-form" [formGroup]="form" (ngSubmit)="submit()">
+              <form
+                class="signup-form register-form"
+                [formGroup]="form"
+                (ngSubmit)="submit()"
+                [attr.data-interactive]="isInteractive() ? 'true' : 'false'"
+                onsubmit="return false;"
+              >
                 <div class="form-grid">
                   <div>
                     <p class="label">Business Name</p>
@@ -201,7 +207,7 @@
                   </button>
                 }
 
-                <button type="submit" class="btn btn-01 mt-4 new-btn bg-black register-submit" [disabled]="isSubmitting()">
+                <button type="submit" class="btn btn-01 mt-4 new-btn bg-black register-submit" [disabled]="isSubmitting() || !isInteractive()">
                   <span>{{ isSubmitting() ? 'Submitting...' : 'Register Business' }}</span>
                 </button>
               </form>

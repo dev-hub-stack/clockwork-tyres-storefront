@@ -23,9 +23,20 @@ export const businessAuthInterceptor: HttpInterceptorFn = (request, next) => {
 
 function shouldAttachToken(
   url: string,
-  endpoints: { accountContext: string; accountContextSelect: string }
+  endpoints: {
+    accountContext: string;
+    accountContextSelect: string;
+    workspace: string;
+    orders: string;
+  }
 ): boolean {
-  return matches(url, endpoints.accountContext) || matches(url, endpoints.accountContextSelect);
+  return (
+    matches(url, endpoints.accountContext) ||
+    matches(url, endpoints.accountContextSelect) ||
+    matches(url, endpoints.workspace) ||
+    matches(url, endpoints.orders) ||
+    url.includes('/api/storefront/')
+  );
 }
 
 function matches(url: string, endpoint: string): boolean {

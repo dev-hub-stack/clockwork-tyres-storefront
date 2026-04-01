@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
-import { Component, DestroyRef, inject, PLATFORM_ID, signal } from '@angular/core';
+import { afterNextRender, Component, DestroyRef, inject, PLATFORM_ID, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -103,6 +103,7 @@ export class RegisterPageComponent {
   protected readonly submitSuccess = signal<string | null>(null);
   protected readonly registrationSummary = signal<BusinessRegistrationSuccessData | null>(null);
   protected readonly isSubmitting = signal(false);
+  protected readonly isInteractive = signal(false);
   protected readonly selectedDocumentName = signal<string>('');
 
   protected readonly form = this.formBuilder.group({
@@ -118,6 +119,10 @@ export class RegisterPageComponent {
   });
 
   constructor() {
+    afterNextRender(() => {
+      this.isInteractive.set(true);
+    });
+
     this.hydrateQueryDefaults();
     this.syncPlanPreferenceWithAccountMode(this.form.controls.accountMode.value ?? 'retailer');
     this.form.controls.accountMode.valueChanges
@@ -165,6 +170,10 @@ export class RegisterPageComponent {
   }
 
   protected submit(): void {
+    if (!this.isInteractive()) {
+      return;
+    }
+
     this.form.markAllAsTouched();
     this.submitError.set(null);
     this.submitSuccess.set(null);

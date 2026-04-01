@@ -48,7 +48,7 @@
           }
 
           @if (cartEnabled()) {
-            <a routerLink="/cart" class="cart-icon" aria-label="Cart">
+            <a routerLink="/cart" class="cart-icon" aria-label="Cart" data-testid="header-cart-link">
               <span class="cart-icon-plate">
                 <i class="fa fa-shopping-cart icon" aria-hidden="true"></i>
                 <small class="cart-count">{{ cartCount() }}</small>

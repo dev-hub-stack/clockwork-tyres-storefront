@@ -15,7 +15,7 @@
 
         @if (items().length) {
           <div class="table-responsive">
-            <table class="table cart-table table-bordered">
+            <table class="table cart-table table-bordered" data-testid="cart-table">
               <thead>
                 <tr class="bg-row">
                   <th>Product</th>
@@ -134,7 +134,7 @@
           <div class="summary-actions">
             <a routerLink="/catalog" class="btn ship-btn secondary">Continue Shopping</a>
             @if (checkoutEnabled()) {
-              <a routerLink="/cart/checkout" class="btn ship-btn">Proceed To Checkout</a>
+              <a routerLink="/cart/checkout" class="btn ship-btn" data-testid="proceed-to-checkout">Proceed To Checkout</a>
             } @else {
               <span class="preview-callout">{{ modeViewModel().description }}</span>
             }
