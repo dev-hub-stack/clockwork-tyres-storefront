@@ -56,6 +56,16 @@ export class LoginPageComponent {
   protected readonly isSubmitting = signal(false);
 
   constructor() {
+    if (this.businessSession.accessToken()) {
+      const nextPath = this.resolveNextPath(this.activatedRoute.snapshot.queryParamMap.get('next'));
+
+      void this.router.navigateByUrl(nextPath, {
+        replaceUrl: true
+      });
+
+      return;
+    }
+
     const shouldOpenRegister =
       this.activatedRoute.snapshot.queryParamMap.get('signup') === '1' ||
       this.activatedRoute.snapshot.queryParamMap.has('plan');
@@ -118,11 +128,12 @@ export class LoginPageComponent {
       .subscribe({
         next: (response) => {
           this.businessSession.save(response.data);
+          const nextPath = this.resolveNextPath(this.activatedRoute.snapshot.queryParamMap.get('next'));
           void this.storefrontBootstrapApi
             .hydrateAuthenticatedAccountContext(response.data.account_context)
             .finally(() => {
               this.isSubmitting.set(false);
-              void this.router.navigate(['/catalog'], {
+              void this.router.navigateByUrl(nextPath, {
                 replaceUrl: true
               });
             });
@@ -150,5 +161,13 @@ export class LoginPageComponent {
     this.registrationNotice.set(null);
     this.form.controls.password.setValidators([Validators.required]);
     this.form.controls.password.updateValueAndValidity();
+  }
+
+  private resolveNextPath(nextPath: string | null): string {
+    if (nextPath && nextPath.startsWith('/')) {
+      return nextPath;
+    }
+
+    return '/catalog';
   }
 }

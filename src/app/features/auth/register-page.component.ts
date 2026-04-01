@@ -59,23 +59,44 @@ export class RegisterPageComponent {
   ];
 
   protected readonly roleOptions: RegistrationRoleOption[] = [
-    { value: 'retailer', label: 'Retailer', note: 'Storefront ordering and admin portal' },
-    { value: 'supplier', label: 'Supplier', note: 'Wholesale inventory and read-only store preview' },
-    { value: 'both', label: 'Both', note: 'Single business account with shared stock pool' }
+    { value: 'retailer', label: 'Retailer', note: 'Counter ordering plus retailer admin access' },
+    { value: 'supplier', label: 'Supplier', note: 'Wholesale portal and product/inventory admin' },
+    { value: 'both', label: 'Both', note: 'One business account with shared stock and paid subscription' }
   ];
 
-  protected readonly planOptions: RegistrationPlanOption[] = [
-    {
-      value: 'basic',
-      label: 'Basic',
-      note: 'Retailers limited to 3 suppliers. Suppliers have no reports access.'
-    },
-    {
-      value: 'premium',
-      label: 'Premium',
-      note: 'Unlock own inventory, broader supplier network, and add-on report options.'
-    }
-  ];
+  private readonly planOptionsByMode: Record<BusinessAccountMode, RegistrationPlanOption[]> = {
+    retailer: [
+      {
+        value: 'basic',
+        label: 'Starter (Free)',
+        note: 'Access to 3 suppliers, live counter ordering, and unlimited orders.'
+      },
+      {
+        value: 'premium',
+        label: 'Plus (199 AED / Month)',
+        note: 'Unlimited suppliers, own inventory showcase, company logo, and store analytics.'
+      }
+    ],
+    supplier: [
+      {
+        value: 'basic',
+        label: 'Starter (Free)',
+        note: 'Live inventory and order portal, unlimited orders, and product/inventory admin.'
+      },
+      {
+        value: 'premium',
+        label: 'Premium (199 AED / Month)',
+        note: 'Unlock retail sales portal, procurement module, and store analytics.'
+      }
+    ],
+    both: [
+      {
+        value: 'premium',
+        label: 'Paid Subscription Required',
+        note: 'Combined retailer + wholesaler accounts cannot stay on the free plan.'
+      }
+    ]
+  };
 
   protected readonly countries = signal<CountryOption[]>([]);
   protected readonly submitError = signal<string | null>(null);
@@ -98,6 +119,10 @@ export class RegisterPageComponent {
 
   constructor() {
     this.hydrateQueryDefaults();
+    this.syncPlanPreferenceWithAccountMode(this.form.controls.accountMode.value ?? 'retailer');
+    this.form.controls.accountMode.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((mode) => this.syncPlanPreferenceWithAccountMode(mode ?? 'retailer'));
 
     if (isPlatformBrowser(this.platformId)) {
       this.loadCountries();
@@ -116,6 +141,18 @@ export class RegisterPageComponent {
     }
 
     return 'Upload trade license';
+  }
+
+  protected get displayedPlanOptions(): RegistrationPlanOption[] {
+    return this.planOptionsByMode[this.form.controls.accountMode.value ?? 'retailer'];
+  }
+
+  protected get selectedPlanNote(): string | null {
+    const selectedPlan = this.displayedPlanOptions.find(
+      (option) => option.value === (this.form.controls.planPreference.value ?? 'basic')
+    );
+
+    return selectedPlan?.note ?? null;
   }
 
   protected onDocumentSelected(event: Event): void {
@@ -193,6 +230,17 @@ export class RegisterPageComponent {
 
     if (requestedPlan === 'premium-plan' || requestedPlan === 'premium') {
       this.form.controls.planPreference.setValue('premium');
+    }
+  }
+
+  private syncPlanPreferenceWithAccountMode(accountMode: BusinessAccountMode): void {
+    if (accountMode === 'both') {
+      this.form.controls.planPreference.setValue('premium');
+      return;
+    }
+
+    if (!this.displayedPlanOptions.some((option) => option.value === this.form.controls.planPreference.value)) {
+      this.form.controls.planPreference.setValue('basic');
     }
   }
 

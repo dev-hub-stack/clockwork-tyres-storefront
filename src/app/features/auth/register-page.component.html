@@ -44,7 +44,7 @@
               <p class="register-eyebrow">Register</p>
               <h3 class="small-30">Register your business</h3>
               <p class="register-intro">
-                Use the same Clockwork onboarding flow, adapted for the new tyre platform account model.
+                Set up a retailer, supplier, or combined business account for the counter-only Clockwork Tyres launch.
               </p>
 
               @if (submitSuccess()) {
@@ -142,12 +142,15 @@
                   }
                 </div>
 
-                <p class="label">Plan</p>
+                <p class="label">Plan preference</p>
                 <select formControlName="planPreference" class="form-control custom-input register-select">
-                  @for (plan of planOptions; track plan.value) {
+                  @for (plan of displayedPlanOptions; track plan.value) {
                     <option [value]="plan.value">{{ plan.label }}</option>
                   }
                 </select>
+                @if (selectedPlanNote) {
+                  <p class="small-text register-links">{{ selectedPlanNote }}</p>
+                }
 
                 <p class="label">{{ uploadLabel }}</p>
                 <div class="register-upload-row">
@@ -187,7 +190,6 @@
                 }
 
                 <p class="small-text register-links">Already registered? <a routerLink="/login" class="cursor-pointer">Log In</a></p>
-                <p class="small-text register-links">Need to review the catalogue first? <a routerLink="/catalog" class="cursor-pointer">Browse Clockwork Tyres</a></p>
 
                 @if (registrationSummary()) {
                   <button

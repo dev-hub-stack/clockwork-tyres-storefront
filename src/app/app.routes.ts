@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { businessSessionGuard } from './core/auth/business-session.guard';
 import { StorefrontLayoutComponent } from './core/layout/storefront-layout.component';
 import { STOREFRONT_PATHS } from './core/storefront-routes';
 
@@ -29,6 +30,7 @@ export const routes: Routes = [
       },
       {
         path: STOREFRONT_PATHS.catalog,
+        canActivate: [businessSessionGuard],
         loadComponent: () =>
           import('./features/catalog/catalog-page.component').then(
             (m) => m.CatalogPageComponent
@@ -36,6 +38,7 @@ export const routes: Routes = [
       },
       {
         path: STOREFRONT_PATHS.tyres,
+        canActivate: [businessSessionGuard],
         loadComponent: () =>
           import('./features/catalog/catalog-page.component').then(
             (m) => m.CatalogPageComponent
@@ -46,6 +49,7 @@ export const routes: Routes = [
       },
       {
         path: STOREFRONT_PATHS.wheels,
+        canActivate: [businessSessionGuard],
         loadComponent: () =>
           import('./features/catalog/catalog-page.component').then(
             (m) => m.CatalogPageComponent
@@ -56,6 +60,7 @@ export const routes: Routes = [
       },
       {
         path: STOREFRONT_PATHS.searchBySize,
+        canActivate: [businessSessionGuard],
         loadComponent: () =>
           import('./features/catalog/catalog-page.component').then(
             (m) => m.CatalogPageComponent
@@ -66,6 +71,7 @@ export const routes: Routes = [
       },
       {
         path: STOREFRONT_PATHS.searchByVehicle,
+        canActivate: [businessSessionGuard],
         loadComponent: () =>
           import('./features/catalog/catalog-page.component').then(
             (m) => m.CatalogPageComponent
@@ -80,6 +86,7 @@ export const routes: Routes = [
       },
       {
         path: `${STOREFRONT_PATHS.product}/:sku`,
+        canActivate: [businessSessionGuard],
         loadComponent: () =>
           import('./features/catalog/product-detail-page.component').then(
             (m) => m.ProductDetailPageComponent
@@ -87,6 +94,7 @@ export const routes: Routes = [
       },
       {
         path: STOREFRONT_PATHS.cart,
+        canActivate: [businessSessionGuard],
         loadComponent: () =>
           import('./features/cart/cart-page.component').then(
             (m) => m.CartPageComponent
@@ -94,6 +102,7 @@ export const routes: Routes = [
       },
       {
         path: STOREFRONT_PATHS.checkout,
+        canActivate: [businessSessionGuard],
         loadComponent: () =>
           import('./features/cart/checkout-page.component').then(
             (m) => m.CheckoutPageComponent
@@ -106,6 +115,7 @@ export const routes: Routes = [
       },
       {
         path: STOREFRONT_PATHS.account,
+        canActivate: [businessSessionGuard],
         loadComponent: () =>
           import('./features/account/account-shell.component').then(
             (m) => m.AccountShellComponent
