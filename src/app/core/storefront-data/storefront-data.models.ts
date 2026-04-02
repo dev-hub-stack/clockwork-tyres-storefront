@@ -6,6 +6,8 @@ export type StockOrigin = 'own' | 'supplier';
 
 export type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'completed' | 'cancelled';
 
+export type StorefrontDataLoadStatus = 'idle' | 'loading' | 'ready' | 'empty' | 'error';
+
 export interface StorefrontAvailability {
   origin: StockOrigin;
   label: string;
@@ -181,6 +183,10 @@ export interface StorefrontDataState {
   profile: StorefrontProfile;
   addresses: StorefrontAddress[];
   orders: StorefrontOrder[];
+  catalogStatus: StorefrontDataLoadStatus;
+  catalogError: string | null;
+  workspaceStatus: StorefrontDataLoadStatus;
+  workspaceError: string | null;
 }
 
 export interface StorefrontCatalogViewItem extends StorefrontCatalogItem {
@@ -196,3 +202,35 @@ export interface StorefrontPdpViewItem extends StorefrontPdpItem {
 export interface StorefrontCartViewLine extends StorefrontCartLine {
   lineTotal: number;
 }
+
+export const createEmptyStorefrontProfile = (): StorefrontProfile => ({
+  businessName: '',
+  address: '',
+  email: '',
+  phone: '',
+  country: '',
+  licenseNumber: '',
+  expiry: '',
+  website: '',
+  instagram: '',
+  contactName: '',
+  accountType: 'retailer',
+  wholesaleEnabled: false,
+  retailEnabled: false,
+  subscription: ''
+});
+
+export const createEmptyStorefrontDataState = (): StorefrontDataState => ({
+  mode: 'retail-store',
+  activeCategory: 'tyres',
+  catalog: [],
+  pdp: {},
+  cart: [],
+  profile: createEmptyStorefrontProfile(),
+  addresses: [],
+  orders: [],
+  catalogStatus: 'idle',
+  catalogError: null,
+  workspaceStatus: 'idle',
+  workspaceError: null
+});

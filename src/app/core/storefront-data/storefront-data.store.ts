@@ -35,6 +35,10 @@ export class StorefrontDataStore {
   readonly profile = computed(() => this.repository.state().profile);
   readonly addresses = computed(() => this.repository.state().addresses);
   readonly orders = computed(() => this.repository.state().orders);
+  readonly catalogStatus = computed(() => this.repository.state().catalogStatus);
+  readonly catalogError = computed(() => this.repository.state().catalogError);
+  readonly workspaceStatus = computed(() => this.repository.state().workspaceStatus);
+  readonly workspaceError = computed(() => this.repository.state().workspaceError);
   readonly catalog = computed(() =>
     this.buildCatalogView(
       this.repository.getCatalogItems(this.mode(), this.activeCategory()),

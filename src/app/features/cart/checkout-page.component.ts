@@ -1,5 +1,5 @@
 import { CurrencyPipe } from '@angular/common';
-import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -21,10 +21,12 @@ export class CheckoutPageComponent {
   private readonly storefrontData = inject(StorefrontDataService);
   private readonly storefrontBootstrap = inject(StorefrontBootstrapService);
   private readonly storefrontMode = inject(StorefrontModeStore);
-  private readonly profile = this.storefrontData.getProfile();
 
+  protected readonly profile = this.storefrontData.profile;
   protected readonly savedAddresses = this.storefrontData.addresses;
   protected readonly checkoutItems = this.storefrontData.cart;
+  protected readonly workspaceStatus = this.storefrontData.workspaceStatus;
+  protected readonly workspaceError = this.storefrontData.workspaceError;
   protected readonly modeViewModel = this.storefrontMode.viewModel;
   protected readonly submitCheckoutCta = this.storefrontMode.ctaState('submit-checkout');
   protected readonly shippingSameAsBilling = signal(true);
@@ -34,23 +36,23 @@ export class CheckoutPageComponent {
   protected readonly checkoutForm = this.fb.nonNullable.group({
     savedAddress: [''],
     billing: this.fb.nonNullable.group({
-      businessName: [this.profile.businessName, Validators.required],
-      country: [this.profile.country, Validators.required],
+      businessName: ['', Validators.required],
+      country: ['', Validators.required],
       state: ['Dubai', Validators.required],
       city: ['Dubai', Validators.required],
       zip: ['11111', Validators.required],
-      address: [this.profile.address, Validators.required],
-      phone: [this.profile.phone, Validators.required]
+      address: ['', Validators.required],
+      phone: ['', Validators.required]
     }),
     shippingSameAsBilling: [true],
     shipping: this.fb.nonNullable.group({
-      businessName: [this.profile.businessName, Validators.required],
-      country: [this.profile.country, Validators.required],
+      businessName: ['', Validators.required],
+      country: ['', Validators.required],
       state: ['Dubai', Validators.required],
       city: ['Dubai', Validators.required],
       zip: ['11111', Validators.required],
-      address: [this.profile.address, Validators.required],
-      phone: [this.profile.phone, Validators.required]
+      address: ['', Validators.required],
+      phone: ['', Validators.required]
     }),
     purchaseOrderNo: ['CW-PO-2034'],
     orderNotes: ['Please call before delivery.'],
@@ -75,6 +77,37 @@ export class CheckoutPageComponent {
       .subscribe((value) => {
         this.shippingSameAsBilling.set(!!value);
       });
+
+    effect(() => {
+      if (this.workspaceStatus() !== 'ready') {
+        return;
+      }
+
+      const profile = this.profile();
+      const addressPatch = {
+        businessName: profile.businessName,
+        country: profile.country,
+        address: profile.address,
+        phone: profile.phone
+      };
+
+      const billing = this.checkoutForm.controls.billing;
+      const shipping = this.checkoutForm.controls.shipping;
+
+      if (!billing.dirty || !billing.controls.businessName.value.trim()) {
+        billing.patchValue(addressPatch, { emitEvent: false });
+      }
+
+      if (this.shippingSameAsBilling() && (!shipping.dirty || !shipping.controls.businessName.value.trim())) {
+        shipping.patchValue(
+          {
+            ...shipping.getRawValue(),
+            ...addressPatch
+          },
+          { emitEvent: false }
+        );
+      }
+    });
   }
 
   protected applySavedAddress(addressId: string): void {

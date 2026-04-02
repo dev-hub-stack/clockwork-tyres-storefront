@@ -25,6 +25,9 @@
           <p class="checkout-subtitle">
             Review your details before placing the order. Payment will be completed in store.
           </p>
+          @if (workspaceStatus() !== 'ready') {
+            <p class="checkout-subtitle">Loading the active business profile into checkout.</p>
+          }
           @if (submitError()) {
             <p class="checkout-error">{{ submitError() }}</p>
           }
@@ -163,7 +166,12 @@
 
             <div class="submit-row">
               @if (submitCheckoutCta().visible) {
-                <button type="submit" class="btn confirm-btn" [disabled]="isSubmitting()" data-testid="confirm-order">
+                <button
+                  type="submit"
+                  class="btn confirm-btn"
+                  [disabled]="isSubmitting() || workspaceStatus() !== 'ready'"
+                  data-testid="confirm-order"
+                >
                   {{ isSubmitting() ? 'Submitting...' : 'Confirm Order' }}
                 </button>
               } @else {

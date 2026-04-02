@@ -27,6 +27,10 @@ export class StorefrontDataService {
   readonly orders = this.store.orders;
   readonly catalog = this.store.catalog;
   readonly cart = this.store.cart;
+  readonly catalogStatus = this.store.catalogStatus;
+  readonly catalogError = this.store.catalogError;
+  readonly workspaceStatus = this.store.workspaceStatus;
+  readonly workspaceError = this.store.workspaceError;
 
   readonly checkoutEnabled = computed(() => this.store.getModeCapabilities(this.mode()).checkoutEnabled);
   readonly cartEnabled = computed(() => this.store.getModeCapabilities(this.mode()).cartEnabled);

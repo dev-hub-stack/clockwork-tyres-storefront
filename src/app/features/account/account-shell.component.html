@@ -1,52 +1,80 @@
 <section class="account-shell">
   <div class="container-fluid">
-    <header class="account-hero">
-      <div class="account-hero-copy">
+    @if (workspaceStatus() === 'loading' || workspaceStatus() === 'idle') {
+      <div class="account-state-card">
         <span class="account-eyebrow">My Account</span>
-        <h1>{{ profile().businessName }}</h1>
-        <p>
-          Manage profile details, delivery addresses, and order history from the same business
-          workspace that powers the storefront.
-        </p>
+        <h1>Loading your business workspace.</h1>
+        <p>We’re loading profile, addresses, and orders for the selected business account.</p>
       </div>
-
-      <div class="account-hero-stats">
-        @for (stat of accountStats(); track stat.label) {
-          <article>
-            <span>{{ stat.label }}</span>
-            <strong>{{ stat.value }}</strong>
-          </article>
-        }
+    } @else if (workspaceStatus() === 'error') {
+      <div class="account-state-card">
+        <span class="account-eyebrow">My Account</span>
+        <h1>We couldn’t load this business workspace.</h1>
+        <p>{{ workspaceError() || 'Please retry the workspace request.' }}</p>
+        <div class="account-state-actions">
+          <button type="button" class="account-state-btn" (click)="retryWorkspace()">Retry workspace</button>
+          <a routerLink="/catalog" class="account-state-link">Back to catalog</a>
+        </div>
       </div>
-    </header>
-
-    <div class="account-layout">
-      <aside class="account-sidebar">
-        <div class="account-summary-card">
-          <span class="account-subtitle">Business summary</span>
-          <h2>{{ profile().accountType | titlecase }}</h2>
-          <p>{{ profile().wholesaleEnabled ? 'Wholesale enabled' : 'Retail-only access' }}</p>
-          <p>{{ profile().retailEnabled ? 'Retail storefront access enabled' : 'Retail access disabled' }}</p>
-          <div class="account-mode-pill">{{ modeLabel() }}</div>
+    } @else if (workspaceStatus() === 'empty') {
+      <div class="account-state-card">
+        <span class="account-eyebrow">My Account</span>
+        <h1>No business workspace data is available yet.</h1>
+        <p>{{ workspaceError() || 'This account is active, but profile and order data have not been loaded.' }}</p>
+        <div class="account-state-actions">
+          <button type="button" class="account-state-btn" (click)="retryWorkspace()">Refresh workspace</button>
+          <a routerLink="/catalog" class="account-state-link">Back to catalog</a>
+        </div>
+      </div>
+    } @else {
+      <header class="account-hero">
+        <div class="account-hero-copy">
+          <span class="account-eyebrow">My Account</span>
+          <h1>{{ profile().businessName }}</h1>
+          <p>
+            Manage profile details, delivery addresses, and order history from the same business
+            workspace that powers the storefront.
+          </p>
         </div>
 
-        <nav class="account-nav" aria-label="Account navigation">
-          @for (item of accountNav; track item.link) {
-            <a
-              [routerLink]="item.link"
-              routerLinkActive="active"
-              [routerLinkActiveOptions]="{ exact: item.exact }"
-              class="account-nav-link"
-            >
-              {{ item.label }}
-            </a>
+        <div class="account-hero-stats">
+          @for (stat of accountStats(); track stat.label) {
+            <article>
+              <span>{{ stat.label }}</span>
+              <strong>{{ stat.value }}</strong>
+            </article>
           }
-        </nav>
-      </aside>
+        </div>
+      </header>
 
-      <div class="account-content">
-        <router-outlet></router-outlet>
+      <div class="account-layout">
+        <aside class="account-sidebar">
+          <div class="account-summary-card">
+            <span class="account-subtitle">Business summary</span>
+            <h2>{{ profile().accountType | titlecase }}</h2>
+            <p>{{ profile().wholesaleEnabled ? 'Wholesale enabled' : 'Retail-only access' }}</p>
+            <p>{{ profile().retailEnabled ? 'Retail storefront access enabled' : 'Retail access disabled' }}</p>
+            <div class="account-mode-pill">{{ modeLabel() }}</div>
+          </div>
+
+          <nav class="account-nav" aria-label="Account navigation">
+            @for (item of accountNav; track item.link) {
+              <a
+                [routerLink]="item.link"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: item.exact }"
+                class="account-nav-link"
+              >
+                {{ item.label }}
+              </a>
+            }
+          </nav>
+        </aside>
+
+        <div class="account-content">
+          <router-outlet></router-outlet>
+        </div>
       </div>
-    </div>
+    }
   </div>
 </section>

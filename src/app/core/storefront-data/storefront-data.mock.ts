@@ -386,5 +386,9 @@ export const storefrontMockState: StorefrontDataState = {
   cart,
   profile,
   addresses,
-  orders
+  orders,
+  catalogStatus: 'ready',
+  catalogError: null,
+  workspaceStatus: 'ready',
+  workspaceError: null
 };

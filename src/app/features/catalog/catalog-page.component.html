@@ -46,7 +46,7 @@
 
     <div class="catalog-results-head">
       <div class="catalog-results-copy-spacer"></div>
-      <span class="showing-text">Showing {{ productCount() }} products</span>
+      <span class="showing-text">{{ resultsSummary() }}</span>
     </div>
 
     <div class="catalog-body">
@@ -148,6 +148,23 @@
               The new storefront keeps the legacy Clockwork listing seams ready for this category, while the live customer journey remains tyre-first.
             </p>
             <a routerLink="/catalog" class="details-link">Return to the live tyre catalog</a>
+          </div>
+        } @else if (catalogStatus() === 'loading' || catalogStatus() === 'idle') {
+          <div class="category-empty-state">
+            <h3>Loading the live {{ activeCategory().label }} catalog.</h3>
+            <p>We’re pulling the latest account-scoped stock and pricing before showing products.</p>
+          </div>
+        } @else if (catalogStatus() === 'error') {
+          <div class="category-empty-state">
+            <h3>Live catalogue data is temporarily unavailable.</h3>
+            <p>{{ catalogError() || 'Please retry the live catalogue request.' }}</p>
+            <button type="button" class="apply-btn state-action-btn" (click)="retryCatalog()">Retry</button>
+          </div>
+        } @else if (!products().length) {
+          <div class="category-empty-state">
+            <h3>No tyres matched this search.</h3>
+            <p>{{ catalogError() || 'Try a different size, brand, or vehicle selection to load live stock.' }}</p>
+            <button type="button" class="apply-btn state-action-btn" (click)="retryCatalog()">Refresh live results</button>
           </div>
         } @else {
           <div class="catalog-grid">

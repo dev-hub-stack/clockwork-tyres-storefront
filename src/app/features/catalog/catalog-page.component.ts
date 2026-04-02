@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { CatalogCategoryService } from '../../core/catalog-categories';
 import { FitmentService } from '../../core/fitment';
 import { StorefrontCatalogViewItem, StorefrontDataService } from '../../core/storefront-data';
+import { StorefrontCatalogSyncService } from '../../core/storefront-data/storefront-catalog-sync.service';
 import { buildCatalogQueryParams } from '../../core/storefront-routes';
 
 @Component({
@@ -17,11 +18,27 @@ export class CatalogPageComponent {
   private readonly catalogCategories = inject(CatalogCategoryService);
   private readonly fitment = inject(FitmentService);
   private readonly storefrontData = inject(StorefrontDataService);
+  private readonly catalogSync = inject(StorefrontCatalogSyncService);
 
   protected readonly activeCategory = this.catalogCategories.activeCategory;
   protected readonly products = this.storefrontData.catalog;
+  protected readonly catalogStatus = this.storefrontData.catalogStatus;
+  protected readonly catalogError = this.storefrontData.catalogError;
   protected readonly cartEnabled = this.storefrontData.cartEnabled;
   protected readonly productCount = computed(() => this.products().length);
+  protected readonly resultsSummary = computed(() => {
+    const status = this.catalogStatus();
+
+    if (status === 'loading' || status === 'idle') {
+      return 'Loading live products';
+    }
+
+    if (status === 'error') {
+      return 'Live catalogue unavailable';
+    }
+
+    return `Showing ${this.productCount()} products`;
+  });
   protected readonly catalogSummary = computed(() => {
     if (!this.activeCategory().enabled) {
       return 'Category structured for launch, but not enabled yet.';
@@ -66,5 +83,12 @@ export class CatalogPageComponent {
       availabilityLabel: product.availability.label,
       modeAvailability: product.modeAvailability
     });
+  }
+
+  protected retryCatalog(): void {
+    void this.catalogSync.syncCatalog(
+      this.storefrontData.mode(),
+      this.activeCategory().id
+    );
   }
 }

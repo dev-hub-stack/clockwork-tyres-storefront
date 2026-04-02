@@ -1,234 +1,274 @@
-<section class="product-detail-page">
-  <div class="container-fluid">
-    <header class="detail-hero">
-      <a routerLink="/catalog" class="back-link">
-        <i class="fa fa-long-arrow-left" aria-hidden="true"></i>
-        <span>Back to catalog</span>
-      </a>
-
-      <div class="detail-hero__topline">
-        <span class="launch-chip">{{ activeCategoryLabel() }}</span>
-        <span class="mode-chip">{{ modeViewModel().label }}</span>
+@if (productStatus() === 'loading') {
+  <section class="product-detail-page">
+    <div class="container-fluid">
+      <div class="detail-empty-state">
+        <h1>Loading live product details.</h1>
+        <p>We’re pulling the latest tyre record, availability, and options for this business account.</p>
+        <a routerLink="/catalog" class="cta-button cta-button--secondary">Back to catalog</a>
       </div>
-    </header>
-
-    <div class="detail-layout">
-      <div class="gallery-column">
-        <div class="gallery-card">
-          <div class="gallery-card__main">
-            <img [src]="activeImage()" [alt]="product().model" />
-          </div>
-
-          <div class="gallery-card__thumbs">
-            @for (image of product().gallery; track image; let index = $index) {
-              <button
-                type="button"
-                class="thumb-button"
-                [class.active]="activeImageIndex() === index"
-                (click)="setActiveImage(index)"
-              >
-                <img [src]="image" [alt]="product().model + ' image ' + (index + 1)" />
-              </button>
-            }
-          </div>
-        </div>
-      </div>
-
-      <div class="summary-column">
-        <div class="summary-card">
-          <div class="summary-card__header">
-            <div class="summary-copy">
-              <p class="brand-line">{{ product().brand }}</p>
-              <h1>{{ product().model }}</h1>
-              <p class="subtitle">{{ product().subtitle }}</p>
-              <p class="sku-label">SKU : {{ product().sku }}</p>
-            </div>
-
-            <div class="hero-stats">
-              @for (stat of heroStats(); track stat.label) {
-                <div class="hero-stat">
-                  <span>{{ stat.label }}</span>
-                  <strong>{{ stat.value }}</strong>
-                </div>
-              }
-            </div>
-          </div>
-
-          <div class="pricing-strip">
-            @if (priceBreakdown().compareAtPrice) {
-              <div class="price-line muted">
-                <span>MSRP</span>
-                <strong>{{ priceBreakdown().compareAtPrice | currency: 'AED' : 'symbol-narrow' : '1.0-0' }}</strong>
-              </div>
-            }
-
-            <div class="price-line emphasis">
-              <span>Your Price</span>
-              <strong>{{ priceBreakdown().price | currency: 'AED' : 'symbol-narrow' : '1.0-0' }}</strong>
-            </div>
-
-            <div class="price-line">
-              <span>Source</span>
-              <strong>{{ priceBreakdown().availabilityOrigin === 'own' ? 'Own stock' : 'Approved supplier stock' }}</strong>
-            </div>
-          </div>
-
-          <div class="action-strip">
-            <div class="quantity-block">
-              <label>Quantity</label>
-              <div class="quantity-control">
-                <button type="button" (click)="decrementQuantity()">-</button>
-                <input type="number" [value]="quantity()" readonly />
-                <button type="button" (click)="incrementQuantity()">+</button>
-              </div>
-            </div>
-
-            <div class="availability-block">
-              <span class="availability-badge" [class.supplier]="availabilitySummary().origin !== 'own'">
-                {{ formatAvailabilityText() }}
-              </span>
-              <small>{{ getQuantityCopy() }}</small>
-            </div>
-
-            @if (addToCartCta().visible) {
-              <div class="cta-stack">
-                <button type="button" class="cta-button cta-button--primary" (click)="addCurrentProductToCart()">Add To Cart</button>
-                <a routerLink="/cart/checkout" class="cta-button cta-button--secondary">Go To Checkout</a>
-              </div>
-            } @else {
-              <div class="cta-stack">
-                <span class="preview-chip">{{ modeViewModel().label }}</span>
-                <span class="preview-note">Cart and checkout are disabled in preview mode.</span>
-              </div>
-            }
-          </div>
-
-          <div class="quick-notes">
-            <div class="quick-note">
-              <span>Supply model</span>
-              <strong>Own stock first, then approved supplier stock</strong>
-            </div>
-            <div class="quick-note">
-              <span>Launch scope</span>
-              <strong>{{ isTyreLaunch() ? 'Tyres active' : 'Category ready for future launch' }}</strong>
-            </div>
-          </div>
+    </div>
+  </section>
+} @else if (productStatus() === 'error') {
+  <section class="product-detail-page">
+    <div class="container-fluid">
+      <div class="detail-empty-state">
+        <h1>We couldn’t load this live product.</h1>
+        <p>Please retry the product request or go back to the catalogue.</p>
+        <div class="detail-empty-state__actions">
+          <button type="button" class="cta-button cta-button--primary" (click)="retryProduct()">Retry</button>
+          <a routerLink="/catalog" class="cta-button cta-button--secondary">Back to catalog</a>
         </div>
       </div>
     </div>
+  </section>
+} @else if (!product()) {
+  <section class="product-detail-page">
+    <div class="container-fluid">
+      <div class="detail-empty-state">
+        <h1>This live product is not available.</h1>
+        <p>The requested slug did not return a real catalogue item for the selected business account.</p>
+        <div class="detail-empty-state__actions">
+          <button type="button" class="cta-button cta-button--primary" (click)="retryProduct()">Retry</button>
+          <a routerLink="/catalog" class="cta-button cta-button--secondary">Back to catalog</a>
+        </div>
+      </div>
+    </div>
+  </section>
+} @else {
+  @if (product(); as currentProduct) {
+    <section class="product-detail-page">
+      <div class="container-fluid">
+        <header class="detail-hero">
+          <a routerLink="/catalog" class="back-link">
+            <i class="fa fa-long-arrow-left" aria-hidden="true"></i>
+            <span>Back to catalog</span>
+          </a>
 
-    <div class="detail-panels">
-      <section class="detail-panel">
-        <div class="panel-header">
-          <h2>Specifications</h2>
-          <span>Tyre-first product details, ready for future categories</span>
+          <div class="detail-hero__topline">
+            <span class="launch-chip">{{ activeCategoryLabel() }}</span>
+            <span class="mode-chip">{{ modeViewModel().label }}</span>
+          </div>
+        </header>
+
+        <div class="detail-layout">
+          <div class="gallery-column">
+            <div class="gallery-card">
+              <div class="gallery-card__main">
+                <img [src]="activeImage()" [alt]="currentProduct.model" />
+              </div>
+
+              <div class="gallery-card__thumbs">
+                @for (image of currentProduct.gallery; track image; let index = $index) {
+                  <button
+                    type="button"
+                    class="thumb-button"
+                    [class.active]="activeImageIndex() === index"
+                    (click)="setActiveImage(index)"
+                  >
+                    <img [src]="image" [alt]="currentProduct.model + ' image ' + (index + 1)" />
+                  </button>
+                }
+              </div>
+            </div>
+          </div>
+
+          <div class="summary-column">
+            <div class="summary-card">
+              <div class="summary-card__header">
+                <div class="summary-copy">
+                  <p class="brand-line">{{ currentProduct.brand }}</p>
+                  <h1>{{ currentProduct.model }}</h1>
+                  <p class="subtitle">{{ currentProduct.subtitle }}</p>
+                  <p class="sku-label">SKU : {{ currentProduct.sku }}</p>
+                </div>
+
+                <div class="hero-stats">
+                  @for (stat of heroStats(); track stat.label) {
+                    <div class="hero-stat">
+                      <span>{{ stat.label }}</span>
+                      <strong>{{ stat.value }}</strong>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <div class="pricing-strip">
+                @if (priceBreakdown().compareAtPrice) {
+                  <div class="price-line muted">
+                    <span>MSRP</span>
+                    <strong>{{ priceBreakdown().compareAtPrice | currency: 'AED' : 'symbol-narrow' : '1.0-0' }}</strong>
+                  </div>
+                }
+
+                <div class="price-line emphasis">
+                  <span>Your Price</span>
+                  <strong>{{ priceBreakdown().price | currency: 'AED' : 'symbol-narrow' : '1.0-0' }}</strong>
+                </div>
+
+                <div class="price-line">
+                  <span>Source</span>
+                  <strong>{{ priceBreakdown().availabilityOrigin === 'own' ? 'Own stock' : 'Approved supplier stock' }}</strong>
+                </div>
+              </div>
+
+              <div class="action-strip">
+                <div class="quantity-block">
+                  <label>Quantity</label>
+                  <div class="quantity-control">
+                    <button type="button" (click)="decrementQuantity()">-</button>
+                    <input type="number" [value]="quantity()" readonly />
+                    <button type="button" (click)="incrementQuantity()">+</button>
+                  </div>
+                </div>
+
+                <div class="availability-block">
+                  <span class="availability-badge" [class.supplier]="availabilitySummary().origin !== 'own'">
+                    {{ formatAvailabilityText() }}
+                  </span>
+                  <small>{{ getQuantityCopy() }}</small>
+                </div>
+
+                @if (addToCartCta().visible) {
+                  <div class="cta-stack">
+                    <button type="button" class="cta-button cta-button--primary" (click)="addCurrentProductToCart()">Add To Cart</button>
+                    <a routerLink="/cart/checkout" class="cta-button cta-button--secondary">Go To Checkout</a>
+                  </div>
+                } @else {
+                  <div class="cta-stack">
+                    <span class="preview-chip">{{ modeViewModel().label }}</span>
+                    <span class="preview-note">Cart and checkout are disabled in preview mode.</span>
+                  </div>
+                }
+              </div>
+
+              <div class="quick-notes">
+                <div class="quick-note">
+                  <span>Supply model</span>
+                  <strong>Own stock first, then approved supplier stock</strong>
+                </div>
+                <div class="quick-note">
+                  <span>Launch scope</span>
+                  <strong>{{ isTyreLaunch() ? 'Tyres active' : 'Category ready for future launch' }}</strong>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="spec-grid">
-          @for (row of specificationRows(); track $index) {
-            <div class="spec-row">
-              @for (item of row; track item.label) {
-                <div class="spec-cell">
-                  <span class="spec-label">{{ item.label }}</span>
-                  <strong>{{ item.value }}</strong>
+        <div class="detail-panels">
+          <section class="detail-panel">
+            <div class="panel-header">
+              <h2>Specifications</h2>
+              <span>Tyre-first product details, ready for future categories</span>
+            </div>
+
+            <div class="spec-grid">
+              @for (row of specificationRows(); track $index) {
+                <div class="spec-row">
+                  @for (item of row; track item.label) {
+                    <div class="spec-cell">
+                      <span class="spec-label">{{ item.label }}</span>
+                      <strong>{{ item.value }}</strong>
+                    </div>
+                  }
                 </div>
               }
             </div>
-          }
-        </div>
-      </section>
+          </section>
 
-      <section class="detail-panel">
-        <div class="panel-header">
-          <h2>Fits</h2>
-          <span>Legacy Clockwork-style fitment support, adapted for tyres</span>
+          <section class="detail-panel">
+            <div class="panel-header">
+              <h2>Fits</h2>
+              <span>Legacy Clockwork-style fitment support, adapted for tyres</span>
+            </div>
+
+            <div class="fits-card">
+              <ul>
+                @for (fit of currentProduct.fits; track fit) {
+                  <li>{{ fit }}</li>
+                }
+              </ul>
+            </div>
+          </section>
         </div>
 
-        <div class="fits-card">
-          <ul>
-            @for (fit of product().fits; track fit) {
-              <li>{{ fit }}</li>
+        <section class="sizes-section">
+          <div class="panel-header">
+            <h2>More Size &amp; Options</h2>
+            <span>Same browsing pattern as legacy Clockwork, with the new tyre catalog contract</span>
+          </div>
+
+          <ul class="size-tabs">
+            @for (tab of sizeTabs(); track tab) {
+              <li>
+                <button
+                  type="button"
+                  class="size-tab"
+                  [class.active]="selectedTab() === tab"
+                  (click)="selectTab(tab)"
+                >
+                  {{ tab }}
+                </button>
+              </li>
             }
           </ul>
-        </div>
-      </section>
-    </div>
 
-    <section class="sizes-section">
-      <div class="panel-header">
-        <h2>More Size &amp; Options</h2>
-        <span>Same browsing pattern as legacy Clockwork, with the new tyre catalog contract</span>
-      </div>
+          <div class="table-responsive">
+            <table class="table details-table">
+              <thead>
+                <tr>
+                  <th>Part No.</th>
+                  <th>Brand</th>
+                  <th>Size</th>
+                  <th>Load Index</th>
+                  <th>Speed Rating</th>
+                  <th>Season</th>
+                  <th>Stock</th>
+                  <th></th>
+                </tr>
+              </thead>
 
-      <ul class="size-tabs">
-        @for (tab of sizeTabs(); track tab) {
-          <li>
-            <button
-              type="button"
-              class="size-tab"
-              [class.active]="selectedTab() === tab"
-              (click)="selectTab(tab)"
-            >
-              {{ tab }}
-            </button>
-          </li>
-        }
-      </ul>
+              <tbody>
+                @for (option of filteredOptions(); track option.sku) {
+                  <tr>
+                    <td>{{ option.sku }}</td>
+                    <td>{{ currentProduct.brand }} {{ currentProduct.model }}</td>
+                    <td>{{ option.size }}</td>
+                    <td>{{ option.loadIndex }}</td>
+                    <td>{{ option.speedRating }}</td>
+                    <td>{{ option.season }}</td>
+                    <td>
+                      <span class="stock-pill" [class.supplier]="option.availability.origin !== 'own'">
+                        {{ option.availability.label }}
+                        @if (option.availability.showQuantity) {
+                          ({{ option.availability.quantity }})
+                        }
+                      </span>
+                    </td>
+                    <td>
+                      <a [routerLink]="['/product', option.slug]" class="view-link">View</a>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </section>
 
-      <div class="table-responsive">
-        <table class="table details-table">
-          <thead>
-            <tr>
-              <th>Part No.</th>
-              <th>Brand</th>
-              <th>Size</th>
-              <th>Load Index</th>
-              <th>Speed Rating</th>
-              <th>Season</th>
-              <th>Stock</th>
-              <th></th>
-            </tr>
-          </thead>
+        <section class="footer-cta">
+          <div class="footer-cta__card">
+            <div class="footer-cta__copy">
+              <span>Clockwork Tyres</span>
+              <h2>Same direct store flow. Tyres first. Wheels later through the same category seam.</h2>
+            </div>
 
-          <tbody>
-            @for (option of filteredOptions(); track option.sku) {
-              <tr>
-                <td>{{ option.sku }}</td>
-                <td>{{ product().brand }} {{ product().model }}</td>
-                <td>{{ option.size }}</td>
-                <td>{{ option.loadIndex }}</td>
-                <td>{{ option.speedRating }}</td>
-                <td>{{ option.season }}</td>
-                <td>
-                  <span class="stock-pill" [class.supplier]="option.availability.origin !== 'own'">
-                    {{ option.availability.label }}
-                    @if (option.availability.showQuantity) {
-                      ({{ option.availability.quantity }})
-                    }
-                  </span>
-                </td>
-                <td>
-                  <a [routerLink]="['/product', option.slug]" class="view-link">View</a>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
+            <div class="footer-cta__actions">
+              <a routerLink="/search-by-vehicle" class="cta-button cta-button--primary">Search by vehicle</a>
+              <a routerLink="/search-by-size" class="cta-button cta-button--secondary">Search by size</a>
+            </div>
+          </div>
+        </section>
       </div>
     </section>
-
-    <section class="footer-cta">
-      <div class="footer-cta__card">
-        <div class="footer-cta__copy">
-          <span>Clockwork Tyres</span>
-          <h2>Same direct store flow. Tyres first. Wheels later through the same category seam.</h2>
-        </div>
-
-        <div class="footer-cta__actions">
-          <a routerLink="/search-by-vehicle" class="cta-button cta-button--primary">Search by vehicle</a>
-          <a routerLink="/search-by-size" class="cta-button cta-button--secondary">Search by size</a>
-        </div>
-      </div>
-    </section>
-  </div>
-</section>
+  }
+}

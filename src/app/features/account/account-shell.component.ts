@@ -2,6 +2,7 @@ import { TitleCasePipe } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { StorefrontDataService } from '../../core/storefront-data';
+import { StorefrontBootstrapApiService } from '../../core/storefront-bootstrap';
 
 @Component({
   selector: 'app-account-shell',
@@ -12,11 +13,14 @@ import { StorefrontDataService } from '../../core/storefront-data';
 })
 export class AccountShellComponent {
   private readonly storefrontData = inject(StorefrontDataService);
+  private readonly storefrontBootstrapApi = inject(StorefrontBootstrapApiService);
 
   protected readonly profile = this.storefrontData.profile;
   protected readonly orders = this.storefrontData.orders;
   protected readonly addresses = this.storefrontData.addresses;
   protected readonly mode = this.storefrontData.mode;
+  protected readonly workspaceStatus = this.storefrontData.workspaceStatus;
+  protected readonly workspaceError = this.storefrontData.workspaceError;
 
   protected readonly modeLabel = computed(() =>
     this.mode() === 'retail-store' ? 'Retail Store' : 'Supplier Preview'
@@ -33,4 +37,8 @@ export class AccountShellComponent {
     { label: 'Addresses', value: String(this.addresses().length) },
     { label: 'Mode', value: this.modeLabel() }
   ]);
+
+  protected retryWorkspace(): void {
+    void this.storefrontBootstrapApi.hydrateAuthenticatedAccountContext();
+  }
 }

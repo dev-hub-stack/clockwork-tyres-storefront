@@ -155,6 +155,58 @@
   background: #fff;
 }
 
+.account-state-card {
+  padding: 28px 24px;
+  border: 1px solid #d9d9d9;
+  background: #fff;
+
+  h1 {
+    margin: 0 0 10px;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  p {
+    margin: 0;
+    color: #5a5a5a;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+}
+
+.account-state-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.account-state-btn,
+.account-state-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 0;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.account-state-btn {
+  border: 0;
+  background: #111;
+  color: #fff;
+}
+
+.account-state-link {
+  border: 1px solid #d9d9d9;
+  background: #fff;
+  color: #111;
+}
+
 @media (max-width: 1199px) {
   .account-layout {
     grid-template-columns: 1fr;
@@ -182,5 +234,10 @@
 
   .account-content {
     padding: 18px;
+  }
+
+  .account-state-actions {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

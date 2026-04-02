@@ -34,29 +34,37 @@ export class ProductDetailPageComponent {
   protected readonly activeImageIndex = signal(0);
   protected readonly quantity = signal(1);
   protected readonly selectedTab = signal('');
+  protected readonly productStatus = signal<'loading' | 'ready' | 'empty' | 'error'>('loading');
+  private productRequestSequence = 0;
 
   protected readonly addToCartCta = this.storefrontMode.ctaState('add-to-cart');
   protected readonly modeViewModel = this.storefrontMode.viewModel;
 
-  protected readonly product = computed<StorefrontPdpViewItem>(() => {
-    return (
-      this.storefrontData.getProductBySlug(this.currentSlug()) ??
-      this.storefrontData.getProductBySlug('michelin-pilot-sport-4s-325-30r21')!
-    );
-  });
+  protected readonly product = computed<StorefrontPdpViewItem | undefined>(() =>
+    this.storefrontData.getProductBySlug(this.currentSlug())
+  );
 
   protected readonly activeImage = computed(
-    () => this.product().gallery[this.activeImageIndex()] ?? this.product().gallery[0]
+    () => this.product()?.gallery[this.activeImageIndex()] ?? this.product()?.gallery[0] ?? '/assets/img/tire-go.jpg'
   );
 
   protected readonly activeCategoryLabel = computed(() => {
-    const category = this.product().category;
+    const category = this.product()?.category ?? 'tyres';
 
     return category === 'wheels' ? 'Wheels' : 'Tyres';
   });
 
   protected readonly priceBreakdown = computed(() => {
     const product = this.product();
+
+    if (!product) {
+      return {
+        compareAtPrice: null,
+        price: 0,
+        availabilityOrigin: 'supplier' as const,
+        supplierCount: 0
+      };
+    }
 
     return {
       compareAtPrice: product.compareAtPrice ?? null,
@@ -69,6 +77,16 @@ export class ProductDetailPageComponent {
   protected readonly availabilitySummary = computed(() => {
     const product = this.product();
 
+    if (!product) {
+      return {
+        label: 'unavailable',
+        quantity: 0,
+        showQuantity: false,
+        supplierCount: 0,
+        origin: 'supplier' as const
+      };
+    }
+
     return {
       label: product.availabilityBadge,
       quantity: product.availability.quantity,
@@ -79,21 +97,21 @@ export class ProductDetailPageComponent {
   });
 
   protected readonly sizeTabs = computed(() => {
-    const uniqueTabs = new Set(this.product().options.map((option) => this.getRimSizeLabel(option.size)));
+    const uniqueTabs = new Set((this.product()?.options ?? []).map((option) => this.getRimSizeLabel(option.size)));
     return [...uniqueTabs];
   });
 
   protected readonly filteredOptions = computed(() => {
     const selectedTab = this.selectedTab();
 
-    return this.product().options.filter(
+    return (this.product()?.options ?? []).filter(
       (option) => !selectedTab || this.getRimSizeLabel(option.size) === selectedTab
     );
   });
 
   protected readonly specificationRows = computed(() => {
     const rows: StorefrontSpecificationRow[][] = [];
-    const specifications = this.product().specifications;
+    const specifications = this.product()?.specifications ?? [];
 
     for (let index = 0; index < specifications.length; index += 2) {
       rows.push(specifications.slice(index, index + 2));
@@ -105,6 +123,15 @@ export class ProductDetailPageComponent {
   protected readonly heroStats = computed(() => {
     const product = this.product();
 
+    if (!product) {
+      return [
+        { label: 'Category', value: this.activeCategoryLabel() },
+        { label: 'Size', value: '--' },
+        { label: 'SKU', value: '--' },
+        { label: 'Supplier stock', value: '0' }
+      ];
+    }
+
     return [
       { label: 'Category', value: this.activeCategoryLabel() },
       { label: 'Size', value: product.size },
@@ -113,18 +140,18 @@ export class ProductDetailPageComponent {
     ];
   });
 
-  protected readonly isTyreLaunch = computed(() => this.product().category === 'tyres');
+  protected readonly isTyreLaunch = computed(() => (this.product()?.category ?? 'tyres') === 'tyres');
 
   constructor() {
     effect(() => {
-      void this.catalogSync.syncProduct(
-        this.currentSlug(),
-        this.storefrontData.mode(),
-        this.storefrontData.activeCategory()
-      );
+      void this.loadProduct();
     });
 
     effect(() => {
+      if (!this.product()) {
+        return;
+      }
+
       const tabs = this.sizeTabs();
 
       this.activeImageIndex.set(0);
@@ -181,6 +208,10 @@ export class ProductDetailPageComponent {
 
     const product = this.product();
 
+    if (!product) {
+      return;
+    }
+
     this.storefrontData.addCartLine({
       sku: product.sku,
       slug: product.slug,
@@ -193,5 +224,36 @@ export class ProductDetailPageComponent {
       availabilityLabel: product.availability.label,
       modeAvailability: product.modeAvailability
     });
+  }
+
+  protected retryProduct(): void {
+    void this.loadProduct();
+  }
+
+  private async loadProduct(): Promise<void> {
+    const slug = this.currentSlug();
+    const mode = this.storefrontData.mode();
+    const category = this.storefrontData.activeCategory();
+    const requestId = ++this.productRequestSequence;
+
+    this.productStatus.set('loading');
+
+    try {
+      await this.catalogSync.syncProduct(slug, mode, category);
+
+      if (requestId !== this.productRequestSequence) {
+        return;
+      }
+
+      this.productStatus.set(
+        this.storefrontData.getProductBySlug(slug, mode, category) ? 'ready' : 'empty'
+      );
+    } catch {
+      if (requestId !== this.productRequestSequence) {
+        return;
+      }
+
+      this.productStatus.set('error');
+    }
   }
 }

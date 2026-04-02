@@ -42,6 +42,7 @@ test.describe('Clockwork Tyres storefront smoke', () => {
 
     await expect(page).toHaveURL(/\/cart\/checkout/, { timeout: 15000 });
     await expect(page.locator('[data-testid="checkout-form"]')).toBeVisible();
+    await expect(page.locator('[data-testid="confirm-order"]')).toBeEnabled({ timeout: 15000 });
 
     const createOrderResponse = page.waitForResponse(
       (response) =>

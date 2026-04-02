@@ -3,6 +3,8 @@ import { inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { CatalogCategoryId } from '../catalog-categories';
 import { FitmentSearchQuery } from '../fitment';
 import {
+  createEmptyStorefrontDataState,
+  createEmptyStorefrontProfile,
   StorefrontCartLine,
   StorefrontCartLineInput,
   StorefrontCheckoutPayload,
@@ -10,6 +12,7 @@ import {
   StorefrontCatalogItem,
   StorefrontAddress,
   StorefrontDataState,
+  StorefrontDataLoadStatus,
   StorefrontMode,
   StorefrontOrder,
   StorefrontPdpItem,
@@ -21,7 +24,6 @@ import {
   resolveFeaturedCatalogItems,
   resolvePdpItemBySlug
 } from './storefront-catalog.helpers';
-import { storefrontMockState } from './storefront-data.mock';
 import { StorefrontDataRepository } from './storefront-data.repository';
 import { StorefrontCatalogApiService } from './storefront-catalog.api';
 import { mapCatalogApiItem, mapCatalogApiProduct } from './storefront-catalog.api.mapper';
@@ -29,14 +31,14 @@ import { StorefrontOrderApiService } from './storefront-order.api';
 import { StorefrontWorkspaceApiService } from './storefront-workspace.api';
 import { BusinessSessionService } from '../auth';
 
-const cloneState = (): StorefrontDataState => structuredClone(storefrontMockState);
+const createInitialState = (): StorefrontDataState => structuredClone(createEmptyStorefrontDataState());
 const CART_STORAGE_KEY_PREFIX = 'clockwork-storefront-cart';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiStorefrontDataRepository implements StorefrontDataRepository {
-  private readonly stateSignal = signal<StorefrontDataState>(cloneState());
+  private readonly stateSignal = signal<StorefrontDataState>(createInitialState());
   private readonly platformId = inject(PLATFORM_ID);
   private readonly businessSession = inject(BusinessSessionService);
   private readonly catalogApi = inject(StorefrontCatalogApiService);
@@ -86,38 +88,42 @@ export class ApiStorefrontDataRepository implements StorefrontDataRepository {
 
     const requestKey = String(accountKey);
 
-    if (!force && this.lastWorkspaceKey === requestKey) {
+    if (
+      !force
+      && this.lastWorkspaceKey === requestKey
+      && ['ready', 'empty'].includes(this.stateSignal().workspaceStatus)
+    ) {
       return;
     }
 
-    const response = await this.workspaceApi.fetchWorkspace();
-    const profile = response?.profile;
+    this.setWorkspaceStatus('loading');
 
-    if (!profile) {
-      return;
+    try {
+      const response = await this.workspaceApi.fetchWorkspace();
+      const profile = response?.profile;
+
+      if (!profile) {
+        this.clearWorkspaceState('empty', 'No business workspace data is available for the selected account.');
+        return;
+      }
+
+      this.lastWorkspaceKey = requestKey;
+
+      this.stateSignal.update((state) => ({
+        ...state,
+        profile,
+        addresses: response.addresses,
+        orders: response.orders,
+        workspaceStatus: 'ready',
+        workspaceError: null
+      }));
+    } catch {
+      this.clearWorkspaceState('error', 'Unable to load business workspace data right now.');
     }
-
-    this.lastWorkspaceKey = requestKey;
-
-    this.stateSignal.update((state) => ({
-      ...state,
-      profile,
-      addresses: response.addresses,
-      orders: response.orders
-    }));
   }
 
   restoreWorkspaceFallback(): void {
-    const fallback = cloneState();
-
-    this.lastWorkspaceKey = null;
-
-    this.stateSignal.update((state) => ({
-      ...state,
-      profile: fallback.profile,
-      addresses: fallback.addresses,
-      orders: fallback.orders
-    }));
+    this.clearWorkspaceState('idle');
   }
 
   async hydrateCatalog(
@@ -133,22 +139,35 @@ export class ApiStorefrontDataRepository implements StorefrontDataRepository {
 
     const requestKey = `${accountKey}:${mode}:${category}:${this.serializeSearchQuery(searchQuery)}`;
 
-    if (this.lastCatalogKey === requestKey) {
+    if (
+      this.lastCatalogKey === requestKey
+      && ['ready', 'empty'].includes(this.stateSignal().catalogStatus)
+    ) {
       return;
     }
 
-    const response = await this.catalogApi.fetchCatalog(mode, category, searchQuery);
+    this.setCatalogStatus('loading');
 
-    if (!response) {
-      return;
+    try {
+      const response = await this.catalogApi.fetchCatalog(mode, category, searchQuery);
+
+      if (!response) {
+        this.clearCatalogState('empty', 'No products matched this search yet.');
+        return;
+      }
+
+      const catalogItems = response.items.map(mapCatalogApiItem);
+      this.lastCatalogKey = requestKey;
+
+      this.stateSignal.update((state) => ({
+        ...state,
+        catalog: catalogItems,
+        catalogStatus: catalogItems.length ? 'ready' : 'empty',
+        catalogError: catalogItems.length ? null : 'No products matched this search yet.'
+      }));
+    } catch {
+      this.clearCatalogState('error', 'Unable to load live catalogue data right now.');
     }
-
-    this.lastCatalogKey = requestKey;
-
-    this.stateSignal.update((state) => ({
-      ...state,
-      catalog: response.items.map(mapCatalogApiItem)
-    }));
   }
 
   async hydrateProduct(
@@ -167,35 +186,32 @@ export class ApiStorefrontDataRepository implements StorefrontDataRepository {
       return;
     }
 
-    const response = await this.catalogApi.fetchProduct(slug, mode, category);
+    try {
+      const response = await this.catalogApi.fetchProduct(slug, mode, category);
 
-    if (!response) {
-      return;
-    }
-
-    const product = mapCatalogApiProduct(response.product);
-    this.hydratedProducts.add(requestKey);
-
-    this.stateSignal.update((state) => ({
-      ...state,
-      pdp: {
-        ...state.pdp,
-        [product.slug]: product
+      if (!response) {
+        this.removeHydratedProduct(slug);
+        return;
       }
-    }));
+
+      const product = mapCatalogApiProduct(response.product);
+      this.hydratedProducts.add(requestKey);
+
+      this.stateSignal.update((state) => ({
+        ...state,
+        pdp: {
+          ...state.pdp,
+          [product.slug]: product
+        }
+      }));
+    } catch (error) {
+      this.removeHydratedProduct(slug);
+      throw error;
+    }
   }
 
   restoreCatalogFallback(): void {
-    const fallback = cloneState();
-
-    this.lastCatalogKey = null;
-    this.hydratedProducts.clear();
-
-    this.stateSignal.update((state) => ({
-      ...state,
-      catalog: fallback.catalog,
-      pdp: fallback.pdp
-    }));
+    this.clearCatalogState('idle');
   }
 
   setMode(mode: StorefrontMode): void {
@@ -335,7 +351,7 @@ export class ApiStorefrontDataRepository implements StorefrontDataRepository {
     this.lastCatalogKey = null;
     this.lastWorkspaceKey = null;
     this.hydratedProducts.clear();
-    const fallback = cloneState();
+    const fallback = createInitialState();
     this.stateSignal.set({
       ...fallback,
       cart: []
@@ -402,5 +418,59 @@ export class ApiStorefrontDataRepository implements StorefrontDataRepository {
         .filter(([, value]) => value !== undefined && value !== null && value !== '')
         .sort(([leftKey], [rightKey]) => leftKey.localeCompare(rightKey))
     );
+  }
+
+  private setCatalogStatus(status: StorefrontDataLoadStatus, error: string | null = null): void {
+    this.stateSignal.update((state) => ({
+      ...state,
+      catalogStatus: status,
+      catalogError: error
+    }));
+  }
+
+  private clearCatalogState(status: StorefrontDataLoadStatus, error: string | null = null): void {
+    this.lastCatalogKey = null;
+    this.hydratedProducts.clear();
+
+    this.stateSignal.update((state) => ({
+      ...state,
+      catalog: [],
+      pdp: {},
+      catalogStatus: status,
+      catalogError: error
+    }));
+  }
+
+  private removeHydratedProduct(slug: string): void {
+    this.stateSignal.update((state) => {
+      const nextPdp = { ...state.pdp };
+      delete nextPdp[slug];
+
+      return {
+        ...state,
+        pdp: nextPdp
+      };
+    });
+  }
+
+  private setWorkspaceStatus(status: StorefrontDataLoadStatus, error: string | null = null): void {
+    this.stateSignal.update((state) => ({
+      ...state,
+      workspaceStatus: status,
+      workspaceError: error
+    }));
+  }
+
+  private clearWorkspaceState(status: StorefrontDataLoadStatus, error: string | null = null): void {
+    this.lastWorkspaceKey = null;
+
+    this.stateSignal.update((state) => ({
+      ...state,
+      profile: createEmptyStorefrontProfile(),
+      addresses: [],
+      orders: [],
+      workspaceStatus: status,
+      workspaceError: error
+    }));
   }
 }
