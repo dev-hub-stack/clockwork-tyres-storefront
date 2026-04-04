@@ -92,8 +92,8 @@ export class RegisterPageComponent {
     both: [
       {
         value: 'premium',
-        label: 'Paid Subscription Required',
-        note: 'Combined retailer + wholesaler accounts cannot stay on the free plan.'
+        label: 'Premium (199 AED / Month)',
+        note: 'Combined retailer + wholesaler account with retail sales portal, procurement module, and store analytics.'
       }
     ]
   };
@@ -105,6 +105,7 @@ export class RegisterPageComponent {
   protected readonly isSubmitting = signal(false);
   protected readonly isInteractive = signal(false);
   protected readonly selectedDocumentName = signal<string>('');
+  protected readonly enterpriseRequested = signal(false);
 
   protected readonly form = this.formBuilder.group({
     businessName: ['', [Validators.required, Validators.maxLength(100)]],
@@ -235,11 +236,19 @@ export class RegisterPageComponent {
   }
 
   private hydrateQueryDefaults(): void {
+    const requestedMode = this.activatedRoute.snapshot.queryParamMap.get('mode');
     const requestedPlan = this.activatedRoute.snapshot.queryParamMap.get('plan');
+    const enterpriseRequested = this.activatedRoute.snapshot.queryParamMap.get('enterprise');
+
+    if (requestedMode === 'retailer' || requestedMode === 'supplier' || requestedMode === 'both') {
+      this.form.controls.accountMode.setValue(requestedMode);
+    }
 
     if (requestedPlan === 'premium-plan' || requestedPlan === 'premium') {
       this.form.controls.planPreference.setValue('premium');
     }
+
+    this.enterpriseRequested.set(enterpriseRequested === '1' || enterpriseRequested === 'true');
   }
 
   private syncPlanPreferenceWithAccountMode(accountMode: BusinessAccountMode): void {

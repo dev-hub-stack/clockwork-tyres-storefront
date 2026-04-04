@@ -31,7 +31,8 @@ test.describe('Clockwork Tyres storefront smoke', () => {
       'true',
       { timeout: 15000 }
     );
-    await expect(page.locator('[data-testid="catalog-row"]').first()).toBeVisible();
+    await expect(page.locator('text=Loading live products')).not.toBeVisible({ timeout: 15000 });
+    await expect(page.locator('[data-testid="catalog-row"]').first()).toBeVisible({ timeout: 15000 });
 
     await page.locator('[data-testid="catalog-add-to-cart"]').first().click();
     await page.locator('[data-testid="header-cart-link"]').click();

@@ -47,6 +47,13 @@
                 Set up a retailer, supplier, or combined business account for the counter-only Clockwork Tyres launch.
               </p>
 
+              @if (enterpriseRequested()) {
+                <div class="submit-banner submit-banner-info" data-testid="enterprise-guidance">
+                  Enterprise and custom pricing are configured manually after sales approval. Submit the business
+                  account request here and super admin can finish the custom entitlements.
+                </div>
+              }
+
               @if (submitSuccess()) {
                 <div class="submit-banner submit-banner-success">
                   <div>{{ submitSuccess() }}</div>
@@ -139,7 +146,12 @@
                 <div class="register-radio-row">
                   @for (role of roleOptions; track role.value) {
                     <label class="radio-style">
-                      <input type="radio" formControlName="accountMode" [value]="role.value" />
+                      <input
+                        type="radio"
+                        formControlName="accountMode"
+                        [value]="role.value"
+                        [attr.data-testid]="'register-account-mode-' + role.value"
+                      />
                       <span>
                         <strong>{{ role.label }}</strong>
                         <small>{{ role.note }}</small>
@@ -149,13 +161,17 @@
                 </div>
 
                 <p class="label">Plan preference</p>
-                <select formControlName="planPreference" class="form-control custom-input register-select">
+                <select
+                  formControlName="planPreference"
+                  class="form-control custom-input register-select"
+                  data-testid="register-plan-select"
+                >
                   @for (plan of displayedPlanOptions; track plan.value) {
                     <option [value]="plan.value">{{ plan.label }}</option>
                   }
                 </select>
                 @if (selectedPlanNote) {
-                  <p class="small-text register-links">{{ selectedPlanNote }}</p>
+                  <p class="small-text register-links" data-testid="register-plan-note">{{ selectedPlanNote }}</p>
                 }
 
                 <p class="label">{{ uploadLabel }}</p>
